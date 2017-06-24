@@ -1,0 +1,6 @@
+User=root
+ExecStop=/usr/bin/ps aux | grep 'daemon.js --run' | grep -v 'grep' | awk '{print $2}' | xargs kill
+Restart=always
+
+[Install]
+WantedBy=default.target
