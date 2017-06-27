@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>TRIGGERcmd Command Editor</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div class="main">
+    <div class="page" id="petratings">
+      <div id="petAppointments">
+        <h2>TRIGGERcmd Command Editor...loading</h2>
+      </div>
+    </div><!-- Pet Ratings -->
+  </div><!-- Main -->
+  <script type="text/javascript">
+    var eRequire = require;
+    var dirName = __dirname;
+
+    var homedir = (process.platform === 'win32') ? process.env.HOMEPATH : process.env.HOME;
+    if (!homedir) {homedir = process.env.HOME};
+    var datapath = require('path').resolve(homedir, ".TRIGGERcmdData");           
+    cmdfile = "commands.json"
+    var dataLocation = require('path').resolve(datapath, cmdfile);
+
+    // var dataLocation = require('path').resolve(__dirname, '..', 'data', 'data.json');
+  </script>
+  <script src="js/render.js"></script>
+</body>
+</html>

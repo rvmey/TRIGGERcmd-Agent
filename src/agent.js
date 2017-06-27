@@ -370,79 +370,98 @@ function syncLoop(iterations, process, exit){
 
 function updateCmds(token,userid,computerid,startsocket) {
   // console.log(token + ' u ' + userid + ' c ' + computerid);
-  var localcmds = JSON.parse(fs.readFileSync(datafile));
-  console.log(localcmds);
-  var onlinecmds = [];
-  // getOnlineCmds(token,userid,computerid) {
-  // Configure the request
-  headers.Authorization = 'Bearer ' + token;
-  options.headers = headers;
-  options.url = urlprefix + '/api/command/list?computer_id=' + computerid;
-  options.method = 'GET';
+  var localcmds;
+  var readsuccess = true;
+  var backupdatafile = datafile + '.backup';
 
-  // Start the request
-  request(options, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      onlinecmds = JSON.parse(body);
+  try {
+      localcmds = JSON.parse(fs.readFileSync(datafile));
+  } catch(e) {
+      readsuccess = false;
+      fs.createReadStream(backupdatafile).pipe(fs.createWriteStream(datafile));  // restore the last known good file      
+      console.log(e); // error in the above string      
+      console.log('Restoring the last known good file');
+  } finally {
+    if (localcmds) {
+      if (readsuccess) {
+        fs.createReadStream(datafile).pipe(fs.createWriteStream(backupdatafile));  // we have a good file, back it up.
+      }      
+      console.log(localcmds);
+      var onlinecmds = [];
+      // getOnlineCmds(token,userid,computerid) {
+      // Configure the request
+      headers.Authorization = 'Bearer ' + token;
+      options.headers = headers;
+      options.url = urlprefix + '/api/command/list?computer_id=' + computerid;
+      options.method = 'GET';
 
-      syncLoop(localcmds.length, function(loop){
-        setTimeout(function(){
-          var l = loop.iteration();
-          // console.log(l);
-          var foundonline = false;
-          for(var o = 0; o < onlinecmds.records.length; o++)
-          {
-            // console.log(onlinecmds.records[o].name);
-            // console.log(l.toString() + localcmds[l].trigger);
-            if (onlinecmds.records[o].name == localcmds[l].trigger &&
-                onlinecmds.records[o].voice == localcmds[l].voice
-            ) { foundonline = true }
-          }
-          if (!foundonline) {
-            if (localcmds[l].ground == ground) {
-              addCmd(localcmds[l].trigger,localcmds[l].voice,token,userid,computerid);
-            }
-          }
-          loop.next();
-        }, 10);
-      }, function(){
-          console.log('Done initiating command adds');
-      });
+      // Start the request
+      request(options, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          onlinecmds = JSON.parse(body);
 
-      // Remove any command triggers found online that don't exist in local file anymore.
-      // for(var o = 0; o < onlinecmds.records.length; o++)  <- this was too fast
-      syncLoop(onlinecmds.records.length, function(loop){
-        setTimeout(function(){
-          var o = loop.iteration();
-          // console.log(o);
-          var foundlocal = false;
-          for(var l = 0; l < localcmds.length; l++)
-          {
-            // console.log(onlinecmds.records[o].name);
-            // console.log(l.toString() + localcmds[l].trigger);
-            if (onlinecmds.records[o].name == localcmds[l].trigger &&
-                onlinecmds.records[o].voice == localcmds[l].voice
-            ) { foundlocal = true }
-          }
-          if (!foundlocal) {
-            removeCmd(onlinecmds.records[o].name,token,userid,computerid);
-          }
-          loop.next();
-        }, 10);
-      }, function(){
-          console.log('Done initiating command removals');
-      });
+          syncLoop(localcmds.length, function(loop){
+            setTimeout(function(){
+              var l = loop.iteration();
+              // console.log(l);
+              var foundonline = false;
+              for(var o = 0; o < onlinecmds.records.length; o++)
+              {
+                // console.log(onlinecmds.records[o].name);
+                // console.log(l.toString() + localcmds[l].trigger);
+                if (onlinecmds.records[o].name == localcmds[l].trigger &&
+                    onlinecmds.records[o].voice == localcmds[l].voice
+                ) { foundonline = true }
+              }
+              if (!foundonline) {
+                if (localcmds[l].ground == ground) {
+                  addCmd(localcmds[l].trigger,localcmds[l].voice,token,userid,computerid);
+                }
+              }
+              loop.next();
+            }, 10);
+          }, function(){
+              console.log('Done initiating command adds');
+          });
 
-    } else {
-      console.log('Login failed trying to update command triggers.');
-      console.log(error);
-      console.log(response);
+          // Remove any command triggers found online that don't exist in local file anymore.
+          // for(var o = 0; o < onlinecmds.records.length; o++)  <- this was too fast
+          syncLoop(onlinecmds.records.length, function(loop){
+            setTimeout(function(){
+              var o = loop.iteration();
+              // console.log(o);
+              var foundlocal = false;
+              for(var l = 0; l < localcmds.length; l++)
+              {
+                // console.log(onlinecmds.records[o].name);
+                // console.log(l.toString() + localcmds[l].trigger);
+                if (onlinecmds.records[o].name == localcmds[l].trigger &&
+                    onlinecmds.records[o].voice == localcmds[l].voice
+                ) { foundlocal = true }
+              }
+              if (!foundlocal) {
+                removeCmd(onlinecmds.records[o].name,token,userid,computerid);
+              }
+              loop.next();
+            }, 10);
+          }, function(){
+              console.log('Done initiating command removals');
+          });
+
+        } else {
+          console.log('Login failed trying to update command triggers.');
+          console.log(error);
+          console.log(response);
+        }
+      })
+      if(startsocket) {
+        watchForCmdUpdates(token,userid,computerid);
+        startSocket(token,computerid);
+      }
     }
-  })
-  if(startsocket) {
-    watchForCmdUpdates(token,userid,computerid);
-    startSocket(token,computerid);
   }
+
+  
 }
 
 function removeCmd(trigger,token,userid,computerid) {
@@ -557,7 +576,9 @@ function reportBack(token,computerid,cmdid) {
 }
 
 function cmdFileUpdated() {
-  updateCmds(tokenFromFile,useridFromFile,computeridFromFile,false);
+  // setTimeout(function () {
+    updateCmds(tokenFromFile,useridFromFile,computeridFromFile,false);
+  // }, 500);  
 }
 
 /*  Replaced to handle smart quote on macs
@@ -585,8 +606,10 @@ function watchForCmdUpdates(token,userid,computerid) {
            return console.log(err);
          } else {
            console.log(event, path);
+           // setTimeout(function () {
            updateCmds(token,userid,computerid,false);
            watchForCmdUpdates(token,userid,computerid);
+           // }, 500);                      
          }
       });
     });

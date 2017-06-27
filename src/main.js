@@ -8,6 +8,9 @@ var util = require('util');
 var fs = require('fs');
 var path = require('path');
 
+// For GUI editor
+var myAppMenu, menuTemplate;
+
 if (process.platform === 'win32') {
   var Service = require('node-windows').Service;
   var wincmd = require('node-windows');
@@ -190,6 +193,66 @@ function openEditor() {
     // when you should delete the corresponding element.
     editorWindow = null;
   });
+}
+
+function openguiEditor() {
+  var appWindow, infoWindow;
+  appWindow = new BrowserWindow({
+    show: false
+  }); //appWindow
+
+  appWindow.loadURL('file://' + __dirname + '/../app/index.html');
+  
+  appWindow.once('ready-to-show', function() {
+    appWindow.show();
+  }); //ready-to-show
+
+  menuTemplate = [
+    {
+      label: 'TRIGGERcmd',
+      submenu: [
+        {
+          label: 'Add Appointment',
+          accelerator: process.platform === 'darwin' ? 'Command+N':'Ctrl+N',
+          click(item,focusedWindow) {
+            if (focusedWindow) focusedWindow.webContents.send('addAppointment');
+          }
+        },{
+          role: 'help',
+          label: 'Website',
+          click() { electron.shell.openExternal('http://www.triggercmd.com')}
+        },
+        {role: 'close'}        
+      ]
+    },{
+        label: 'View',
+        submenu: [
+          {
+            label: 'Reload',
+            accelerator: 'CmdOrCtrl+R',
+            click (item, focusedWindow) {
+              if (focusedWindow) focusedWindow.reload()
+            }
+          },
+          {
+            label: 'Toggle Developer Tools',
+            accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+            click (item, focusedWindow) {
+              if (focusedWindow) focusedWindow.webContents.toggleDevTools()
+            }
+          },
+          {type: 'separator'},
+          {role: 'resetzoom'},
+          {role: 'zoomin'},
+          {role: 'zoomout'},
+          {type: 'separator'},
+          {role: 'togglefullscreen'}
+        ]
+      },
+  ];
+
+  myAppMenu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(myAppMenu);
 }
 
 function readMyFile(file) {
@@ -378,17 +441,19 @@ if (process.platform === 'linux') {
       ]
     },
     {
-      label: 'Run Command Editor',
+      label: 'Text Command Editor',
       // accelerator: 'Alt+Command+N',
       click: function() {
-        console.log('Opening commands.json');
-        if (process.platform === 'win32') {
-          var cmd = 'notepad ' + datafile;
-          console.log('Running: ' + cmd);
-          var ChildProcess = cp.exec(cmd);
-        } else {
-          openEditor();
-        }
+        console.log('Opening commands.json');        
+        openEditor();        
+      }
+    },
+    {
+      label: 'GUI Command Editor',
+      // accelerator: 'Alt+Command+N',
+      click: function() {
+        console.log('Opening GUI editor');
+        openguiEditor();
       }
     },
     { label: 'Quit',
@@ -447,17 +512,19 @@ if (process.platform === 'linux') {
       ]
     },
     {
-      label: 'Run Command Editor',
+      label: 'Text Command Editor',
       // accelerator: 'Alt+Command+N',
       click: function() {
         console.log('Opening commands.json');
-        if (process.platform === 'win32') {
-          var cmd = 'notepad ' + datafile;
-          console.log('Running: ' + cmd);
-          var ChildProcess = cp.exec(cmd);
-        } else {
-          openEditor();
-        }
+        openEditor();
+      }
+    },
+    {
+      label: 'GUI Command Editor',
+      // accelerator: 'Alt+Command+N',
+      click: function() {
+        console.log('Opening GUI editor');
+        openguiEditor();
       }
     },
     { label: 'Quit',
@@ -478,17 +545,19 @@ if (process.platform === 'linux') {
       }
     },
     {
-      label: 'Run Command Editor',
+      label: 'Text Command Editor',
       // accelerator: 'Alt+Command+N',
       click: function() {
         console.log('Opening commands.json');
-        if (process.platform === 'win32') {
-          var cmd = 'notepad ' + datafile;
-          console.log('Running: ' + cmd);
-          var ChildProcess = cp.exec(cmd);
-        } else {
-          openEditor();
-        }
+        openEditor();
+      }
+    },
+    {
+      label: 'GUI Command Editor',
+      // accelerator: 'Alt+Command+N',
+      click: function() {
+        console.log('Opening GUI editor');
+        openguiEditor();
       }
     },
     { label: 'Quit',

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>TRIGGERcmd Command Editor</title>
+  <link rel="stylesheet" href="css/app.css">
+  <script type="text/javascript">
+    var electron = require('electron');
+    var shell = electron.shell;
+    var ipc = electron.ipcRenderer;
+  </script>
+</head>
+<body id="page-info">
+  <main class="info-content">
+    <h3 class="page-headline">TRIGGERcmd</h3>
+    <p>
+      Command Editor.<br>
+      <strong>Version 1.0.0</strong><br>
+      <small>Built by <a href="#" onclick="shell.openExternal('http://www.triggercmd.com')">VanderMey Consulting, LLC</a></small>
+    </p>
+    <p><a href="#" onclick="ipc.sendSync('closeInfoWindow')">close window</a></p>
+  </main>
+</body>
+</html>
