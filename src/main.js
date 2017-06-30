@@ -1,5 +1,9 @@
 const {app, shell, Tray, Menu, BrowserWindow, ipcMain} = require('electron');
 
+// These are for the GUI editor:
+var electron = require('electron');
+var ipc = ipcMain;
+
 var cp = require('child_process');
 // var spawn = require('child_process').spawn;
 
@@ -195,35 +199,73 @@ function openEditor() {
   });
 }
 
+function toggleWindow(whichWindow) {
+  if (whichWindow.isVisible()) {
+    whichWindow.hide();
+  } else {
+    whichWindow.show();
+  }
+}
+
 function openguiEditor() {
   agent.fetchexamples();
-  var appWindow, infoWindow;
-  appWindow = new BrowserWindow({
-    show: false
+  
+  // Paste from /app/main.js, but change this line: 
+  //    this line: appWindow.loadURL('file://' + __dirname + '/index.html');
+  //    to this:   appWindow.loadURL('file://' + __dirname + '/../app/index.html');
+  // and this line:  exampleWindow.loadURL('file://' + __dirname + '/examples.html');
+  //       to this:  exampleWindow.loadURL('file://' + __dirname + '/../app/examples.html');
+
+  var appWindow, exampleWindow;
+  appWindow = new BrowserWindow({    
+    show: false,
+    width: 900,
+    height: 700
   }); //appWindow
 
   appWindow.loadURL('file://' + __dirname + '/../app/index.html');
-  
+
   appWindow.once('ready-to-show', function() {
     appWindow.show();
   }); //ready-to-show
+ 
+  exampleWindow = new BrowserWindow({    
+    show: false, 
+    parent: appWindow,
+  }); //exampleWindow
+
+  exampleWindow.loadURL('file://' + __dirname + '/../app/examples.html');
+
+  exampleWindow.on('close', function (event) {
+    exampleWindow.hide();
+    event.preventDefault();
+  })
+
+  ipc.on('exampleAdded', function(event, arg){
+    // console.log('exampleAdded received by main.js')
+    event.returnValue='';
+    appWindow.webContents.send('reloadCommands', 'Reloading commands');    
+  }); //closeexampleWindow 
+
+  ipc.on('openexampleWindow', function(event, arg){
+    event.returnValue='';
+    exampleWindow.show();
+  }); //closeexampleWindow
+
+  ipc.on('closeexampleWindow', function(event, arg){
+    event.returnValue='';
+    exampleWindow.hide();
+  }); //closeexampleWindow
 
   menuTemplate = [
     {
       label: 'TRIGGERcmd',
       submenu: [
         {
-          label: 'Add Appointment',
-          accelerator: process.platform === 'darwin' ? 'Command+N':'Ctrl+N',
-          click(item,focusedWindow) {
-            if (focusedWindow) focusedWindow.webContents.send('addAppointment');
-          }
-        },{
           role: 'help',
           label: 'Website',
           click() { electron.shell.openExternal('http://www.triggercmd.com')}
-        },
-        {role: 'close'}        
+        },        
       ]
     },{
         label: 'View',
@@ -251,7 +293,7 @@ function openguiEditor() {
         ]
       },
   ];
-
+  
   myAppMenu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(myAppMenu);
 }

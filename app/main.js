@@ -30,7 +30,7 @@ app.on('ready', function() {
   appWindow.once('ready-to-show', function() {
     appWindow.show();
   }); //ready-to-show
-
+ 
   exampleWindow = new BrowserWindow({    
     show: false, 
     parent: appWindow,
