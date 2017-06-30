@@ -2,7 +2,10 @@ var electron = require('electron');
 var BrowserWindow = electron.BrowserWindow;
 var Menu = electron.Menu;
 var app = electron.app;
+var ipc = electron.ipcMain;
 var myAppMenu, menuTemplate;
+var path = require('path');
+var fs = require('fs');
 
 function toggleWindow(whichWindow) {
   if (whichWindow.isVisible()) {
@@ -13,9 +16,13 @@ function toggleWindow(whichWindow) {
 }
 
 app.on('ready', function() {
-  var appWindow, infoWindow;
-  appWindow = new BrowserWindow({
-    show: false
+  // console.log('main.js');
+
+  var appWindow, exampleWindow;
+  appWindow = new BrowserWindow({    
+    show: false,
+    width: 900,
+    height: 700
   }); //appWindow
 
   appWindow.loadURL('file://' + __dirname + '/index.html');
@@ -24,23 +31,43 @@ app.on('ready', function() {
     appWindow.show();
   }); //ready-to-show
 
+  exampleWindow = new BrowserWindow({    
+    show: false, 
+    parent: appWindow,
+  }); //exampleWindow
+
+  exampleWindow.loadURL('file://' + __dirname + '/examples.html');
+
+  exampleWindow.on('close', function (event) {
+    exampleWindow.hide();
+    event.preventDefault();
+  })
+
+  ipc.on('exampleAdded', function(event, arg){
+    // console.log('exampleAdded received by main.js')
+    event.returnValue='';
+    appWindow.webContents.send('reloadCommands', 'Reloading commands');    
+  }); //closeexampleWindow 
+
+  ipc.on('openexampleWindow', function(event, arg){
+    event.returnValue='';
+    exampleWindow.show();
+  }); //closeexampleWindow
+
+  ipc.on('closeexampleWindow', function(event, arg){
+    event.returnValue='';
+    exampleWindow.hide();
+  }); //closeexampleWindow
+
   menuTemplate = [
     {
       label: 'TRIGGERcmd',
       submenu: [
         {
-          label: 'Add Command',
-          accelerator: process.platform === 'darwin' ? 'Command+N':'Ctrl+N',
-          click(item,focusedWindow) {
-            if (focusedWindow) focusedWindow.webContents.send('addAppointment');
-          }
-        },{
           role: 'help',
           label: 'Website',
           click() { electron.shell.openExternal('http://www.triggercmd.com')}
-        },
-        {role: 'close'},
-        {role: 'quit'}
+        },        
       ]
     },{
         label: 'View',
@@ -68,8 +95,8 @@ app.on('ready', function() {
         ]
       },
   ];
-
+  
   myAppMenu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(myAppMenu);
-
+  
 }); //app is ready

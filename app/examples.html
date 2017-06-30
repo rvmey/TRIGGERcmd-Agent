@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Example Commands</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div class="main">
+    <div class="page" id="petratings">
+      <div id="petAppointments">
+        <h2>Loading examples</h2>
+      </div>
+    </div><!-- Pet Ratings -->
+  </div><!-- Main -->
+  <script type="text/javascript">
+    var eRequire = require;
+    var dirName = __dirname;
+
+    var homedir = (process.platform === 'win32') ? process.env.HOMEPATH : process.env.HOME;
+    if (!homedir) {homedir = process.env.HOME};
+    var datapath = require('path').resolve(homedir, ".TRIGGERcmdData");           
+    examplefile = "onlineexamples.json"
+    var dataLocation = require('path').resolve(datapath, examplefile);
+
+    cmdfile = "commands.json"
+    var cmdLocation = require('path').resolve(datapath, cmdfile);
+
+  </script>
+  <script src="js/examples.js"></script>
+</body>
+</html>

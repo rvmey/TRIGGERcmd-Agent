@@ -54,9 +54,9 @@ var MainInterface = React.createClass({
     }); //setState
   }, //toggleAptDisplay
 
-  showAbout:function() {
-    ipc.sendSync('openInfoWindow');
-  }, //showAbout
+  browseExamples: function() {
+    ipc.sendSync('openexampleWindow');
+  }, //browseExamples
 
   addItem: function(tempItem) {
     var tempApts = this.state.myAppointments;
@@ -108,11 +108,6 @@ var MainInterface = React.createClass({
         (myAppointments[i].ground.toLowerCase().indexOf(queryText)!=-1) ||
         (myAppointments[i].voice.toLowerCase().indexOf(queryText)!=-1)
 
-        //(myAppointments[i].petName.toLowerCase().indexOf(queryText)!=-1) ||
-        //(myAppointments[i].ownerName.toLowerCase().indexOf(queryText)!=-1) ||
-        //(myAppointments[i].aptDate.toLowerCase().indexOf(queryText)!=-1) ||
-        //(myAppointments[i].aptNotes.toLowerCase().indexOf(queryText)!=-1)
-
       ) {
         filteredApts.push(myAppointments[i]);
       }
@@ -143,6 +138,7 @@ var MainInterface = React.createClass({
         <div className="interface">
           <Toolbar
             handleToggle = {this.toggleAptDisplay}
+            handleBrowse = {this.browseExamples}
             handleAbout = {this.showAbout}
           />
           <AddAppointment

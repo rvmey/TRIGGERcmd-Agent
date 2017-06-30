@@ -196,6 +196,7 @@ function openEditor() {
 }
 
 function openguiEditor() {
+  agent.fetchexamples();
   var appWindow, infoWindow;
   appWindow = new BrowserWindow({
     show: false

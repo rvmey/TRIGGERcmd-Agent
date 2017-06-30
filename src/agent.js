@@ -33,6 +33,9 @@ module.exports = {
   },
   triggerCmd: function (token,computername,triggername,callback) {
     triggerCmd(token,computername,triggername,callback);
+  },
+  fetchexamples: function () {
+    fetchexamples();
   }
 
 };
@@ -56,6 +59,7 @@ var headers = {
 var daemoninstall;
 var installuserhomedir;
 
+var onlineexamplefile;
 var examplefile;
 var homedir;
 var datapath;
@@ -96,6 +100,7 @@ function initFiles(backgrounddpath, callback) {
     fs.createReadStream(examplefile).pipe(fs.createWriteStream(datafile));
   }
 
+  onlineexamplefile = path.resolve(datapath, 'onlineexamples.json');
   tokenfile = path.resolve(datapath, 'token.tkn');
   useridfile = path.resolve(datapath, 'userid.cfg');
   computeridfile = path.resolve(datapath, 'computerid.cfg');
@@ -172,6 +177,31 @@ function consoleLogin(daemoninstall) {
       });
     });
   });
+}
+
+function fetchexamples() {
+  console.log('Downloading example commands')
+  var onlineexamples = [];  
+  // Configure the request
+  headers.Authorization = 'Bearer ' + tokenFromFile;
+  options.headers = headers;
+  options.url = urlprefix + '/api/example/list';
+  options.method = 'GET';
+
+  // Start the request
+  request(options, function (error, response, body) {
+    if (!error && response.statusCode == 200) {      
+      onlineexamples = JSON.parse(body);
+      // console.log(onlineexamples);
+      fs.writeFile(onlineexamplefile, JSON.stringify(onlineexamples.records, undefined, 1), 'utf8', function(err) {
+        if (err) {
+          console.log(err);
+        }        
+      });//writeFile
+    } else {
+      console.log(error);
+    }   
+  })
 }
 
 function computerExists(token,computerid,cb) {
@@ -460,7 +490,6 @@ function updateCmds(token,userid,computerid,startsocket) {
       }
     }
   }
-
   
 }
 

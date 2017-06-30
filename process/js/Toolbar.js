@@ -6,6 +6,10 @@ var Toolbar = React.createClass({
     this.props.handleToggle();
   }, //createAppointments
 
+  browseExamples: function() {
+    this.props.handleBrowse();
+  }, //createAppointments
+
   toggleAbout: function() {
     this.props.handleAbout();
   }, //toggleAbout
@@ -17,8 +21,13 @@ var Toolbar = React.createClass({
           <span className="toolbar-item-button glyphicon glyphicon-plus-sign"></span>
           <span className="toolbar-item-text">Add Command</span>
         </div>
+        <div className="toolbar-item" onClick={this.browseExamples}>
+          <span className="toolbar-item-button glyphicon glyphicon-plus-sign"></span>
+          <span className="toolbar-item-text">Browse Examples</span>
+        </div>
       </div>
     ) //return
+
   } //render
 }); //Toolbar
 

@@ -11,7 +11,7 @@
   <div class="main">
     <div class="page" id="petratings">
       <div id="petAppointments">
-        <h2>TRIGGERcmd Command Editor...loading</h2>
+        <h2>Loading commands</h2>
       </div>
     </div><!-- Pet Ratings -->
   </div><!-- Main -->
@@ -26,6 +26,12 @@
     var dataLocation = require('path').resolve(datapath, cmdfile);
 
     // var dataLocation = require('path').resolve(__dirname, '..', 'data', 'data.json');
+  </script>
+    <script>
+    require('electron').ipcRenderer.on('reloadCommands', (event, message) => {
+      console.log(message);
+      location.reload();
+    })
   </script>
   <script src="js/render.js"></script>
 </body>
