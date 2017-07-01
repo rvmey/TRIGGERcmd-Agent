@@ -207,6 +207,8 @@ function toggleWindow(whichWindow) {
   }
 }
 
+var appWindow, exampleWindow;
+
 function openguiEditor() {
   agent.fetchexamples();
   
@@ -216,7 +218,6 @@ function openguiEditor() {
   // and this line:  exampleWindow.loadURL('file://' + __dirname + '/examples.html');
   //       to this:  exampleWindow.loadURL('file://' + __dirname + '/../app/examples.html');
 
-  var appWindow, exampleWindow;
   appWindow = new BrowserWindow({    
     show: false,
     width: 900,
@@ -228,18 +229,23 @@ function openguiEditor() {
   appWindow.once('ready-to-show', function() {
     appWindow.show();
   }); //ready-to-show
- 
-  exampleWindow = new BrowserWindow({    
-    show: false, 
-    parent: appWindow,
-  }); //exampleWindow
 
+  appWindow.on('close', function (event) {
+    exampleWindow.hide();
+    appWindow.hide();
+    event.preventDefault();
+  })
+
+  exampleWindow = new BrowserWindow({    
+    show: false
+  }); //exampleWindow  
+  
   exampleWindow.loadURL('file://' + __dirname + '/../app/examples.html');
 
   exampleWindow.on('close', function (event) {
     exampleWindow.hide();
     event.preventDefault();
-  })
+  })  
 
   ipc.on('exampleAdded', function(event, arg){
     // console.log('exampleAdded received by main.js')
