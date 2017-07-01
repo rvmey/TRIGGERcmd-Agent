@@ -87,6 +87,7 @@ const iconPath = path.join(__dirname, 'icon.png');
 let appIcon = null;
 let mainWindow;
 let editorWindow;
+var appWindow, exampleWindow;
 
 var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
   // console.log('User ran triggercmdagent.');
@@ -174,6 +175,17 @@ app.on('ready', function(){
       }
     }
   });
+
+  appWindow = new BrowserWindow({    
+    show: false,
+    width: 900,
+    height: 700
+  }); //appWindow
+
+  exampleWindow = new BrowserWindow({    
+    show: false
+  }); //exampleWindow  
+
 });
 
 app.on("before-quit", (event) => {
@@ -207,8 +219,6 @@ function toggleWindow(whichWindow) {
   }
 }
 
-var appWindow, exampleWindow;
-
 function openguiEditor() {
   agent.fetchexamples();
   
@@ -218,27 +228,19 @@ function openguiEditor() {
   // and this line:  exampleWindow.loadURL('file://' + __dirname + '/examples.html');
   //       to this:  exampleWindow.loadURL('file://' + __dirname + '/../app/examples.html');
 
-  appWindow = new BrowserWindow({    
-    show: false,
-    width: 900,
-    height: 700
-  }); //appWindow
-
   appWindow.loadURL('file://' + __dirname + '/../app/index.html');
 
-  appWindow.once('ready-to-show', function() {
+/*  appWindow.once('ready-to-show', function() {
     appWindow.show();
   }); //ready-to-show
+*/
+  appWindow.show();
 
   appWindow.on('close', function (event) {
     exampleWindow.hide();
     appWindow.hide();
     event.preventDefault();
   })
-
-  exampleWindow = new BrowserWindow({    
-    show: false
-  }); //exampleWindow  
   
   exampleWindow.loadURL('file://' + __dirname + '/../app/examples.html');
 
