@@ -1,3 +1,4 @@
-node_modules
+node_modules/*
+!node_modules/electron-compilers/lib/passthrough.js
 out
 *.log
