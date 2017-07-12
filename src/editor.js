@@ -59,6 +59,18 @@ function readFileIntoEditor(theFileEntry) {
   });
 }
 
+// Russ added this to fix a bug where the commands.json would get emptied sometimes.
+function writeFileTransactional (path, content, cb) {
+    let temporaryPath = `${path}.new`;
+    fs.writeFile(temporaryPath, content, function (err) {
+        if (err) {
+            return cb(err);
+        }
+
+        fs.rename(temporaryPath, path, cb);
+    });
+};
+
 function writeEditorToFile(theFileEntry) {
   var str = editor.getValue();
 /*
@@ -72,9 +84,14 @@ function writeEditorToFile(theFileEntry) {
     console.log("Write completed.");
   });
 */
-  fs.writeFileSync(theFileEntry, editor.getValue());
-  handleDocumentChange(theFileEntry);
-  console.log("Write completed.");
+  // fs.writeFileSync(theFileEntry, editor.getValue());
+  writeFileTransactional(theFileEntry, editor.getValue(), function(err) {
+    if (err) {
+      console.log("Write failed: " + err);
+    }
+    handleDocumentChange(theFileEntry);
+    console.log("Write completed.");
+  });  
 }
 
 var onChosenFileToOpen = function(theFileEntry) {

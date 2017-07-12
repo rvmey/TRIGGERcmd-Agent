@@ -88,11 +88,17 @@ var MainInterface = React.createClass({
       // aptBodyVisible: false
     // }) //setState
 
-    fs.writeFileSync(cmdLocation, JSON.stringify(tempCmds, undefined, 1), 'utf8', function(err) {
+    /* fs.writeFileSync(cmdLocation, JSON.stringify(tempCmds, undefined, 1), 'utf8', function(err) {
       if (err) {
         console.log(err);
       }
-    });//writeFile
+    });//writeFile  */
+
+    writeFileTransactional (cmdLocation, JSON.stringify(tempCmds, undefined, 1), function(err) {
+      if (err) {
+        console.log(err);
+      }
+    });
 
     console.log("reloadCommands function in examples.js ran, ipc.sendSync exampleAdded")
     ipc.sendSync('exampleAdded');
@@ -199,3 +205,15 @@ ReactDOM.render(
   <MainInterface />,
   document.getElementById('petAppointments')
 ); //render
+
+// Russ added this to fix a bug where the commands.json would get emptied sometimes.
+function writeFileTransactional (path, content, cb) {    
+    let temporaryPath = `${path}.new`;
+    fs.writeFile(temporaryPath, content, 'utf8', function (err) {
+        if (err) {
+            return cb(err);
+        }
+
+        fs.rename(temporaryPath, path, cb);
+    });
+};

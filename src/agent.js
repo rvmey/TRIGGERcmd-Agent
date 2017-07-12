@@ -416,7 +416,7 @@ function updateCmds(token,userid,computerid,startsocket) {
       if (readsuccess) {
         fs.createReadStream(datafile).pipe(fs.createWriteStream(backupdatafile));  // we have a good file, back it up.
       }      
-      console.log(localcmds);
+      // console.log(localcmds);
       var onlinecmds = [];
       // getOnlineCmds(token,userid,computerid) {
       // Configure the request
@@ -451,7 +451,7 @@ function updateCmds(token,userid,computerid,startsocket) {
               loop.next();
             }, 10);
           }, function(){
-              console.log('Done initiating command adds');
+              console.log('Initiated command adds');
           });
 
           // Remove any command triggers found online that don't exist in local file anymore.
@@ -475,7 +475,7 @@ function updateCmds(token,userid,computerid,startsocket) {
               loop.next();
             }, 10);
           }, function(){
-              console.log('Done initiating command removals');
+              console.log('Initiated command removals');
           });
 
         } else {

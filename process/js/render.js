@@ -39,11 +39,16 @@ var MainInterface = React.createClass({
 
   componentDidUpdate: function() {
     if (!this.state.aptBodyVisible) {
-      fs.writeFileSync(dataLocation, JSON.stringify(this.state.myAppointments, undefined, 1), 'utf8', function(err) {
+      writeFileTransactional (dataLocation, JSON.stringify(this.state.myAppointments, undefined, 1), function(err) {
         if (err) {
           console.log(err);
         }
-      });//writeFile
+      });
+      /* fs.writeFileSync(dataLocation, JSON.stringify(this.state.myAppointments, undefined, 1), 'utf8', function(err) {
+        if (err) {
+          console.log(err);
+        }
+      });//writeFile  */
     }    
   }, //componentDidUpdate
 
@@ -163,3 +168,15 @@ ReactDOM.render(
   <MainInterface />,
   document.getElementById('petAppointments')
 ); //render
+
+// Russ added this to fix a bug where the commands.json would get emptied sometimes.
+function writeFileTransactional (path, content, cb) {    
+    let temporaryPath = `${path}.new`;
+    fs.writeFile(temporaryPath, content, 'utf8', function (err) {
+        if (err) {
+            return cb(err);
+        }
+
+        fs.rename(temporaryPath, path, cb);
+    });
+};
