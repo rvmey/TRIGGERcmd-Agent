@@ -10,7 +10,9 @@ var cp = require('child_process');
 var util = require('util');
 
 var fs = require('fs');
+var http = require('http');
 var path = require('path');
+const ChildProcess = require('child_process');
 
 // For GUI editor
 var myAppMenu, menuTemplate;
@@ -369,6 +371,7 @@ function startTrayIcon () {
 }
 
 function installService () {
+  console.log('Installing background service.');
   if (process.platform === 'win32') {
     console.log('Installing service.');
     var homedir = (process.platform === 'win32') ? process.env.HOMEPATH : process.env.HOME;
@@ -390,6 +393,7 @@ function installService () {
 }
 
 function addToPath() {
+  console.log('Adding to path.');
   if (process.platform === 'win32') {
     // console.log('Installing service.');
     var i = 250;
@@ -410,6 +414,7 @@ function addToPath() {
 }
 
 function removeFromPath() {
+  console.log('Removing from path.');
   if (process.platform === 'win32') {
     // console.log('Installing service.');
     var i = 250;
@@ -431,10 +436,12 @@ function removeFromPath() {
 
 
 function startService () {
+    console.log('Starting background service.');
     svc.start();
 }
 
 function removeService () {
+  console.log('Removing background service.');
   if (process.platform === 'win32') {
     wincmd.elevate('node svcmgr --remove',function(error, stdout, stderr){
       if (error !== null) {
@@ -453,6 +460,7 @@ function removeService () {
 }
 
 function stopService () {
+  console.log('Stopping background service.');
   svc.stop();
 }
 
@@ -524,6 +532,13 @@ if (process.platform === 'linux') {
         shell.openExternal('https://www.triggercmd.com/user/computer/list');
       }
     },
+    {
+      label: 'Update Agent',
+      click: function() {
+        console.log('Updating the TRIGGERcmd agent');
+        updateAgent();
+      }
+    },    
     {
       label: 'Background Service',
       submenu: [
@@ -626,7 +641,7 @@ function handleSquirrelEvent() {
     return false;
   }
 
-  const ChildProcess = require('child_process');
+  // const ChildProcess = require('child_process');
   const path = require('path');
 
   const appFolder = path.resolve(process.execPath, '..');
@@ -653,23 +668,28 @@ function handleSquirrelEvent() {
 
   const squirrelEvent = process.argv[1];
 
-  /*
-    // Russ:
+  
+  /* 
   var homedir = (process.platform === 'win32') ? process.env.HOMEPATH : process.env.HOME;
   var sqlog_file = fs.createWriteStream(homedir + '/' + squirrelEvent + '.log', {flags : 'w'});
   function sqlog (d) { //
     sqlog_file.write(util.format(d) + '\n');
-  };
+  }; 
 
   sqlog(process.argv);
   sqlog('exeName ' + exeName);
   sqlog('squirrelEvent ' + squirrelEvent);
   sqlog('updateDotExe ' + updateDotExe);
-*/
+  sqlog('rootAtomFolder ' + rootAtomFolder);
+  sqlog('appFolder ' + appFolder);  */
+  
+  console.log('squirrelEvent ' + squirrelEvent);
+
 
   switch (squirrelEvent) {
-    case '--squirrel-install':
     case '--squirrel-updated':
+    case '--squirrel-install':
+    
       // Optionally do things such as:
       // - Add your .exe to the PATH
       // - Write to the registry for things like file associations and
@@ -677,7 +697,7 @@ function handleSquirrelEvent() {
 
       // Install desktop and start menu shortcuts
       spawnUpdate(['--createShortcut', exeName, '--shortcut-locations=Desktop,Startup,StartMenu']);
-      addToPath();
+      // addToPath();
 
       setTimeout(app.quit, squirreltimeout);
       return true;
@@ -686,9 +706,9 @@ function handleSquirrelEvent() {
       // Undo anything you did in the --squirrel-install and
       // --squirrel-updated handlers
 
-      // Russ:
-      removeService();
-      removeFromPath();
+      // Russ:      
+      var cmd = path.resolve(__dirname, 'cleanup.bat');      
+      ChildProcess.spawn(cmd, [], {detached: true});
 
       // Remove desktop and start menu shortcuts
       spawnUpdate(['--removeShortcut', exeName, '--shortcut-locations=Desktop,Startup,StartMenu']);
@@ -700,7 +720,58 @@ function handleSquirrelEvent() {
       // This is called on the outgoing version of your app before
       // we update to the new version - it's the opposite of
       // --squirrel-updated
+      var cmd = path.resolve(__dirname, 'cleanup.bat');      
+      ChildProcess.spawn(cmd, [], {detached: true});
+
       setTimeout(app.quit, squirreltimeout);
       return true;
   }
+};
+
+function updateAgent() {
+    // Remove current background service.
+    var cmd = path.resolve(__dirname, 'cleanup.bat');
+    ChildProcess.spawn(cmd, [], {detached: true});    
+
+    var messagecmd = path.resolve(__dirname, 'winupgrademessage.bat');
+    ChildProcess.spawn(messagecmd, [], {detached: true}); 
+
+    var file = path.join(datapath, 'TRIGGERcmdAgentSetup.exe')
+    download('http://s3.amazonaws.com/triggercmdagents/TRIGGERcmdAgentSetup.exe', file, function (err) {
+      if (err) { 
+        console.log(err)
+      } else {
+        var installer = path.join(datapath, 'TRIGGERcmdAgentSetup.exe');
+        console.log(installer);
+        ChildProcess.spawn(installer, [], {detached: true});
+      }
+    });
+}
+
+var download = function(url, dest, cb) {
+    var file = fs.createWriteStream(dest);
+    var request = http.get(url, function(response) {
+
+        // check if response is success
+        if (response.statusCode !== 200) {
+            return cb('Response status was ' + response.statusCode);
+        }
+
+        response.pipe(file);
+
+        file.on('finish', function() {
+            file.close(cb);  // close() is async, call cb after close completes.
+        });
+    });
+
+    // check for request error too
+    request.on('error', function (err) {
+        fs.unlink(dest);
+        return cb(err.message);
+    });
+
+    file.on('error', function(err) { // Handle errors
+        fs.unlink(dest); // Delete the file async. (But we don't check the result) 
+        return cb(err.message);
+    });
 };

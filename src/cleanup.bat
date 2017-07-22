@@ -1,0 +1,1 @@
+cmd /c %~dp0cleanup.cmd

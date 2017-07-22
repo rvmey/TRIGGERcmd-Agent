@@ -1,0 +1,2 @@
+mshta javascript:alert("Updating the TRIGGERcmd agent.\n\nThe agent will upgrade when it finishes downloading the new version.\n\nAfter the upgrade, you'll need to re-install the Background Service if you use it.");close();
+    
