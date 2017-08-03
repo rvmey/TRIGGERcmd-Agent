@@ -4,12 +4,19 @@ var AptList = React.createClass({
   handleDelete: function() {
     this.props.onDelete(this.props.whichItem);
   },
+  handleEdit: function() {
+    this.props.onEdit(this.props.whichItem);
+  },
   render: function() {
     return(
       <li className="pet-item media">
         <div className="media-left">
           <button className="pet-delete btn btn-xs btn-danger" onClick={this.handleDelete}>
           <span className="glyphicon glyphicon-remove"></span></button>
+        </div>
+        <div className="media-left">
+          <button className="pet-edit btn btn-xs btn-success" onClick={this.handleEdit}>
+          <span className="glyphicon glyphicon-pencil"></span></button>
         </div>
         <div className="pet-info media-body">
           <div className="pet-head">

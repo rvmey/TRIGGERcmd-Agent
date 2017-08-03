@@ -13,14 +13,21 @@ var AptList = require('./AptList');
 var Toolbar = require('./Toolbar');
 var HeaderNav = require('./HeaderNav');
 var AddAppointment = require('./AddAppointment');
+var EditAppointment = require('./EditAppointment');
 
 var MainInterface = React.createClass({
   getInitialState: function() {
     return {
       aptBodyVisible: false,
+      editBodyVisible: false,
       orderBy: 'trigger',
       orderDir: 'asc',
       queryText: '',
+      editTrigger: '',
+      editCommand: '',
+      editGround: '',
+      editVoice: '',
+      editKey: null,
       myAppointments: loadApts
     }//return
   }, //getInitialState
@@ -29,26 +36,38 @@ var MainInterface = React.createClass({
     ipc.on('addAppointment', function(event,message) {
       this.toggleAptDisplay();
     }.bind(this));
+
+    ipc.on('editAppointment', function(event,message) {
+      this.toggleEditDisplay();
+    }.bind(this));
   }, //componentDidMount
 
   componentWillUnmount: function() {
     ipc.removeListener('addAppointment', function(event,message) {
       this.toggleAptDisplay();
     }.bind(this));
+
+    ipc.removeListener('editAppointment', function(event,message) {
+      this.toggleEditDisplay();
+    }.bind(this));
   }, //componentDidMount
 
   componentDidUpdate: function() {
-    if (!this.state.aptBodyVisible) {
-      writeFileTransactional (dataLocation, JSON.stringify(this.state.myAppointments, undefined, 1), function(err) {
+    if ((this.state.aptBodyVisible == false) && (this.state.editBodyVisible == false)) {  
+      console.log('Neither add nor edit box visible, so updating file');
+    
+      function replacer(key, value) {
+        // Filtering out properties
+        if (key === 'mykey') {
+          return undefined;
+        }
+        return value;
+      }
+      writeFileTransactional (dataLocation, JSON.stringify(this.state.myAppointments, replacer, 1), function(err) {
         if (err) {
           console.log(err);
         }
       });
-      /* fs.writeFileSync(dataLocation, JSON.stringify(this.state.myAppointments, undefined, 1), 'utf8', function(err) {
-        if (err) {
-          console.log(err);
-        }
-      });//writeFile  */
     }    
   }, //componentDidUpdate
 
@@ -59,9 +78,65 @@ var MainInterface = React.createClass({
     }); //setState
   }, //toggleAptDisplay
 
+  toggleEditDisplay: function(item) {  
+    var tempVisibility = !this.state.editBodyVisible;
+    this.setState({
+      editBodyVisible: tempVisibility,
+      editTrigger: item.trigger,
+      editCommand: item.command,
+      editGround: item.ground,
+      editVoice: item.voice,
+      editKey: item.mykey
+    }); //setState
+  }, //toggleAptDisplay
+
+  onTriggerChange: function(value) {
+    this.setState({    
+      editTrigger: value
+    }); //setState
+  },
+  onCommandChange: function(value) {
+    this.setState({    
+      editCommand: value
+    }); //setState
+  },
+  onGroundChange: function(value) {
+    this.setState({    
+      editGround: value
+    }); //setState
+  },
+  onVoiceChange: function(value) {
+    this.setState({    
+      editVoice: value
+    }); //setState
+  },
+
+  changeItem: function(item) {    
+    var allApts = this.state.myAppointments;
+    var newApts = _.without(allApts, this.state.myAppointments[item.mykey]);    
+
+    var tempItem = {
+      trigger: this.state.editTrigger,
+      command: this.state.editCommand,
+      ground: this.state.editGround,
+      voice: this.state.editVoice,
+      mykey: item.mykey
+    } //tempitems
+        
+    newApts.push(tempItem);    
+    
+    var tempVisibility = !this.state.editBodyVisible;
+    this.setState({
+      editBodyVisible: tempVisibility,
+      myAppointments: newApts,
+      aptBodyVisible: false
+    }) //setState
+  }, //addItem
+
   browseExamples: function() {
     ipc.sendSync('openexampleWindow');
   }, //browseExamples
+
 
   addItem: function(tempItem) {
     var tempApts = this.state.myAppointments;
@@ -79,7 +154,7 @@ var MainInterface = React.createClass({
       myAppointments: newApts
     }); //setState
   }, //deleteMessage
-
+  
   reOrder: function(orderBy, orderDir) {
     this.setState({
       orderBy: orderBy,
@@ -106,6 +181,12 @@ var MainInterface = React.createClass({
       $('#addAppointment').modal('hide');
     }
 
+    if(this.state.editBodyVisible === true) {      
+      $('#editAppointment').modal('show');
+    } else {
+      $('#editAppointment').modal('hide');
+    }
+
     for (var i = 0; i < myAppointments.length; i++) {
       if (
         (myAppointments[i].trigger.toLowerCase().indexOf(queryText)!=-1) ||
@@ -118,6 +199,10 @@ var MainInterface = React.createClass({
       }
     }
 
+    for (var i = 0; i < myAppointments.length; i++) {
+        myAppointments[i].mykey = i;      
+    }
+
     filteredApts = _.orderBy(filteredApts, function(item) {
       return item[orderBy].toLowerCase();
     }, orderDir); // order array
@@ -128,6 +213,7 @@ var MainInterface = React.createClass({
           singleItem = {item}
           whichItem =  {item}
           onDelete = {this.deleteMessage}
+          onEdit = {this.toggleEditDisplay}
         />
       ) // return
     }.bind(this)); //Appointments.map
@@ -149,6 +235,19 @@ var MainInterface = React.createClass({
           <AddAppointment
             handleToggle = {this.toggleAptDisplay}
             addApt = {this.addItem}
+          />
+          <EditAppointment
+            handleToggle = {this.toggleEditDisplay}
+            editApt = {this.changeItem}            
+            editTrigger = {this.state.editTrigger}
+            editCommand = {this.state.editCommand}
+            editGround = {this.state.editGround}
+            editVoice = {this.state.editVoice}
+            editKey = {this.state.editKey}
+            onTriggerChange = {this.onTriggerChange}
+            onCommandChange = {this.onCommandChange}
+            onGroundChange = {this.onGroundChange}
+            onVoiceChange = {this.onVoiceChange}
           />
           <div className="container">
            <div className="row">

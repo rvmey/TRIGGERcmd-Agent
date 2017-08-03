@@ -8464,7 +8464,18 @@ h6 {
   transition: all 1s;
 }
 
+.item-list .pet-item .pet-edit {
+  display: none;
+  opacity: 0;
+  transition: all 1s;
+}
+
 .item-list  .pet-item:hover .pet-delete {
+  display: block;
+  opacity: 1;
+}
+
+.item-list  .pet-item:hover .pet-edit {
   display: block;
   opacity: 1;
 }
