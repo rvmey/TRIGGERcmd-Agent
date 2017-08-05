@@ -267,46 +267,59 @@ function openguiEditor() {
     exampleWindow.hide();
   }); //closeexampleWindow
 
-  menuTemplate = [
-    {
-      label: 'TRIGGERcmd',
-      submenu: [
-        {
-          role: 'help',
-          label: 'Website',
-          click() { electron.shell.openExternal('http://www.triggercmd.com')}
-        },        
-      ]
-    },{
-        label: 'View',
-        submenu: [
-          {
-            label: 'Reload',
-            accelerator: 'CmdOrCtrl+R',
-            click (item, focusedWindow) {
-              if (focusedWindow) focusedWindow.reload()
-            }
-          },
-          {
-            label: 'Toggle Developer Tools',
-            accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
-            click (item, focusedWindow) {
-              if (focusedWindow) focusedWindow.webContents.toggleDevTools()
-            }
-          },
-          {type: 'separator'},
-          {role: 'resetzoom'},
-          {role: 'zoomin'},
-          {role: 'zoomout'},
-          {type: 'separator'},
-          {role: 'togglefullscreen'}
-        ]
-      },
-  ];
-  
   myAppMenu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(myAppMenu);
 }
+
+var menuTemplate = [
+  {
+    label: 'TRIGGERcmd',
+    submenu: [
+      {
+        role: 'help',
+        label: 'Website',
+        click() { electron.shell.openExternal('http://www.triggercmd.com')}
+      },        
+    ]
+  },{
+      label: 'View',
+      submenu: [
+        {
+          label: 'Reload',
+          accelerator: 'CmdOrCtrl+R',
+          click (item, focusedWindow) {
+            if (focusedWindow) focusedWindow.reload()
+          }
+        },
+        {
+          label: 'Toggle Developer Tools',
+          accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+          click (item, focusedWindow) {
+            if (focusedWindow) focusedWindow.webContents.toggleDevTools()
+          }
+        },
+        {type: 'separator'},
+        {role: 'resetzoom'},
+        {role: 'zoomin'},
+        {role: 'zoomout'},
+        {type: 'separator'},
+        {role: 'togglefullscreen'}
+      ]
+    },
+    {
+      label: "Edit",
+      submenu: [
+          { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+          { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+          { type: "separator" },
+          { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+          { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+          { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+          { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+      ]
+    }
+];
+
 
 function readMyFile(file) {
   try {
@@ -319,9 +332,15 @@ function readMyFile(file) {
 
 function createWindow() {
     handleSubmission();
-    mainWindow = new BrowserWindow({ title: 'TRIGGERcmd Agent Sign In', width: 700, height: 390, titleBarStyle: 'hidden', icon: __dirname + '/icon.png' });
+    // mainWindow = new BrowserWindow({ title: 'TRIGGERcmd Agent Sign In', width: 700, height: 390, titleBarStyle: 'hidden', icon: __dirname + '/icon.png' });
+    mainWindow = new BrowserWindow({ title: 'TRIGGERcmd Agent Sign In', width: 700, height: 390, icon: __dirname + '/icon.png' });
+    
     // mainWindow.toggleDevTools();
     mainWindow.loadURL(`file://${__dirname}/index.html`);
+
+    myAppMenu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(myAppMenu);
+    
     mainWindow.on('closed', () => {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
