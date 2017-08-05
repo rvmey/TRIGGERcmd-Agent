@@ -170,8 +170,8 @@ function consoleLogin(daemoninstall) {
     var token = result.token;
     token = token.trim();
     tokenLogin(token, function (token) {
-      createComputer(token,useridFromFile, function (computerid) {
-        if (!daemoninstall) {
+      createComputer(token,useridFromFile, function (computerid) {        
+        if ((!daemoninstall) && (computerid != 'MustSubscribe')) {
           foreground(token,useridFromFile,computerid);
         }
       });
@@ -339,7 +339,12 @@ function createComputer(token,userid,callback) {
         callback(computerid);
       }
     } else {
-      console.log('Login failed while trying to create a computer.');
+      if (response.statusCode == 403) {
+        console.log('You must subscribe before adding another computer.');
+        callback('MustSubscribe');
+      } else {
+        console.log('Login failed while trying to create a computer.');
+      }      
     }
   })
 }

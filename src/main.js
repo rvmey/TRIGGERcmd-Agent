@@ -356,9 +356,13 @@ function handleSubmission() {
           console.log('handleSubmission token ' + token)
           if (token) {
             agent.createComputer(token,null, function (computerid) {
-              agent.foreground(token,null,computerid);
-              startTrayIcon();
-              mainWindow.hide();
+              if (computerid == 'MustSubscribe') {
+                mainWindow.loadURL(`file://${__dirname}/subscribefirst.html`);
+              } else {
+                agent.foreground(token,null,computerid);
+                startTrayIcon();
+                mainWindow.hide();
+              }              
             });
           }
         });
