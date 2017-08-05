@@ -1,0 +1,4 @@
+[
+  {"trigger":"Visit www.TRIGGERcmd.com","command":"open http://www.triggercmd.com","ground":"foreground","voice":"web site"},
+  {"trigger":"Calculator","command":"open -a Calculator","ground":"foreground","voice":"calculator"}
+]

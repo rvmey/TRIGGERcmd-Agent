@@ -88,11 +88,15 @@ function initFiles(backgrounddpath, callback) {
       fs.mkdirSync(datapath);
   }
 
+  examplefile = 'linuxcommands.json';
   if (process.platform === 'win32') {
     examplefile = 'wincommands.json';
   }
   if (process.platform === 'linux') {
     examplefile = 'linuxcommands.json';
+  }
+  if (process.platform === 'darwin') {
+    examplefile = 'maccommands.json';
   }
   cmdfile = "commands.json"
   datafile = path.resolve(datapath, cmdfile);
