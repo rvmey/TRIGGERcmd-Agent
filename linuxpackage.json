@@ -3,7 +3,6 @@
   "productName": "triggercmdagent",
   "version": "1.0.1",
   "description": "TRIGGERcmd Agent",
-
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -79,14 +78,14 @@
     "request": "^2.79.0",
     "sails.io.js": "^1.1.4",
     "socket.io-client": "^1.7.2",
-
     "bootstrap": "^3.3.7",
     "electron-reload": "^1.0.2",
     "lodash": "^4.13.1",
-    "jquery": "^3.1.0"  
+    "jquery": "^3.1.0"
   },
   "devDependencies": {
     "babel-preset-stage-0": "^6.16.0",
+    "electron-compilers": "^5.9.0",
     "electron-prebuilt-compile": "1.4.12",
     "electron-rebuild": "^1.5.6",
     "eslint": "^3.12.2",
@@ -94,7 +93,6 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.8.0",
-
     "gulp": "^3.8.8",
     "gulp-browserify": "^0.5.1",
     "gulp-concat-css": "^2.3.0",
