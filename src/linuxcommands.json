@@ -1,6 +1,6 @@
 [
-  {"trigger":"Reboot","command":"shutdown -r","ground":"background","voice":"reboot"},
-  {"trigger":"Gnome Editor","command":"gedit","ground":"foreground","voice":"edit"},
-  {"trigger":"yum update","command":"yum -y update","ground":"background","voice":"yum update"},
-  {"trigger":"apt update","command":"apt-get -y update","ground":"background","voice":"update"}
+  {"trigger":"Reboot","command":"shutdown -r","ground":"background","voice":"reboot","allowParams": "false"},
+  {"trigger":"Gnome Editor","command":"gedit","ground":"foreground","voice":"edit","allowParams": "false"},
+  {"trigger":"yum update","command":"yum -y update","ground":"background","voice":"yum update","allowParams": "false"},
+  {"trigger":"apt update","command":"apt-get -y update","ground":"background","voice":"update","allowParams": "false"}
 ]
