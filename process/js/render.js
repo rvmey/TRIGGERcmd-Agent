@@ -53,9 +53,9 @@ var MainInterface = React.createClass({
   }, //componentDidMount
 
   componentDidUpdate: function() {
-    if ((this.state.aptBodyVisible == false) && (this.state.editBodyVisible == false)) {  
+    if ((this.state.aptBodyVisible == false) && (this.state.editBodyVisible == false)) {
       console.log('Neither add nor edit box visible, so updating file');
-    
+
       function replacer(key, value) {
         // Filtering out properties
         if (key === 'mykey') {
@@ -68,7 +68,7 @@ var MainInterface = React.createClass({
           console.log(err);
         }
       });
-    }    
+    }
   }, //componentDidUpdate
 
   toggleAptDisplay: function() {
@@ -78,7 +78,7 @@ var MainInterface = React.createClass({
     }); //setState
   }, //toggleAptDisplay
 
-  toggleEditDisplay: function(item) {  
+  toggleEditDisplay: function(item) {
     var tempVisibility = !this.state.editBodyVisible;
     this.setState({
       editBodyVisible: tempVisibility,
@@ -86,45 +86,52 @@ var MainInterface = React.createClass({
       editCommand: item.command,
       editGround: item.ground,
       editVoice: item.voice,
+      editAllowParams: item.allowParams,
       editKey: item.mykey
     }); //setState
   }, //toggleAptDisplay
 
   onTriggerChange: function(value) {
-    this.setState({    
+    this.setState({
       editTrigger: value
     }); //setState
   },
   onCommandChange: function(value) {
-    this.setState({    
+    this.setState({
       editCommand: value
     }); //setState
   },
   onGroundChange: function(value) {
-    this.setState({    
+    this.setState({
       editGround: value
     }); //setState
   },
   onVoiceChange: function(value) {
-    this.setState({    
+    this.setState({
       editVoice: value
     }); //setState
   },
+  onAllowParamsChange: function(value) {
+    this.setState({
+      editAllowParams: value
+    }); //setState
+  },
 
-  changeItem: function(item) {    
+  changeItem: function(item) {
     var allApts = this.state.myAppointments;
-    var newApts = _.without(allApts, this.state.myAppointments[item.mykey]);    
+    var newApts = _.without(allApts, this.state.myAppointments[item.mykey]);
 
     var tempItem = {
       trigger: this.state.editTrigger,
       command: this.state.editCommand,
       ground: this.state.editGround,
       voice: this.state.editVoice,
+      allowParams: this.state.editAllowParams,
       mykey: item.mykey
     } //tempitems
-        
-    newApts.push(tempItem);    
-    
+
+    newApts.push(tempItem);
+
     var tempVisibility = !this.state.editBodyVisible;
     this.setState({
       editBodyVisible: tempVisibility,
@@ -154,7 +161,7 @@ var MainInterface = React.createClass({
       myAppointments: newApts
     }); //setState
   }, //deleteMessage
-  
+
   reOrder: function(orderBy, orderDir) {
     this.setState({
       orderBy: orderBy,
@@ -181,7 +188,7 @@ var MainInterface = React.createClass({
       $('#addAppointment').modal('hide');
     }
 
-    if(this.state.editBodyVisible === true) {      
+    if(this.state.editBodyVisible === true) {
       $('#editAppointment').modal('show');
     } else {
       $('#editAppointment').modal('hide');
@@ -200,7 +207,7 @@ var MainInterface = React.createClass({
     }
 
     for (var i = 0; i < myAppointments.length; i++) {
-        myAppointments[i].mykey = i;      
+        myAppointments[i].mykey = i;
     }
 
     filteredApts = _.orderBy(filteredApts, function(item) {
@@ -238,16 +245,18 @@ var MainInterface = React.createClass({
           />
           <EditAppointment
             handleToggle = {this.toggleEditDisplay}
-            editApt = {this.changeItem}            
+            editApt = {this.changeItem}
             editTrigger = {this.state.editTrigger}
             editCommand = {this.state.editCommand}
             editGround = {this.state.editGround}
             editVoice = {this.state.editVoice}
+            editAllowParams = {this.state.editAllowParams}
             editKey = {this.state.editKey}
             onTriggerChange = {this.onTriggerChange}
             onCommandChange = {this.onCommandChange}
             onGroundChange = {this.onGroundChange}
             onVoiceChange = {this.onVoiceChange}
+            onAllowParamsChange = {this.onAllowParamsChange}
           />
           <div className="container">
            <div className="row">
@@ -269,7 +278,7 @@ ReactDOM.render(
 ); //render
 
 // Russ added this to fix a bug where the commands.json would get emptied sometimes.
-function writeFileTransactional (path, content, cb) {    
+function writeFileTransactional (path, content, cb) {
     let temporaryPath = `${path}.new`;
     fs.writeFile(temporaryPath, content, 'utf8', function (err) {
         if (err) {

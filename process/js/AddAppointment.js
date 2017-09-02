@@ -13,15 +13,16 @@ var AddAppointment = React.createClass({
       command: this.inputPetOwner.value,
       ground: this.inputAptDate.value,
       voice: this.inputAptNotes.value,
+      allowParams: this.inputAllowParams.value,
     } //tempitems
 
     this.props.addApt(tempItem);
 
     this.inputPetName.value = '';
     this.inputPetOwner.value = '';
-    this.inputAptDate.value = 'foreground';    
+    this.inputAptDate.value = 'foreground';
     this.inputAptNotes.value = '';
-    
+    this.inputAllowParams.value = 'false';
   }, //handleAdd
 
   render: function() {
@@ -51,18 +52,27 @@ var AddAppointment = React.createClass({
               </div>
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="aptDate">Ground</label>
-                <div className="col-sm-9">                  
+                <div className="col-sm-9">
                   <select id="mySelect" className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref }  >
                     <option>foreground</option>
                     <option>background</option>
                   </select>
                 </div>
-              </div>              
+              </div>
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="aptNotes">Voice</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
-                    id="aptNotes"  ref={(ref) => this.inputAptNotes = ref } placeholder="Voice word for Alexa or Google Assistant (optional)" />                  
+                    id="aptNotes"  ref={(ref) => this.inputAptNotes = ref } placeholder="Voice word for Alexa or Google Assistant (optional)" />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-3 control-label" htmlFor="allowParams">Allow Parameters</label>
+                <div className="col-sm-9">
+                  <select id="mySelect" className="form-control" id="allowParams"  ref={(ref) => this.inputAllowParams = ref }  >
+                    <option>false</option>
+                    <option>true</option>
+                  </select>
                 </div>
               </div>
               <div className="form-group">

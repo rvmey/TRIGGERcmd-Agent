@@ -117,7 +117,7 @@ function initFiles(backgrounddpath, callback) {
 // var cafile = path.resolve(__dirname, 'selfsigned.crt');  // dev only
 var cafile = path.resolve(__dirname, 'gd_bundle-g2-g1.crt');
 
-// var urlprefix = 'http://localhost:1337'
+// var urlprefix = 'http://17a9e6c0.ngrok.io'
 var urlprefix = 'https://www.triggercmd.com'
 
 // console.log('Connecting to ' + urlprefix);
@@ -174,7 +174,7 @@ function consoleLogin(daemoninstall) {
     var token = result.token;
     token = token.trim();
     tokenLogin(token, function (token) {
-      createComputer(token,useridFromFile, function (computerid) {        
+      createComputer(token,useridFromFile, function (computerid) {
         if ((!daemoninstall) && (computerid != 'MustSubscribe')) {
           foreground(token,useridFromFile,computerid);
         }
@@ -185,7 +185,7 @@ function consoleLogin(daemoninstall) {
 
 function fetchexamples() {
   console.log('Downloading example commands')
-  var onlineexamples = [];  
+  var onlineexamples = [];
   // Configure the request
   headers.Authorization = 'Bearer ' + tokenFromFile;
   options.headers = headers;
@@ -194,17 +194,17 @@ function fetchexamples() {
 
   // Start the request
   request(options, function (error, response, body) {
-    if (!error && response.statusCode == 200) {      
+    if (!error && response.statusCode == 200) {
       onlineexamples = JSON.parse(body);
       // console.log(onlineexamples);
       fs.writeFile(onlineexamplefile, JSON.stringify(onlineexamples.records, undefined, 1), 'utf8', function(err) {
         if (err) {
           console.log(err);
-        }        
+        }
       });//writeFile
     } else {
       console.log(error);
-    }   
+    }
   })
 }
 
@@ -304,19 +304,6 @@ function getToken(email,password,callback) {
       writeNewUserIDToFile(userid);
       writeNewTokenToFile(token);
       callback(token);
-/*
-      if (!computeridFromFile) {
-        createComputer(token,userid,writeNewTokenToFile(token,callback(token)));
-      } else {
-        computerExists(token,computeridFromFile,function(exists) {
-          if (exists) {
-            callback(token);
-          } else {
-            createComputer(token,userid,writeNewTokenToFile(token,callback(token)));
-          }
-        });
-      }
-  */
     } else {
       console.log('Login failed.');
     }
@@ -348,7 +335,7 @@ function createComputer(token,userid,callback) {
         callback('MustSubscribe');
       } else {
         console.log('Login failed while trying to create a computer.');
-      }      
+      }
     }
   })
 }
@@ -417,14 +404,14 @@ function updateCmds(token,userid,computerid,startsocket) {
       localcmds = JSON.parse(fs.readFileSync(datafile));
   } catch(e) {
       readsuccess = false;
-      fs.createReadStream(backupdatafile).pipe(fs.createWriteStream(datafile));  // restore the last known good file      
-      console.log(e); // error in the above string      
+      fs.createReadStream(backupdatafile).pipe(fs.createWriteStream(datafile));  // restore the last known good file
+      console.log(e); // error in the above string
       console.log('Restoring the last known good file');
   } finally {
     if (localcmds) {
       if (readsuccess) {
         fs.createReadStream(datafile).pipe(fs.createWriteStream(backupdatafile));  // we have a good file, back it up.
-      }      
+      }
       // console.log(localcmds);
       var onlinecmds = [];
       // getOnlineCmds(token,userid,computerid) {
@@ -448,13 +435,20 @@ function updateCmds(token,userid,computerid,startsocket) {
               {
                 // console.log(onlinecmds.records[o].name);
                 // console.log(l.toString() + localcmds[l].trigger);
+                var localallowParams = false;
+                for (var value of [1, "1", true, "true"]) {
+                    if (localcmds[l].allowParams == value) {
+                      localallowParams = true;
+                    }
+                }
                 if (onlinecmds.records[o].name == localcmds[l].trigger &&
-                    onlinecmds.records[o].voice == localcmds[l].voice
+                    onlinecmds.records[o].voice == localcmds[l].voice &&
+                    Boolean(onlinecmds.records[o].allowParams) == localallowParams
                 ) { foundonline = true }
               }
               if (!foundonline) {
                 if (localcmds[l].ground == ground) {
-                  addCmd(localcmds[l].trigger,localcmds[l].voice,token,userid,computerid);
+                  addCmd(localcmds[l].trigger,localcmds[l].voice,localcmds[l].allowParams,token,userid,computerid);
                 }
               }
               loop.next();
@@ -472,10 +466,15 @@ function updateCmds(token,userid,computerid,startsocket) {
               var foundlocal = false;
               for(var l = 0; l < localcmds.length; l++)
               {
-                // console.log(onlinecmds.records[o].name);
-                // console.log(l.toString() + localcmds[l].trigger);
+                var localallowParams = false;
+                for (var value of [1, "1", true, "true"]) {
+                    if (localcmds[l].allowParams == value) {
+                      localallowParams = true;
+                    }
+                }
                 if (onlinecmds.records[o].name == localcmds[l].trigger &&
-                    onlinecmds.records[o].voice == localcmds[l].voice
+                    onlinecmds.records[o].voice == localcmds[l].voice &&
+                    Boolean(onlinecmds.records[o].allowParams) == localallowParams
                 ) { foundlocal = true }
               }
               if (!foundlocal) {
@@ -499,7 +498,7 @@ function updateCmds(token,userid,computerid,startsocket) {
       }
     }
   }
-  
+
 }
 
 function removeCmd(trigger,token,userid,computerid) {
@@ -522,14 +521,14 @@ function removeCmd(trigger,token,userid,computerid) {
   })
 }
 
-function addCmd(trigger,voice,token,userid,computerid) {
+function addCmd(trigger,voice,allowParams,token,userid,computerid) {
   // Configure the request
 
   headers.Authorization = 'Bearer ' + token;
   options.headers = headers;
   options.url = urlprefix + '/api/command/save';
   options.method = 'POST';
-  options.form = {'name': trigger, 'computer': computerid, 'voice': voice };
+  options.form = {'name': trigger, 'computer': computerid, 'voice': voice, 'allowParams': allowParams };
 
   // Start the request
   request(options, function (error, response, body) {
@@ -567,13 +566,18 @@ function startSocket(token,computerid) {
   io.socket.on('message', function(event){
         var trigger = event.trigger;
         var cmdid = event.id;
+        var params = event.params;
         //console.log(event);
         console.log(event);
         var commands = JSON.parse(fs.readFileSync(datafile));
         var cmdobj = triggerToCmdObj(commands,trigger);
         if (cmdobj.ground == ground) {
           console.log('Running trigger: ' + trigger + '  Command: ' + cmdobj.command);
-          var ChildProcess = cp.exec(cmdobj.command);
+          if (cmdobj.allowParams && params) {
+            var ChildProcess = cp.exec(cmdobj.command + ' ' + params);
+          } else {
+            var ChildProcess = cp.exec(cmdobj.command);
+          }
           reportBack(token,computerid,cmdid);
         }
   })
@@ -616,7 +620,7 @@ function reportBack(token,computerid,cmdid) {
 function cmdFileUpdated() {
   // setTimeout(function () {
     updateCmds(tokenFromFile,useridFromFile,computeridFromFile,false);
-  // }, 500);  
+  // }, 500);
 }
 
 /*  Replaced to handle smart quote on macs
@@ -647,7 +651,7 @@ function watchForCmdUpdates(token,userid,computerid) {
            // setTimeout(function () {
            updateCmds(token,userid,computerid,false);
            watchForCmdUpdates(token,userid,computerid);
-           // }, 500);                      
+           // }, 500);
          }
       });
     });

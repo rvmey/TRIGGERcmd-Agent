@@ -9,6 +9,7 @@ class EditAppointment extends React.Component {
     this.handleCommandChange = this.handleCommandChange.bind(this);
     this.handleGroundChange = this.handleGroundChange.bind(this);
     this.handleVoiceChange = this.handleVoiceChange.bind(this);
+    this.handleAllowParamsChange = this.handleAllowParamsChange.bind(this);
     this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
   }
@@ -24,11 +25,12 @@ class EditAppointment extends React.Component {
       command: this.inputPetOwner.value,
       ground: this.inputAptDate.value,
       voice: this.inputAptNotes.value,
+      allowParams: this.inputAllowParams.value,
       mykey: this.props.editKey
     } //tempitems
 
     this.props.editApt(tempItem);
-    
+
   } //handleEdit
 
   handleTriggerChange(e) {
@@ -47,11 +49,16 @@ class EditAppointment extends React.Component {
     this.props.onVoiceChange(e.target.value);
   }
 
+  handleAllowParamsChange(e) {
+    this.props.onAllowParamsChange(e.target.value);
+  }
+
   render() {
     const triggervalue = this.props.editTrigger;
     const commandvalue = this.props.editCommand;
     const groundvalue = this.props.editGround;
-    const voicevalue = this.props.editVoice;    
+    const voicevalue = this.props.editVoice;
+    const allowParamsvalue = this.props.editAllowParams;
     return(
       <div className="modal fade" id="editAppointment" tabIndex="-1" role="dialog">
         <div className="modal-dialog" role="document">
@@ -78,18 +85,27 @@ class EditAppointment extends React.Component {
               </div>
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="aptDate">Ground</label>
-                <div className="col-sm-9">                  
+                <div className="col-sm-9">
                   <select id="mySelect" className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} value={groundvalue} >
                     <option>foreground</option>
                     <option>background</option>
                   </select>
                 </div>
-              </div>              
+              </div>
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="aptNotes">Voice</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
-                    id="aptNotes"  ref={(ref) => this.inputAptNotes = ref } placeholder="Voice word for Alexa or Google Assistant (optional)" onChange={this.handleVoiceChange} value={voicevalue} />                  
+                    id="aptNotes"  ref={(ref) => this.inputAptNotes = ref } placeholder="Voice word for Alexa or Google Assistant (optional)" onChange={this.handleVoiceChange} value={voicevalue} />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-3 control-label" htmlFor="allowParams">Allow Parameters</label>
+                <div className="col-sm-9">
+                  <select id="mySelect" className="form-control" id="allowParams"  ref={(ref) => this.inputAllowParams = ref } onChange={this.handleAllowParamsChange} value={allowParamsvalue} >
+                    <option>false</option>
+                    <option>true</option>
+                  </select>
                 </div>
               </div>
               <div className="form-group">
