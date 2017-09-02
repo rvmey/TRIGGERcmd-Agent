@@ -58,7 +58,7 @@ class EditAppointment extends React.Component {
     const commandvalue = this.props.editCommand;
     const groundvalue = this.props.editGround;
     const voicevalue = this.props.editVoice;
-    const allowParamsvalue = this.props.editAllowParams;
+    const allowParamsvalue = this.props.editAllowParams || false;
     return(
       <div className="modal fade" id="editAppointment" tabIndex="-1" role="dialog">
         <div className="modal-dialog" role="document">
