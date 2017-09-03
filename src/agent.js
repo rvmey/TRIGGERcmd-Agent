@@ -436,11 +436,15 @@ function updateCmds(token,userid,computerid,startsocket) {
                 // console.log(onlinecmds.records[o].name);
                 // console.log(l.toString() + localcmds[l].trigger);
                 var localallowParams = false;
-                for (var value of [1, "1", true, "true"]) {
-                    if (localcmds[l].allowParams == value) {
-                      localallowParams = true;
-                    }
+
+                var _arr = [1, "1", true, "true"];
+                for (var _i = 0; _i < _arr.length; _i++) {
+                  var value = _arr[_i];
+                  if (localcmds[l].allowParams == value) {
+                    localallowParams = true;
+                  }                  
                 }
+                
                 if (onlinecmds.records[o].name == localcmds[l].trigger &&
                     onlinecmds.records[o].voice == localcmds[l].voice &&
                     Boolean(onlinecmds.records[o].allowParams) == localallowParams
@@ -467,11 +471,15 @@ function updateCmds(token,userid,computerid,startsocket) {
               for(var l = 0; l < localcmds.length; l++)
               {
                 var localallowParams = false;
-                for (var value of [1, "1", true, "true"]) {
-                    if (localcmds[l].allowParams == value) {
-                      localallowParams = true;
-                    }
+
+                var _arr = [1, "1", true, "true"];
+                for (var _i = 0; _i < _arr.length; _i++) {
+                  var value = _arr[_i];
+                  if (localcmds[l].allowParams == value) {
+                    localallowParams = true;
+                  }
                 }
+
                 if (onlinecmds.records[o].name == localcmds[l].trigger &&
                     onlinecmds.records[o].voice == localcmds[l].voice &&
                     Boolean(onlinecmds.records[o].allowParams) == localallowParams
