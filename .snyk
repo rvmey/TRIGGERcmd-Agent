@@ -1,0 +1,12 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.7.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:debug:20170905':
+    - sails.io.js > socket.io-client > debug:
+        patched: '2017-09-27T08:54:04.881Z'
+    - sails.io.js > socket.io-client > engine.io-client > debug:
+        patched: '2017-09-27T08:54:04.881Z'
+    - sails.io.js > socket.io-client > socket.io-parser > debug:
+        patched: '2017-09-27T08:54:04.881Z'
