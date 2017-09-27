@@ -6,7 +6,9 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [],
   "author": "TRIGGERcmd",
@@ -64,7 +66,8 @@
     "regedit": "^2.2.6",
     "request": "^2.79.0",
     "sails.io.js": "^1.1.4",
-    "socket.io-client": "^1.7.2"
+    "socket.io-client": "^2.0.2",
+    "snyk": "^1.41.1"
   },
   "devDependencies": {
     "babel-preset-stage-0": "^6.16.0",
@@ -83,5 +86,6 @@
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "reactify": "^1.1.1"
-  }
+  },
+  "snyk": true
 }
