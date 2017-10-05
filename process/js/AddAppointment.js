@@ -79,7 +79,7 @@ var AddAppointment = React.createClass({
                 <div className="col-sm-offset-3 col-sm-9">
                   <div className="pull-right">
                     <button type="button" className="btn btn-default"  onClick={this.toggleAptDisplay}>Cancel</button>&nbsp;
-                    <button type="submit" className="btn btn-primary">Add Command</button>
+                    <button type="submit" className="btn btn-primary">Save</button>
                   </div>
                 </div>
               </div>

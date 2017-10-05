@@ -14,6 +14,10 @@ var Toolbar = React.createClass({
     this.props.handleAbout();
   }, //toggleAbout
 
+  computerList: function() {
+    this.props.handleComputerList();
+  }, //computerlist
+
   render: function() {
     return(
       <div className="toolbar">
@@ -25,6 +29,10 @@ var Toolbar = React.createClass({
           <span className="toolbar-item-button glyphicon glyphicon-plus-sign"></span>
           <span className="toolbar-item-text">Browse Examples</span>
         </div>
+        <div className="toolbar-item" onClick={this.computerList}>
+          <span className="toolbar-item-button glyphicon glyphicon-plus-sign"></span>
+          <span className="toolbar-item-text">Computer List</span>
+        </div>        
       </div>
     ) //return
 

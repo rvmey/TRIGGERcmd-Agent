@@ -9,6 +9,7 @@ var ipc = electron.ipcRenderer;
 
 var React = require('react');
 var ReactDOM = require('react-dom');
+var cp = eRequire('child_process');
 var AptList = require('./AptList');
 var Toolbar = require('./Toolbar');
 var HeaderNav = require('./HeaderNav');
@@ -144,8 +145,11 @@ var MainInterface = React.createClass({
     ipc.sendSync('openexampleWindow');
   }, //browseExamples
 
+  openComputerList: function() {
+    electron.shell.openExternal('https://www.triggercmd.com/user/computer/list');
+  }, //openComputerList
 
-  addItem: function(tempItem) {
+  addItem: function(tempItem) {    
     var tempApts = this.state.myAppointments;
     tempApts.push(tempItem);
     this.setState({
@@ -161,6 +165,11 @@ var MainInterface = React.createClass({
       myAppointments: newApts
     }); //setState
   }, //deleteMessage
+
+  runCommand: function(item) {
+    console.log('Running ' + item.command);
+    var ChildProcess = cp.exec(item.command);
+  }, //runCommand
 
   reOrder: function(orderBy, orderDir) {
     this.setState({
@@ -221,6 +230,7 @@ var MainInterface = React.createClass({
           whichItem =  {item}
           onDelete = {this.deleteMessage}
           onEdit = {this.toggleEditDisplay}
+          onRun = {this.runCommand}
         />
       ) // return
     }.bind(this)); //Appointments.map
@@ -238,6 +248,7 @@ var MainInterface = React.createClass({
             handleToggle = {this.toggleAptDisplay}
             handleBrowse = {this.browseExamples}
             handleAbout = {this.showAbout}
+            handleComputerList = {this.openComputerList}
           />
           <AddAppointment
             handleToggle = {this.toggleAptDisplay}

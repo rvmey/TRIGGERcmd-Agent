@@ -7,6 +7,9 @@ var AptList = React.createClass({
   handleEdit: function() {
     this.props.onEdit(this.props.whichItem);
   },
+  handleRun: function() {
+    this.props.onRun(this.props.whichItem);
+  },
   render: function() {
     let params = '';
     if (this.props.singleItem.allowParams == 'true') {
@@ -21,8 +24,12 @@ var AptList = React.createClass({
           <span className="glyphicon glyphicon-remove"></span></button>
         </div>
         <div className="media-left">
-          <button className="pet-edit btn btn-xs btn-success" onClick={this.handleEdit}>
+          <button className="pet-edit btn btn-xs btn-primary" onClick={this.handleEdit}>
           <span className="glyphicon glyphicon-pencil"></span></button>
+        </div>
+        <div className="media-left">
+          <button className="pet-edit btn btn-xs btn-success" onClick={this.handleRun}>
+          <span className="glyphicon glyphicon-play"></span></button>
         </div>
         <div className="pet-info media-body">
           <div className="pet-head">

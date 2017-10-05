@@ -117,7 +117,7 @@ function initFiles(backgrounddpath, callback) {
 // var cafile = path.resolve(__dirname, 'selfsigned.crt');  // dev only
 var cafile = path.resolve(__dirname, 'gd_bundle-g2-g1.crt');
 
-// var urlprefix = 'http://17a9e6c0.ngrok.io'
+// var urlprefix = 'https://6ec4eee4.ngrok.io'
 var urlprefix = 'https://www.triggercmd.com'
 
 // console.log('Connecting to ' + urlprefix);
@@ -442,9 +442,9 @@ function updateCmds(token,userid,computerid,startsocket) {
                   var value = _arr[_i];
                   if (localcmds[l].allowParams == value) {
                     localallowParams = true;
-                  }                  
+                  }
                 }
-                
+
                 if (onlinecmds.records[o].name == localcmds[l].trigger &&
                     onlinecmds.records[o].voice == localcmds[l].voice &&
                     Boolean(onlinecmds.records[o].allowParams) == localallowParams
