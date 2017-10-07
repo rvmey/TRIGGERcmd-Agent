@@ -411,9 +411,10 @@ function updateCmds(token,userid,computerid,startsocket) {
   var localcmds;
   var readsuccess = true;
   var backupdatafile = datafile + '.backup';
+  var content = fs.readFileSync(datafile);
 
   try {
-      localcmds = JSON.parse(fs.readFileSync(datafile));
+      localcmds = JSON.parse(content);
   } catch(e) {
       readsuccess = false;
       writeFileTransactional(datafile, fs.readFileSync(backupdatafile), function(err) {
@@ -427,7 +428,7 @@ function updateCmds(token,userid,computerid,startsocket) {
       // fs.createReadStream(backupdatafile).pipe(fs.createWriteStream(datafile));  // restore the last known good file
       console.log(e); // error in the above string
       console.log('Restoring the last known good file');
-  } finally {
+  } finally {    
     if (localcmds) {
       if (readsuccess) {                
         writeFileTransactional(backupdatafile, fs.readFileSync(datafile), function(err) {
@@ -679,20 +680,30 @@ function watchForCmdUpdates(token,userid,computerid) {
       }
       var result = data.replace(/[“”]/g, '\"');
       watcher.close();
-      fs.writeFile(datafile, result, 'utf8', function (err) {
+      let temporaryPath = `${path}.newquotereplace`;
+      fs.writeFile(temporaryPath, result, 'utf8', function (err) {
          if (err) {
            return console.log(err);
          } else {
-           console.log(event, path);
-           // setTimeout(function () {
-           updateCmds(token,userid,computerid,false);
-           watchForCmdUpdates(token,userid,computerid);
-           // }, 500);
+           try {
+             fs.renameSync(temporaryPath,datafile);
+           } catch(e) {
+             console.log(e);
+           } finally {
+             console.log(event, path);
+             var timewait=0;
+             if (ground == 'background') { timewait = 1000}
+             setTimeout(function () {            
+               updateCmds(token,userid,computerid,false);
+               watchForCmdUpdates(token,userid,computerid);
+             }, timewait);
+           }                     
          }
       });
     });
   });
 }
+
 
 function writeNewTokenToFile(token) {
   fs.writeFile(tokenfile, token, function(err) {
