@@ -394,6 +394,18 @@ function syncLoop(iterations, process, exit){
     return loop;
 }
 
+// Russ added this to fix a bug where the commands.json would get emptied sometimes.
+function writeFileTransactional (path, content, cb) {
+  let temporaryPath = `${path}.newagt`;
+  fs.writeFile(temporaryPath, content, function (err) {
+      if (err) {
+          return cb(err);
+      }
+
+      fs.rename(temporaryPath, path, cb);
+  });
+};
+
 function updateCmds(token,userid,computerid,startsocket) {
   // console.log(token + ' u ' + userid + ' c ' + computerid);
   var localcmds;
@@ -404,13 +416,29 @@ function updateCmds(token,userid,computerid,startsocket) {
       localcmds = JSON.parse(fs.readFileSync(datafile));
   } catch(e) {
       readsuccess = false;
-      fs.createReadStream(backupdatafile).pipe(fs.createWriteStream(datafile));  // restore the last known good file
+      writeFileTransactional(datafile, fs.readFileSync(backupdatafile), function(err) {
+        if (err) {
+          console.log("Restore backup failed: " + err);
+        } else {
+          console.log("Restore backup completed.");
+        }                    
+      });
+
+      // fs.createReadStream(backupdatafile).pipe(fs.createWriteStream(datafile));  // restore the last known good file
       console.log(e); // error in the above string
       console.log('Restoring the last known good file');
   } finally {
     if (localcmds) {
-      if (readsuccess) {
-        fs.createReadStream(datafile).pipe(fs.createWriteStream(backupdatafile));  // we have a good file, back it up.
+      if (readsuccess) {                
+        writeFileTransactional(backupdatafile, fs.readFileSync(datafile), function(err) {
+          if (err) {
+            console.log("Write backup failed: " + err);
+          } else {
+            console.log("Write backup completed.");
+          }                    
+        });
+
+        // fs.createReadStream(datafile).pipe(fs.createWriteStream(backupdatafile));  // we have a good file, back it up.
       }
       // console.log(localcmds);
       var onlinecmds = [];
