@@ -1,0 +1,151 @@
+[
+ {
+  "trigger": "Lock my PC8",
+  "command": "rundll32.exe user32.dll, LockWorkStation�,
+  "ground": "foreground",
+  "voice": "lock"
+ },
+ {
+  "trigger": "Pause",
+  "command": "start C:\\\\autohotkeyscripts\\\\media.ahk pause",
+  "ground": "foreground",
+  "voice": "pause"
+ },
+ {
+  "trigger": "Logger",
+  "command": "d:\\tools\\logger.bat",
+  "ground": "foreground",
+  "voice": "",
+  "allowParams": "true"
+ },
+ {
+  "trigger": "Backup Documents",
+  "command": "robocopy /r:1 /w:1 /mir %userprofile%\\Documents c:\\MyDocsBackup\\Documents",
+  "ground": "foreground",
+  "voice": "backup"
+ },
+ {
+  "trigger": "Chrome",
+  "command": "start chrome",
+  "ground": "foreground",
+  "voice": "chrome"
+ },
+ {
+  "trigger": "Email my document list",
+  "command": "powershell -file c:\\scripts\\emailmydocs.ps1",
+  "ground": "foreground",
+  "voice": "documents"
+ },
+ {
+  "trigger": "Launch a website",
+  "command": "start http://www.triggercmd.com",
+  "ground": "foreground",
+  "voice": "site"
+ },
+ {
+  "trigger": "Next Song",
+  "command": "start C:\\\\autohotkeyscripts\\\\media.ahk next",
+  "ground": "foreground",
+  "voice": "next"
+ },
+ {
+  "trigger": "Play",
+  "command": "start C:\\\\autohotkeyscripts\\\\media.ahk pause",
+  "ground": "foreground",
+  "voice": "play"
+ },
+ {
+  "trigger": "Play mp3's in your Music folder",
+  "command": "c: & cd \"%USERPROFILE%\\Music\" & dir /s /b *.mp3 > playlist.m3u & start playlist.m3u",
+  "ground": "foreground",
+  "voice": "samples"
+ },
+ {
+  "trigger": "Restart Print Spooler",
+  "command": "sc stop spooler & sc start spooler",
+  "ground": "background",
+  "voice": "fix printing"
+ },
+ {
+  "trigger": "Say TRIGGERcmd is cool",
+  "command": "nircmd speak text \"Trigger c m d is cool.\"",
+  "ground": "foreground",
+  "voice": "say it"
+ },
+ {
+  "trigger": "Shutdown in 1 minute",
+  "command": "shutdown /s /t 60",
+  "ground": "background",
+  "voice": "shutdown"
+ },
+ {
+  "trigger": "Update Windows",
+  "command": "cmd /c \"wuauclt /updatenow\"",
+  "ground": "foreground",
+  "voice": "update"
+ },
+ {
+  "trigger": "Volume Up",
+  "command": "start C:\\\\autohotkeyscripts\\\\media.ahk volup",
+  "ground": "foreground",
+  "voice": "up"
+ },
+ {
+  "trigger": "Downloader",
+  "command": "d:\\tools\\downloader",
+  "ground": "foreground",
+  "voice": "",
+  "allowParams": "false"
+ },
+ {
+  "trigger": "Power my computer on",
+  "command": "wakeonlan c8:60:00:9b:69:1a",
+  "ground": "background",
+  "voice": "power on"
+ },
+ {
+  "trigger": "Previous Song",
+  "command": "start C:\\\\autohotkeyscripts\\\\media.ahk previous",
+  "ground": "foreground",
+  "voice": "previous"
+ },
+ {
+  "trigger": "Reboot in 30 seconds2",
+  "command": "shutdown /r /t 30",
+  "ground": "background",
+  "voice": "reboot"
+ },
+ {
+  "trigger": "Notepad",
+  "command": "notepad",
+  "ground": "foreground",
+  "voice": "notepad",
+  "allowParams": "true"
+ },
+ {
+  "trigger": "Kodi",
+  "command": "c:\\scripts\\kodi.bat",
+  "ground": "foreground",
+  "voice": "Kodi",
+  "allowParams": "true"
+ },
+ {
+  "trigger": "Clean up",
+  "command": "cleanmgr /sagerun:1",
+  "ground": "foreground",
+  "voice": "Clean up"
+ },
+ {
+  "trigger": "Calculator",
+  "command": "calc",
+  "ground": "foreground",
+  "voice": "calculator",
+  "allowParams": "false"
+ },
+ {
+  "trigger": "Abort shutdown2",
+  "command": "shutdown /a",
+  "ground": "background",
+  "voice": "abort"
+ }
+]

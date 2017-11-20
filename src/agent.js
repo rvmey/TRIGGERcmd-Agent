@@ -674,34 +674,14 @@ function watchForCmdUpdates(token,userid,computerid) {
 
 function watchForCmdUpdates(token,userid,computerid) {
   var chokidar = require('chokidar');
-  var watcher = chokidar.watch(datafile, {ignoreInitial: true}).on('change', function(event, path) {
-    fs.readFile(datafile, 'utf8', function (err,data) {
-      if (err) {
-        return console.log(err);
-      }
-      var result = data.replace(/[“”]/g, '\"');
-      watcher.close();
-      var temporaryPath = path + ".newquotereplace";
-      fs.writeFile(temporaryPath, result, 'utf8', function (err) {
-         if (err) {
-           return console.log(err);
-         } else {
-           try {
-             fs.renameSync(temporaryPath,datafile);
-           } catch(e) {
-             console.log(e);
-           } finally {
-             console.log(event, path);
-             var timewait=0;
-             if (ground == 'background') { timewait = 1000}
-             setTimeout(function () {            
-               updateCmds(token,userid,computerid,false);
-               watchForCmdUpdates(token,userid,computerid);
-             }, timewait);
-           }                     
-         }
-      });
-    });
+  var watcher = chokidar.watch(datafile, {ignoreInitial: true}).on('change', function(event, path) {    
+      watcher.close();      
+      var timewait=0;
+      if (ground == 'background') { timewait = 1000}
+      setTimeout(function () {            
+        updateCmds(token,userid,computerid,false);
+        watchForCmdUpdates(token,userid,computerid);
+      }, timewait);               
   });
 }
 
