@@ -396,7 +396,8 @@ function syncLoop(iterations, process, exit){
 
 // Russ added this to fix a bug where the commands.json would get emptied sometimes.
 function writeFileTransactional (path, content, cb) {
-  var temporaryPath = `${path}.newagt`;
+  // var temporaryPath = `${path}.newagt`;
+  var temporaryPath = path + ".newagt";
   fs.writeFile(temporaryPath, content, function (err) {
       if (err) {
           return cb(err);
@@ -680,7 +681,7 @@ function watchForCmdUpdates(token,userid,computerid) {
       }
       var result = data.replace(/[“”]/g, '\"');
       watcher.close();
-      var temporaryPath = `${path}.newquotereplace`;
+      var temporaryPath = path + ".newquotereplace";
       fs.writeFile(temporaryPath, result, 'utf8', function (err) {
          if (err) {
            return console.log(err);
