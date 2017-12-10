@@ -3,7 +3,7 @@ Electron / Node.js based agent to run commands on computers via TRIGGERcmd.com
 
 Features:
  - Electron Tray
- - React
+ - React based GUI editor
  - Electron based text editor
  - Linux, Mac, and Windows package.json files
  - Sails.JS websockets
