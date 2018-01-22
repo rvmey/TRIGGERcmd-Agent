@@ -50,7 +50,7 @@
           "libappindicator1",
           "libxtst6",
           "libnss3",
-          "nodejs-legacy"
+          "nodejs"
         ]
       },
       "electronInstallerRedhat": {
