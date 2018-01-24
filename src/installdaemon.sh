@@ -15,7 +15,7 @@ fi
 
 find /usr/share/triggercmdagent -type d -name "src" | grep /app/src | while read dname; do
   /usr/bin/env node $dname/agent.js --daemoninstall
-  /bin/sh $dname/daemonmgr.sh --add /root/.TRIGGERcmdData
+  /bin/sh $dname/daemonmgr.sh --add $HOME/.TRIGGERcmdData
 done;
 
 systemctl enable triggercmdagent
