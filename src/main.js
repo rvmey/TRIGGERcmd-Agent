@@ -14,8 +14,34 @@ var http = require('http');
 var path = require('path');
 const ChildProcess = require('child_process');
 
+
 // For GUI editor
 var myAppMenu, menuTemplate;
+
+if (process.platform === 'darwin') {
+  function isDirSync(aPath) {
+    try {
+      return fs.statSync(aPath).isDirectory();
+    } catch (e) {
+      if (e.code === 'ENOENT') {
+        return false;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  var macappPath = '/Applications/TRIGGERcmdAgent.app'
+
+  if (isDirSync(macappPath)) {
+    var AutoLaunch = require('auto-launch'); 
+    var AutoLauncher = new AutoLaunch({
+        name: 'TRIGGERcmd Agent',
+        path: macappPath,
+    });
+    AutoLauncher.enable(); 
+  }
+}
 
 if (process.platform === 'win32') {
   var Service = require('node-windows').Service;
