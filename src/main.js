@@ -150,8 +150,8 @@ app.on('ready', function(){
   });
 
   args.createOption(["-c", "--computer"], {
-    description: "Remote computer name on TRIGGERcmd site",
-    hasValue: true
+      description: "Remote computer name on TRIGGERcmd site",
+      hasValue: true
   });
 
   args.createOption(["--help", "-h"], { description: "Show this text" });
@@ -167,41 +167,67 @@ app.on('ready', function(){
   // console.log(n);
 
   args.parse(process.argv.slice(n), function (errors, options) {
-    if (errors) { return console.log(errors[0]); }
- 
-    if (options["-h"].isSet) {
-        args.options.forEach(function (opt) {
-          console.log(opt.signature + ": " + opt.description);
-        });
-    } else {
-      if (options["--trigger"].isSet && options["--computer"].isSet) {
-        options["--trigger"].value
-        var computername = options["--computer"].value;
-        var triggername = options["--trigger"].value;
-        console.log('computer: ' + computername + '  trigger: ' + triggername);
-        agent.triggerCmd(tokenFromFile,computername,triggername, function (message) {
-          console.log(message);
-          doQuit = true;
-          app.quit();
-        });
-      } else {  // not trying to run a remote command so run the agent.
-        appIcon = new Tray(iconPath);
+    if (errors) { 
+      if (!errors[0].includes("psn")) {
+        console.log(errors[0]);
+        doQuit = true;
+        app.quit();
+        // return console.log(errors[0])
+      }; 
 
-        if (!tokenFromFile) {
-          console.log('No token exists.  Login to request one.');
-          createWindow();
-        } else {
-          agent.computerExists(tokenFromFile, computeridFromFile, function(exists) {
-            if (exists) {
-              agent.foreground(tokenFromFile,null,computeridFromFile);
-              startTrayIcon();
-            } else {
-              createWindow();
-            }
+      appIcon = new Tray(iconPath);
+
+      if (!tokenFromFile) {
+        console.log('First run after download.  No token exists.  Login to request one.');
+        createWindow();
+      } else {
+        agent.computerExists(tokenFromFile, computeridFromFile, function(exists) {
+          if (exists) {
+            agent.foreground(tokenFromFile,null,computeridFromFile);
+            startTrayIcon();
+          } else {
+            createWindow();
+          }
+        });
+      }      
+    } else {
+ 
+      if (options["-h"].isSet) {
+          args.options.forEach(function (opt) {
+            console.log(opt.signature + ": " + opt.description);
+            doQuit = true;
+            app.quit();
+          });
+      } else {
+        if (options["--trigger"].isSet && options["--computer"].isSet) {
+          options["--trigger"].value
+          var computername = options["--computer"].value;
+          var triggername = options["--trigger"].value;
+          console.log('computer: ' + computername + '  trigger: ' + triggername);
+          agent.triggerCmd(tokenFromFile,computername,triggername, function (message) {
+            console.log(message);
+            doQuit = true;
+            app.quit();
           });
+        } else {  // not trying to run a remote command so run the agent.
+          appIcon = new Tray(iconPath);
+
+          if (!tokenFromFile) {
+            console.log('No token exists.  Login to request one.');
+            createWindow();
+          } else {
+            agent.computerExists(tokenFromFile, computeridFromFile, function(exists) {
+              if (exists) {
+                agent.foreground(tokenFromFile,null,computeridFromFile);
+                startTrayIcon();
+              } else {
+                createWindow();
+              }
+            });
+          }
         }
-      }
-    }
+      }
+    }
   });
 
   appWindow = new BrowserWindow({    
@@ -218,8 +244,10 @@ app.on('ready', function(){
 
 app.on("before-quit", (event) => {
   if (doQuit) {
-    mainWindow.removeAllListeners('close');
-    mainWindow.close();
+    if(mainWindow) {
+      mainWindow.removeAllListeners('close');
+      mainWindow.close();  
+    }    
   } else {
     event.preventDefault();
   }
