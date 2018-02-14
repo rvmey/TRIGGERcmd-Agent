@@ -18,31 +18,6 @@ const ChildProcess = require('child_process');
 // For GUI editor
 var myAppMenu, menuTemplate;
 
-if (process.platform === 'darwin') {
-  function isDirSync(aPath) {
-    try {
-      return fs.statSync(aPath).isDirectory();
-    } catch (e) {
-      if (e.code === 'ENOENT') {
-        return false;
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  var macappPath = '/Applications/TRIGGERcmdAgent.app'
-
-  if (isDirSync(macappPath)) {
-    var AutoLaunch = require('auto-launch'); 
-    var AutoLauncher = new AutoLaunch({
-        name: 'TRIGGERcmd Agent',
-        path: macappPath,
-    });
-    AutoLauncher.enable(); 
-  }
-}
-
 if (process.platform === 'win32') {
   var Service = require('node-windows').Service;
   var wincmd = require('node-windows');
@@ -178,7 +153,7 @@ app.on('ready', function(){
       appIcon = new Tray(iconPath);
 
       if (!tokenFromFile) {
-        console.log('First run after download.  No token exists.  Login to request one.');
+        console.log('First time run after download.  No token exists.  Login to request one.');
         createWindow();
       } else {
         agent.computerExists(tokenFromFile, computeridFromFile, function(exists) {
@@ -210,6 +185,34 @@ app.on('ready', function(){
             app.quit();
           });
         } else {  // not trying to run a remote command so run the agent.
+
+          // Not the first run after download, so add a Login item if on a mac.  
+          // I put this here so it doesn't run during the first run after download because it was adding a second Login item if the user already had one.   
+          if (process.platform === 'darwin') {
+            function isDirSync(aPath) {
+              try {
+                return fs.statSync(aPath).isDirectory();
+              } catch (e) {
+                if (e.code === 'ENOENT') {
+                  return false;
+                } else {
+                  throw e;
+                }
+              }
+            }
+          
+            var macappPath = '/Applications/TRIGGERcmdAgent.app'
+          
+            if (isDirSync(macappPath)) {
+              var AutoLaunch = require('auto-launch'); 
+              var AutoLauncher = new AutoLaunch({
+                  name: 'TRIGGERcmd Agent',
+                  path: macappPath,
+              });
+              AutoLauncher.enable();   
+            }
+          }
+
           appIcon = new Tray(iconPath);
 
           if (!tokenFromFile) {
