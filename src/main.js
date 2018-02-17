@@ -247,11 +247,22 @@ app.on('ready', function(){
 
 app.on("before-quit", (event) => {
   if (doQuit) {
+    // console.log("Quitting.");
+    if(appWindow) {
+      appWindow.removeAllListeners('close');
+      appWindow.close();  
+    }
+    if(editorWindow) {    
+      editorWindow.removeAllListeners('close');
+      editorWindow.close();  
+    }
     if(mainWindow) {
       mainWindow.removeAllListeners('close');
       mainWindow.close();  
-    }    
+    }
+    app.quit();
   } else {
+    console.log("Don't quit yet");
     event.preventDefault();
   }
 });
