@@ -117,8 +117,8 @@ function initFiles(backgrounddpath, callback) {
 // var cafile = path.resolve(__dirname, 'selfsigned.crt');  // dev only
 var cafile = path.resolve(__dirname, 'gd_bundle-g2-g1.crt');
 
-var urlprefix = 'https://f3499ce3.ngrok.io'
-// var urlprefix = 'https://www.triggercmd.com'
+// var urlprefix = 'https://f3499ce3.ngrok.io'
+var urlprefix = 'https://www.triggercmd.com'
 
 // console.log('Connecting to ' + urlprefix);
 var options = {
