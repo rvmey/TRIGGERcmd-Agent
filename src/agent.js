@@ -117,7 +117,7 @@ function initFiles(backgrounddpath, callback) {
 // var cafile = path.resolve(__dirname, 'selfsigned.crt');  // dev only
 var cafile = path.resolve(__dirname, 'gd_bundle-g2-g1.crt');
 
-// var urlprefix = 'https://6ec4eee4.ngrok.io'
+// var urlprefix = 'https://f3499ce3.ngrok.io'
 var urlprefix = 'https://www.triggercmd.com'
 
 // console.log('Connecting to ' + urlprefix);
@@ -477,12 +477,13 @@ function updateCmds(token,userid,computerid,startsocket) {
 
                 if (onlinecmds.records[o].name == localcmds[l].trigger &&
                     onlinecmds.records[o].voice == localcmds[l].voice &&
+                    onlinecmds.records[o].voiceReply == localcmds[l].voiceReply &&
                     Boolean(onlinecmds.records[o].allowParams) == localallowParams
                 ) { foundonline = true }
               }
               if (!foundonline) {
                 if (localcmds[l].ground == ground) {
-                  addCmd(localcmds[l].trigger,localcmds[l].voice,localcmds[l].allowParams,token,userid,computerid);
+                  addCmd(localcmds[l].trigger,localcmds[l].voice,localcmds[l].voiceReply,localcmds[l].allowParams,token,userid,computerid);
                 }
               }
               loop.next();
@@ -512,6 +513,7 @@ function updateCmds(token,userid,computerid,startsocket) {
 
                 if (onlinecmds.records[o].name == localcmds[l].trigger &&
                     onlinecmds.records[o].voice == localcmds[l].voice &&
+                    onlinecmds.records[o].voiceReply == localcmds[l].voiceReply &&
                     Boolean(onlinecmds.records[o].allowParams) == localallowParams
                 ) { foundlocal = true }
               }
@@ -559,14 +561,14 @@ function removeCmd(trigger,token,userid,computerid) {
   })
 }
 
-function addCmd(trigger,voice,allowParams,token,userid,computerid) {
+function addCmd(trigger,voice,voiceReply,allowParams,token,userid,computerid) {
   // Configure the request
 
   headers.Authorization = 'Bearer ' + token;
   options.headers = headers;
   options.url = urlprefix + '/api/command/save';
   options.method = 'POST';
-  options.form = {'name': trigger, 'computer': computerid, 'voice': voice, 'allowParams': allowParams };
+  options.form = {'name': trigger, 'computer': computerid, 'voice': voice, 'voiceReply': voiceReply, 'allowParams': allowParams };
 
   // Start the request
   request(options, function (error, response, body) {
