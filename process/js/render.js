@@ -28,6 +28,7 @@ var MainInterface = React.createClass({
       editCommand: '',
       editGround: '',
       editVoice: '',
+      editVoiceReply: '',
       editKey: null,
       myAppointments: loadApts
     }//return
@@ -87,6 +88,7 @@ var MainInterface = React.createClass({
       editCommand: item.command,
       editGround: item.ground,
       editVoice: item.voice,
+      editVoiceReply: item.voiceReply,
       editAllowParams: item.allowParams,
       editKey: item.mykey
     }); //setState
@@ -112,6 +114,11 @@ var MainInterface = React.createClass({
       editVoice: value
     }); //setState
   },
+  onVoiceReplyChange: function(value) {
+    this.setState({
+      editVoiceReply: value
+    }); //setState
+  },
   onAllowParamsChange: function(value) {
     this.setState({
       editAllowParams: value
@@ -127,6 +134,7 @@ var MainInterface = React.createClass({
       command: this.state.editCommand,
       ground: this.state.editGround,
       voice: this.state.editVoice,
+      voiceReply: this.state.editVoiceReply,
       allowParams: this.state.editAllowParams,
       mykey: item.mykey
     } //tempitems
@@ -261,12 +269,14 @@ var MainInterface = React.createClass({
             editCommand = {this.state.editCommand}
             editGround = {this.state.editGround}
             editVoice = {this.state.editVoice}
+            editVoiceReply = {this.state.editVoiceReply}
             editAllowParams = {this.state.editAllowParams}
             editKey = {this.state.editKey}
             onTriggerChange = {this.onTriggerChange}
             onCommandChange = {this.onCommandChange}
             onGroundChange = {this.onGroundChange}
             onVoiceChange = {this.onVoiceChange}
+            onVoiceReplyChange = {this.onVoiceReplyChange}
             onAllowParamsChange = {this.onAllowParamsChange}
           />
           <div className="container">

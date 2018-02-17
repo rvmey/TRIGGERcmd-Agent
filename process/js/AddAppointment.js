@@ -13,6 +13,7 @@ var AddAppointment = React.createClass({
       command: this.inputPetOwner.value,
       ground: this.inputAptDate.value,
       voice: this.inputAptNotes.value,
+      voiceReply: this.inputVoiceReply.value,
       allowParams: this.inputAllowParams.value,
     } //tempitems
 
@@ -22,6 +23,7 @@ var AddAppointment = React.createClass({
     this.inputPetOwner.value = '';
     this.inputAptDate.value = 'foreground';
     this.inputAptNotes.value = '';
+    this.inputVoiceReply.value = '';
     this.inputAllowParams.value = 'false';
   }, //handleAdd
 
@@ -63,7 +65,14 @@ var AddAppointment = React.createClass({
                 <label className="col-sm-3 control-label" htmlFor="aptNotes">Voice</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
-                    id="aptNotes"  ref={(ref) => this.inputAptNotes = ref } placeholder="Voice word for Alexa or Google Assistant (optional)" />
+                    id="aptNotes"  ref={(ref) => this.inputAptNotes = ref } placeholder="Word you'll say to Alexa or Google (optional)" />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-3 control-label" htmlFor="voiceReply">Voice Reply</label>
+                <div className="col-sm-9">
+                  <input type="text" className="form-control"
+                    id="voiceReply"  ref={(ref) => this.inputVoiceReply = ref } placeholder="Alexa or Google will say this when it runs (optional)" />
                 </div>
               </div>
               <div className="form-group">

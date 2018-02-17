@@ -9,6 +9,7 @@ class EditAppointment extends React.Component {
     this.handleCommandChange = this.handleCommandChange.bind(this);
     this.handleGroundChange = this.handleGroundChange.bind(this);
     this.handleVoiceChange = this.handleVoiceChange.bind(this);
+    this.handleVoiceReplyChange = this.handleVoiceReplyChange.bind(this);
     this.handleAllowParamsChange = this.handleAllowParamsChange.bind(this);
     this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
@@ -25,6 +26,7 @@ class EditAppointment extends React.Component {
       command: this.inputPetOwner.value,
       ground: this.inputAptDate.value,
       voice: this.inputAptNotes.value,
+      voiceReply: this.inputVoiceReply.value,
       allowParams: this.inputAllowParams.value,
       mykey: this.props.editKey
     } //tempitems
@@ -49,6 +51,10 @@ class EditAppointment extends React.Component {
     this.props.onVoiceChange(e.target.value);
   }
 
+  handleVoiceReplyChange(e) {
+    this.props.onVoiceReplyChange(e.target.value);
+  }
+
   handleAllowParamsChange(e) {
     this.props.onAllowParamsChange(e.target.value);
   }
@@ -58,6 +64,7 @@ class EditAppointment extends React.Component {
     const commandvalue = this.props.editCommand;
     const groundvalue = this.props.editGround;
     const voicevalue = this.props.editVoice;
+    const voiceReplyvalue = this.props.editVoiceReply;
     const allowParamsvalue = this.props.editAllowParams || false;
     return(
       <div className="modal fade" id="editAppointment" tabIndex="-1" role="dialog">
@@ -96,7 +103,14 @@ class EditAppointment extends React.Component {
                 <label className="col-sm-3 control-label" htmlFor="aptNotes">Voice</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
-                    id="aptNotes"  ref={(ref) => this.inputAptNotes = ref } placeholder="Voice word for Alexa or Google Assistant (optional)" onChange={this.handleVoiceChange} value={voicevalue} />
+                    id="aptNotes"  ref={(ref) => this.inputAptNotes = ref } placeholder="Word you'll say to Alexa or Google (optional)" onChange={this.handleVoiceChange} value={voicevalue} />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-3 control-label" htmlFor="voiceReply">Voice Reply</label>
+                <div className="col-sm-9">
+                  <input type="text" className="form-control"
+                    id="voiceReply"  ref={(ref) => this.inputVoiceReply = ref } placeholder="Alexa or Google will say this when it runs (optional)" onChange={this.handleVoiceReplyChange} value={voiceReplyvalue} />
                 </div>
               </div>
               <div className="form-group">
