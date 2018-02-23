@@ -245,22 +245,11 @@ app.on('ready', function(){
 
 });
 
+app.on('window-all-closed', app.quit);
+
 app.on("before-quit", (event) => {
-  if (doQuit) {
-    // console.log("Quitting.");
-    if(appWindow) {
-      appWindow.removeAllListeners('close');
-      appWindow.close();  
-    }
-    if(editorWindow) {    
-      editorWindow.removeAllListeners('close');
-      editorWindow.close();  
-    }
-    if(mainWindow) {
-      mainWindow.removeAllListeners('close');
-      mainWindow.close();  
-    }
-    app.quit();
+  if (doQuit) {    
+    console.log("Quitting")    
   } else {
     console.log("Don't quit yet");
     event.preventDefault();
@@ -610,7 +599,7 @@ if (process.platform === 'linux') {
       selector: 'terminate:',
       click: function() {
         doQuit = true;
-        app.quit();
+        app.exit(0);
       }
     }
   ]);
@@ -688,7 +677,7 @@ if (process.platform === 'linux') {
       selector: 'terminate:',
       click: function() {
         doQuit = true;
-        app.quit();
+        app.exit(0);
       }
     }
   ]);
@@ -721,7 +710,7 @@ if (process.platform === 'linux') {
       selector: 'terminate:',
       click: function() {
         doQuit = true;
-        app.quit();
+        app.exit(0);
       }
     }
   ]);
