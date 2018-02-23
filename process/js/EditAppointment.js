@@ -41,7 +41,7 @@ class EditAppointment extends React.Component {
 
   handleCommandChange(e) {
     this.props.onCommandChange(e.target.value);
-  }
+  } 
 
   handleGroundChange(e) {
     this.props.onGroundChange(e.target.value);
@@ -63,8 +63,8 @@ class EditAppointment extends React.Component {
     const triggervalue = this.props.editTrigger;
     const commandvalue = this.props.editCommand;
     const groundvalue = this.props.editGround;
-    const voicevalue = this.props.editVoice;
-    const voiceReplyvalue = this.props.editVoiceReply;
+    const voicevalue = this.props.editVoice || '';
+    const voiceReplyvalue = this.props.editVoiceReply || '';
     const allowParamsvalue = this.props.editAllowParams || false;
     return(
       <div className="modal fade" id="editAppointment" tabIndex="-1" role="dialog">
