@@ -1,7 +1,7 @@
 {
   "name": "TRIGGERcmdAgent",
   "productName": "TRIGGERcmdAgent",
-  "version": "1.0.18",
+  "version": "1.0.20",
   "description": "TRIGGERcmd Windows Agent",
   "main": "src/main.js",
   "scripts": {
