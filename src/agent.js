@@ -117,7 +117,8 @@ function initFiles(backgrounddpath, callback) {
 // var cafile = path.resolve(__dirname, 'selfsigned.crt');  // dev only
 var cafile = path.resolve(__dirname, 'gd_bundle-g2-g1.crt');
 
-// var urlprefix = 'https://f3499ce3.ngrok.io'
+// var urlprefix = 'https://599ce3f1.ngrok.io'
+// var urlprefix = 'http://localhost:1337'
 var urlprefix = 'https://www.triggercmd.com'
 
 // console.log('Connecting to ' + urlprefix);
@@ -614,9 +615,9 @@ function startSocket(token,computerid) {
         if (cmdobj.ground == ground) {
           console.log('Running trigger: ' + trigger + '  Command: ' + cmdobj.command);
           if (cmdobj.allowParams && params) {
-            var ChildProcess = cp.exec(cmdobj.command + ' ' + params);
+            var ChildProcess = cp.exec(cmdobj.command + ' ' + params, {env: { TCMD_COMPUTER_ID: computerid, TCMD_COMMAND_ID: cmdid }});
           } else {
-            var ChildProcess = cp.exec(cmdobj.command);
+            var ChildProcess = cp.exec(cmdobj.command, {env: { TCMD_COMPUTER_ID: computerid, TCMD_COMMAND_ID: cmdid }});
           }
           reportBack(token,computerid,cmdid);
         }
