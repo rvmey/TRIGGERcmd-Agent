@@ -10,15 +10,17 @@ var ipc = electron.ipcRenderer;
 var React = require('react');
 var ReactDOM = require('react-dom');
 var cp = eRequire('child_process');
+var os = require('os');
 var AptList = require('./AptList');
 var Toolbar = require('./Toolbar');
 var HeaderNav = require('./HeaderNav');
 var AddAppointment = require('./AddAppointment');
 var EditAppointment = require('./EditAppointment');
 
-var MainInterface = React.createClass({
-  getInitialState: function() {
+var MainInterface = React.createClass({  
+  getInitialState: function() {    
     return {
+      operatingSystem: operatingSystem,  // added here because it wouldn't detect the OS in the render function
       aptBodyVisible: false,
       editBodyVisible: false,
       orderBy: 'trigger',
@@ -261,8 +263,10 @@ var MainInterface = React.createClass({
           <AddAppointment
             handleToggle = {this.toggleAptDisplay}
             addApt = {this.addItem}
+            operatingSystem = {this.state.operatingSystem}
           />
           <EditAppointment
+            operatingSystem = {this.state.operatingSystem}
             handleToggle = {this.toggleEditDisplay}
             editApt = {this.changeItem}
             editTrigger = {this.state.editTrigger}

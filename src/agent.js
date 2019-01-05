@@ -104,6 +104,16 @@ function initFiles(backgrounddpath, callback) {
     fs.createReadStream(examplefile).pipe(fs.createWriteStream(datafile));
   }
 
+  // Copy a script to the data folder to help users send the results of their commands.
+  resultscript = 'sendresult.sh';
+  if (process.platform === 'win32') {
+    resultscript = 'SendResult.bat';
+  }  
+  resultscripttarget = path.resolve(datapath, resultscript);
+  if (!fs.existsSync(resultscripttarget)) {
+    fs.createReadStream(resultscript).pipe(fs.createWriteStream(resultscripttarget));
+  }
+
   onlineexamplefile = path.resolve(datapath, 'onlineexamples.json');
   tokenfile = path.resolve(datapath, 'token.tkn');
   useridfile = path.resolve(datapath, 'userid.cfg');
