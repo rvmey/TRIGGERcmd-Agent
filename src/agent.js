@@ -618,16 +618,19 @@ function startSocket(token,computerid) {
         var trigger = event.trigger;
         var cmdid = event.id;
         var params = event.params;
+        var envVars = process.env;
+        
         //console.log(event);
         console.log(event);
         var commands = JSON.parse(fs.readFileSync(datafile));
         var cmdobj = triggerToCmdObj(commands,trigger);
         if (cmdobj.ground == ground) {
           console.log('Running trigger: ' + trigger + '  Command: ' + cmdobj.command);
+          Object.assign(envVars, { TCMD_COMPUTER_ID: computerid }, { TCMD_COMMAND_ID: cmdid });
           if (cmdobj.allowParams && params) {
-            var ChildProcess = cp.exec(cmdobj.command + ' ' + params, {env: { TCMD_COMPUTER_ID: computerid, TCMD_COMMAND_ID: cmdid }});
+            var ChildProcess = cp.exec(cmdobj.command + ' ' + params, {env: envVars});
           } else {
-            var ChildProcess = cp.exec(cmdobj.command, {env: { TCMD_COMPUTER_ID: computerid, TCMD_COMMAND_ID: cmdid }});
+            var ChildProcess = cp.exec(cmdobj.command, {env: envVars});
           }
           reportBack(token,computerid,cmdid);
         }
