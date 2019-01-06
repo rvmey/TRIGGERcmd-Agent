@@ -86,7 +86,7 @@
   "devDependencies": {
     "babel-preset-stage-0": "^6.16.0",
     "electron-compilers": "latest",
-    "electron-prebuilt-compile": "latest",
+    "electron-prebuilt-compile": "4.0.0",
     "electron-rebuild": "latest",
     "eslint": "^3.12.2",
     "eslint-config-airbnb": "^13.0.0",
