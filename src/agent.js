@@ -105,11 +105,11 @@ function initFiles(backgrounddpath, callback) {
   }
 
   // Copy a script to the data folder to help users send the results of their commands.
-  resultscript = 'sendresult.sh';
+  var resultscript = 'sendresult.sh';
   if (process.platform === 'win32') {
     resultscript = 'SendResult.bat';
   }  
-  resultscripttarget = path.resolve(datapath, resultscript);
+  var resultscripttarget = path.resolve(datapath, resultscript);
   if (!fs.existsSync(resultscripttarget)) {
     fs.createReadStream(resultscript).pipe(fs.createWriteStream(resultscripttarget));
   }

@@ -1,8 +1,8 @@
 {
   "name": "triggercmdagent",
-  "productName": "triggercmdagent",
-  "version": "1.0.1",
-  "description": "TRIGGERcmd Agent",
+  "productName": "TRIGGERcmdAgent",
+  "version": "1.0.20",
+  "description": "TRIGGERcmd Windows Agent",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -41,29 +41,13 @@
         "name": "TRIGGERcmdAgent",
         "iconUrl": "http://www.triggercmd.com/iconico.ico"
       },
-      "electronInstallerDebian": {
-        "homepage": "http://www.triggercmd.com",
-        "depends": [
-          "gconf2",
-          "gconf-service",
-          "libnotify4",
-          "libappindicator1",
-          "libxtst6",
-          "libnss3",
-          "nodejs"
-        ]
-      },
-      "electronInstallerRedhat": {
-        "homepage": "http://www.triggercmd.com",
-        "requires": [
-          "lsb",
-          "libXScrnSaver",
-          "nodejs"
-        ]
-      }
+      "electronInstallerDebian": {},
+      "electronInstallerRedhat": {}
     }
   },
+
   "dependencies": {
+    "node-windows": "latest",
     "sudo-prompt": "^6.2.1",
     "child_process": "^1.0.2",
     "chokidar": "^1.6.1",
