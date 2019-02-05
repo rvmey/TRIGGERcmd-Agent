@@ -86,7 +86,7 @@
   "devDependencies": {
     "babel-preset-stage-0": "^6.16.0",
     "electron-compilers": "latest",
-    "electron-prebuilt-compile": "latest",
+    "electron-prebuilt-compile": "4.0.0",
     "electron-rebuild": "latest",
     "eslint": "^3.12.2",
     "eslint-config-airbnb": "^13.0.0",
@@ -98,6 +98,7 @@
     "gulp-concat-css": "^2.3.0",
     "gulp-react": "^3.1.0",
     "gulp-run": "^1.7.1",
+    "node-abi": "^2.5.1",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "reactify": "^1.1.1"
