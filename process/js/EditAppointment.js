@@ -12,11 +12,16 @@ class EditAppointment extends React.Component {
     this.handleVoiceReplyChange = this.handleVoiceReplyChange.bind(this);
     this.handleAllowParamsChange = this.handleAllowParamsChange.bind(this);
     this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
+    this.groundInstructions = this.groundInstructions.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
   }
 
   toggleAptDisplay(e) {
     this.props.handleToggle(e);
+  }
+
+  groundInstructions(e) {
+    this.props.handleGroundInstructions(e);
   }
 
   handleEdit(e) {
@@ -105,9 +110,13 @@ class EditAppointment extends React.Component {
               </div>
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="aptDate">Ground</label>
-                <div className="col-sm-9">
-                  {groundOptions}
-                </div>
+                <div className="col-sm-9"> 
+                  <select id="mySelect" className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} value={groundvalue} >
+                    <option>foreground</option>
+                    <option>background</option>
+                  </select>                 
+                  <button type="button" className="btn btn-link" onClick={this.groundInstructions} >How to use background commands</button>
+                </div>                
               </div>
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="aptNotes">Voice</label>

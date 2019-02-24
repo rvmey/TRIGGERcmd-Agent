@@ -8,3 +8,5 @@ out
 .DS_Store
 package-lock.json
 *.log
+package.json
+app/js/*

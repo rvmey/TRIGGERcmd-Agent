@@ -159,6 +159,10 @@ var MainInterface = React.createClass({
     electron.shell.openExternal('https://www.triggercmd.com/user/computer/list');
   }, //openComputerList
 
+  openGroundInstructions: function() {
+    electron.shell.openExternal('https://www.triggercmd.com/forum/topic/15/what-s-the-difference-between-background-and-foreground-commands');
+  }, 
+
   addItem: function(tempItem) {    
     var tempApts = this.state.myAppointments;
     tempApts.push(tempItem);
@@ -262,12 +266,14 @@ var MainInterface = React.createClass({
           />
           <AddAppointment
             handleToggle = {this.toggleAptDisplay}
+            handleGroundInstructions = {this.openGroundInstructions}
             addApt = {this.addItem}
             operatingSystem = {this.state.operatingSystem}
           />
           <EditAppointment
             operatingSystem = {this.state.operatingSystem}
             handleToggle = {this.toggleEditDisplay}
+            handleGroundInstructions = {this.openGroundInstructions}
             editApt = {this.changeItem}
             editTrigger = {this.state.editTrigger}
             editCommand = {this.state.editCommand}

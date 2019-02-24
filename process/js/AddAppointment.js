@@ -6,6 +6,10 @@ var AddAppointment = React.createClass({
     this.props.handleToggle();
   },
 
+  groundInstructions(e) {
+    this.props.handleGroundInstructions(e);
+  },
+
   handleAdd: function(e) {
     e.preventDefault();
     var tempItem = {
@@ -67,6 +71,7 @@ var AddAppointment = React.createClass({
                 <label className="col-sm-3 control-label" htmlFor="aptDate">Ground</label>
                 <div className="col-sm-9">
                   {groundOptions}
+                  <button type="button" className="btn btn-link" onClick={this.groundInstructions} >How to use background commands</button>
                 </div>
               </div>
               <div className="form-group">

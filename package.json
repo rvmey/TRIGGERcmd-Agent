@@ -1,8 +1,8 @@
 {
   "name": "triggercmdagent",
-  "productName": "triggercmdagent",
-  "version": "1.0.1",
-  "description": "TRIGGERcmd Agent",
+  "productName": "TRIGGERcmdAgent",
+  "version": "1.0.22",
+  "description": "TRIGGERcmd Windows Agent",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -41,53 +41,37 @@
         "name": "TRIGGERcmdAgent",
         "iconUrl": "http://www.triggercmd.com/iconico.ico"
       },
-      "electronInstallerDebian": {
-        "homepage": "http://www.triggercmd.com",
-        "depends": [
-          "gconf2",
-          "gconf-service",
-          "libnotify4",
-          "libappindicator1",
-          "libxtst6",
-          "libnss3",
-          "nodejs"
-        ]
-      },
-      "electronInstallerRedhat": {
-        "homepage": "http://www.triggercmd.com",
-        "requires": [
-          "lsb",
-          "libXScrnSaver",
-          "nodejs"
-        ]
-      }
+      "electronInstallerDebian": {},
+      "electronInstallerRedhat": {}
     }
   },
+
   "dependencies": {
-    "sudo-prompt": "^6.2.1",
+    "auto-launch": "^5.0.5",
+    "bootstrap": "^3.3.7",
     "child_process": "^1.0.2",
     "chokidar": "^1.6.1",
-    "electron-compile": "latest",
-    "electron-squirrel-startup": "latest",
+    "electron-compile": "^5.1.0",
+    "electron-reload": "^1.0.2",
+    "electron-squirrel-startup": "^1.0.0",
     "fs": "0.0.1-security",
+    "jquery": "^3.1.0",
+    "lodash": "^4.13.1",
     "minimist": "^1.2.0",
+    "node-windows": "^0.1.12",
     "os": "^0.1.1",
     "path": "^0.12.7",
     "posix-argv-parser": "^2.0.0",
     "prompt": "^1.0.0",
+    "regedit": "^2.2.6",
     "request": "^2.79.0",
     "sails.io.js": "^1.1.4",
-    "socket.io-client": "^2.0.2",
-    "bootstrap": "^3.3.7",
-    "electron-reload": "latest",
-    "lodash": "^4.13.1",
-    "jquery": "^3.1.0"
+    "socket.io-client": "^2.0.2"
   },
   "devDependencies": {
     "babel-preset-stage-0": "^6.16.0",
-    "electron-compilers": "latest",
-    "electron-prebuilt-compile": "4.0.0",
-    "electron-rebuild": "latest",
+    "electron-prebuilt-compile": "1.4.12",
+    "electron-rebuild": "^1.5.6",
     "eslint": "^3.12.2",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-import": "^2.2.0",
@@ -98,7 +82,6 @@
     "gulp-concat-css": "^2.3.0",
     "gulp-react": "^3.1.0",
     "gulp-run": "^1.7.1",
-    "node-abi": "^2.5.1",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "reactify": "^1.1.1"

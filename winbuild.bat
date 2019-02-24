@@ -1,3 +1,5 @@
+REM Run 'gulp' to update the GUI editor before running this.
+
 sc stop triggercmdagent.exe
 sc delete triggercmdagent.exe
 timeout /t 5

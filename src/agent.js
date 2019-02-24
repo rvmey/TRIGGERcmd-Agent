@@ -626,7 +626,13 @@ function startSocket(token,computerid) {
         var cmdobj = triggerToCmdObj(commands,trigger);
         if (cmdobj.ground == ground) {
           console.log('Running trigger: ' + trigger + '  Command: ' + cmdobj.command);
-          Object.assign(envVars, { TCMD_COMPUTER_ID: computerid }, { TCMD_COMMAND_ID: cmdid });
+
+          // This wasn't compatible with Raspberry Pi2's:
+          // Object.assign(envVars, { TCMD_COMPUTER_ID: computerid }, { TCMD_COMMAND_ID: cmdid });
+          // But this works:
+          envVars.TCMD_COMPUTER_ID=computerid;
+          envVars.TCMD_COMMAND_ID=cmdid;
+
           if (cmdobj.allowParams && params) {
             var ChildProcess = cp.exec(cmdobj.command + ' ' + params, {env: envVars});
           } else {
