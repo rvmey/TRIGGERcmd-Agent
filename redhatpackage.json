@@ -21,7 +21,6 @@
           "zip"
         ],
         "linux": [
-          "deb",
           "rpm"
         ]
       },
@@ -81,13 +80,14 @@
     "bootstrap": "^3.3.7",
     "electron-reload": "latest",
     "lodash": "^4.13.1",
-    "jquery": "^3.1.0"
+    "jquery": "^3.1.0",
+    "node-abi": "^2.7.0"
   },
   "devDependencies": {
     "babel-preset-stage-0": "^6.16.0",
     "electron-compilers": "latest",
-    "electron-prebuilt-compile": "4.0.0",
-    "electron-rebuild": "latest",
+    "electron-prebuilt-compile": "2.0.16",
+    "electron-rebuild": "1.8.4",
     "eslint": "^3.12.2",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-import": "^2.2.0",
@@ -98,7 +98,6 @@
     "gulp-concat-css": "^2.3.0",
     "gulp-react": "^3.1.0",
     "gulp-run": "^1.7.1",
-    "node-abi": "^2.5.1",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "reactify": "^1.1.1"
