@@ -129,7 +129,7 @@ var cafile = path.resolve(__dirname, 'gd_bundle-g2-g1.crt');
 
 // var urlprefix = 'https://599ce3f1.ngrok.io'
 // var urlprefix = 'http://localhost:1337'
-var urlprefix = 'https://www.triggercmdasdf.com'
+var urlprefix = 'https://www.triggercmd.com'
 
 // console.log('Connecting to ' + urlprefix);
 var options = {
