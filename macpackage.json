@@ -1,8 +1,8 @@
 {
   "name": "TRIGGERcmdAgent",
   "productName": "TRIGGERcmdAgent",
-  "version": "1.0.22",
-  "description": "TRIGGERcmd Windows Agent",
+  "version": "1.0.23",
+  "description": "TRIGGERcmd Mac Agent",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -26,7 +26,7 @@
         ]
       },
       "electronPackagerConfig": {
-        "appCopyright": "(c) Copyright 2017-2019 VanderMey Consulting, LLC, all rights reserved.",
+        "appCopyright": "(c) Copyright 2017-2020 VanderMey Consulting, LLC, all rights reserved.",
         "osxSign": true,
         "appCategoryType": "public.app-category.utilities",
         "appBundleId": "com.vandermeyconsulting.triggercmdagent",
