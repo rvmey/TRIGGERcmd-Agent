@@ -10,3 +10,4 @@ package-lock.json
 *.log
 package.json
 app/js/*
+CodeSigningCert.pfx

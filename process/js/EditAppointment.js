@@ -72,16 +72,16 @@ class EditAppointment extends React.Component {
     const voiceReplyvalue = this.props.editVoiceReply || '';
     const allowParamsvalue = this.props.editAllowParams || false;
 
-    let groundOptions;        
+    let groundOptions;
     if (this.props.operatingSystem == 'darwin') {
-      groundOptions = <select id="mySelect" className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref }  >
-          <option>foreground</option>          
-        </select>;
+      groundOptions = <select id="mySelect" className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} value={groundvalue} >
+         <option>foreground</option>
+      </select>   ;
     } else {
-      groundOptions = <select id="mySelect" className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref }  >
-          <option>foreground</option>
-          <option>background</option>
-        </select>;
+      groundOptions = <select id="mySelect" className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} value={groundvalue} >
+         <option>foreground</option>
+         <option>background</option>
+      </select>   ;
     }
 
     return(
@@ -111,10 +111,7 @@ class EditAppointment extends React.Component {
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="aptDate">Ground</label>
                 <div className="col-sm-9"> 
-                  <select id="mySelect" className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} value={groundvalue} >
-                    <option>foreground</option>
-                    <option>background</option>
-                  </select>                 
+                  {groundOptions}                 
                   <button type="button" className="btn btn-link" onClick={this.groundInstructions} >How to use background commands</button>
                 </div>                
               </div>

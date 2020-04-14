@@ -37,7 +37,7 @@
       },
       "electronWinstallerConfig": {
         "certificatePassword": "pw",
-        "certificateFile": "c:\\triggercmddev\\CodeSigningCert.pfx",
+        "certificateFile": "CodeSigningCert.pfx",
         "name": "TRIGGERcmdAgent",
         "iconUrl": "http://www.triggercmd.com/iconico.ico"
       },
