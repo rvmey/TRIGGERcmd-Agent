@@ -92,12 +92,9 @@ let mainWindow;
 let editorWindow;
 var appWindow, exampleWindow;
 
-var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
-  // console.log('User ran triggercmdagent.');
-  return true;
-});
+var gotTheLock = app.requestSingleInstanceLock();
 
-if (shouldQuit) {
+if (!gotTheLock) {
   // console.log('Agent is already running, quiting this instance soon.');
   doQuit = true;
   setTimeout(app.quit, squirreltimeout+ 1000);
@@ -236,11 +233,17 @@ app.on('ready', function(){
   appWindow = new BrowserWindow({    
     show: false,
     width: 900,
-    height: 700
+    height: 700,
+    webPreferences: {
+      nodeIntegration: true
+    }
   }); //appWindow
 
   exampleWindow = new BrowserWindow({    
-    show: false
+    show: false,
+    webPreferences: {
+      nodeIntegration: true
+    }
   }); //exampleWindow  
 
 });
@@ -390,7 +393,14 @@ function readMyFile(file) {
 function createWindow() {
     handleSubmission();
     // mainWindow = new BrowserWindow({ title: 'TRIGGERcmd Agent Sign In', width: 700, height: 390, titleBarStyle: 'hidden', icon: __dirname + '/icon.png' });
-    mainWindow = new BrowserWindow({ title: 'TRIGGERcmd Agent Sign In', width: 700, height: 390, icon: __dirname + '/icon.png' });
+    mainWindow = new BrowserWindow({ title: 'TRIGGERcmd Agent Sign In', 
+      width: 700, 
+      height: 390, 
+      icon: __dirname + '/icon.png',
+      webPreferences: {
+        nodeIntegration: true
+      }
+    });
     
     // mainWindow.toggleDevTools();
     mainWindow.loadURL(`file://${__dirname}/index.html`);
@@ -546,7 +556,11 @@ function stopService () {
 
 function launchComputerList(){
   var clWindow;
-  clWindow = new BrowserWindow();
+  clWindow = new BrowserWindow({
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
   clWindow.loadURL('https://www.triggercmd.com/user/auth/login');
 }
 

@@ -28,6 +28,7 @@ var MainInterface = React.createClass({
       queryText: '',
       editTrigger: '',
       editCommand: '',
+      editOffCommand: '',
       editGround: '',
       editVoice: '',
       editVoiceReply: '',
@@ -78,7 +79,8 @@ var MainInterface = React.createClass({
   toggleAptDisplay: function() {
     var tempVisibility = !this.state.aptBodyVisible;
     this.setState({
-      aptBodyVisible: tempVisibility
+      aptBodyVisible: tempVisibility,
+      editAllowParams: false
     }); //setState
   }, //toggleAptDisplay
 
@@ -88,6 +90,7 @@ var MainInterface = React.createClass({
       editBodyVisible: tempVisibility,
       editTrigger: item.trigger,
       editCommand: item.command,
+      editOffCommand: item.offCommand,
       editGround: item.ground,
       editVoice: item.voice,
       editVoiceReply: item.voiceReply,
@@ -104,6 +107,11 @@ var MainInterface = React.createClass({
   onCommandChange: function(value) {
     this.setState({
       editCommand: value
+    }); //setState
+  },
+  onOffCommandChange: function(value) {
+    this.setState({
+      editOffCommand: value
     }); //setState
   },
   onGroundChange: function(value) {
@@ -134,6 +142,7 @@ var MainInterface = React.createClass({
     var tempItem = {
       trigger: this.state.editTrigger,
       command: this.state.editCommand,
+      offCommand: this.state.editOffCommand,
       ground: this.state.editGround,
       voice: this.state.editVoice,
       voiceReply: this.state.editVoiceReply,
@@ -149,7 +158,7 @@ var MainInterface = React.createClass({
       myAppointments: newApts,
       aptBodyVisible: false
     }) //setState
-  }, //addItem
+  }, //changeItem
 
   browseExamples: function() {
     ipc.sendSync('openexampleWindow');
@@ -216,7 +225,6 @@ var MainInterface = React.createClass({
     } else {
       $('#editAppointment').modal('hide');
     }
-
     for (var i = 0; i < myAppointments.length; i++) {
       if (
         (myAppointments[i].trigger.toLowerCase().indexOf(queryText)!=-1) ||
@@ -269,6 +277,20 @@ var MainInterface = React.createClass({
             handleGroundInstructions = {this.openGroundInstructions}
             addApt = {this.addItem}
             operatingSystem = {this.state.operatingSystem}
+            editTrigger = {this.state.editTrigger}
+            editCommand = {this.state.editCommand}
+            editOffCommand = {this.state.editOffCommand}
+            editGround = {this.state.editGround}
+            editVoice = {this.state.editVoice}
+            editVoiceReply = {this.state.editVoiceReply}
+            editAllowParams = {this.state.editAllowParams}
+            onTriggerChange = {this.onTriggerChange}
+            onCommandChange = {this.onCommandChange}
+            onOffCommandChange = {this.onOffCommandChange}
+            onGroundChange = {this.onGroundChange}
+            onVoiceChange = {this.onVoiceChange}
+            onVoiceReplyChange = {this.onVoiceReplyChange}
+            onAllowParamsChange = {this.onAllowParamsChange}
           />
           <EditAppointment
             operatingSystem = {this.state.operatingSystem}
@@ -277,6 +299,7 @@ var MainInterface = React.createClass({
             editApt = {this.changeItem}
             editTrigger = {this.state.editTrigger}
             editCommand = {this.state.editCommand}
+            editOffCommand = {this.state.editOffCommand}
             editGround = {this.state.editGround}
             editVoice = {this.state.editVoice}
             editVoiceReply = {this.state.editVoiceReply}
@@ -284,6 +307,7 @@ var MainInterface = React.createClass({
             editKey = {this.state.editKey}
             onTriggerChange = {this.onTriggerChange}
             onCommandChange = {this.onCommandChange}
+            onOffCommandChange = {this.onOffCommandChange}
             onGroundChange = {this.onGroundChange}
             onVoiceChange = {this.onVoiceChange}
             onVoiceReplyChange = {this.onVoiceReplyChange}

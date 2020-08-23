@@ -7,6 +7,7 @@ class EditAppointment extends React.Component {
     super(props);
     this.handleTriggerChange = this.handleTriggerChange.bind(this);
     this.handleCommandChange = this.handleCommandChange.bind(this);
+    this.handleOffCommandChange = this.handleOffCommandChange.bind(this);
     this.handleGroundChange = this.handleGroundChange.bind(this);
     this.handleVoiceChange = this.handleVoiceChange.bind(this);
     this.handleVoiceReplyChange = this.handleVoiceReplyChange.bind(this);
@@ -29,6 +30,7 @@ class EditAppointment extends React.Component {
     var tempItem = {
       trigger: this.inputPetName.value,
       command: this.inputPetOwner.value,
+      offCommand: this.inputOffCommand.value,
       ground: this.inputAptDate.value,
       voice: this.inputAptNotes.value,
       voiceReply: this.inputVoiceReply.value,
@@ -48,6 +50,10 @@ class EditAppointment extends React.Component {
     this.props.onCommandChange(e.target.value);
   } 
 
+  handleOffCommandChange(e) {
+    this.props.onOffCommandChange(e.target.value);
+  } 
+
   handleGroundChange(e) {
     this.props.onGroundChange(e.target.value);
   }
@@ -65,12 +71,18 @@ class EditAppointment extends React.Component {
   }
 
   render() {
-    const triggervalue = this.props.editTrigger;
-    const commandvalue = this.props.editCommand;
-    const groundvalue = this.props.editGround;
+    const triggervalue = this.props.editTrigger || '';
+    const commandvalue = this.props.editCommand || '';
+    const offCommandvalue = this.props.editOffCommand || '';
+    const groundvalue = this.props.editGround || 'foreground';
     const voicevalue = this.props.editVoice || '';
     const voiceReplyvalue = this.props.editVoiceReply || '';
     const allowParamsvalue = this.props.editAllowParams || false;
+    
+    var disableOffCommandField = true;
+    if (allowParamsvalue == "true") {
+      disableOffCommandField = false;
+    }
 
     let groundOptions;
     if (this.props.operatingSystem == 'darwin') {
@@ -106,6 +118,13 @@ class EditAppointment extends React.Component {
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
                     id="petOwner"  ref={(ref) => this.inputPetOwner = ref } placeholder="Your command" onChange={this.handleCommandChange} value={commandvalue} required/>
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-3 control-label" htmlFor="offCommand">Off Command</label>
+                <div className="col-sm-9">
+                  <input type="text" className="form-control" disabled={disableOffCommandField}
+                    id="offCommand"  ref={(ref) => this.inputOffCommand = ref } placeholder="If filled, runs instead of Command when off is the parameter" onChange={this.handleOffCommandChange} value={offCommandvalue} />
                 </div>
               </div>
               <div className="form-group">

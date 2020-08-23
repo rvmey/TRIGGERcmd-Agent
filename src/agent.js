@@ -625,8 +625,6 @@ function startSocket(token,computerid) {
         var commands = JSON.parse(fs.readFileSync(datafile));
         var cmdobj = triggerToCmdObj(commands,trigger);
         if (cmdobj.ground == ground) {
-          console.log('Running trigger: ' + trigger + '  Command: ' + cmdobj.command);
-
           // This wasn't compatible with Raspberry Pi2's:
           // Object.assign(envVars, { TCMD_COMPUTER_ID: computerid }, { TCMD_COMMAND_ID: cmdid });
           // But this works:
@@ -634,10 +632,18 @@ function startSocket(token,computerid) {
           envVars.TCMD_COMMAND_ID=cmdid;
 
           if (cmdobj.allowParams && params) {
-            var ChildProcess = cp.exec(cmdobj.command + ' ' + params, {env: envVars});
+            if (cmdobj.offCommand && (params.trim() == 'off')) {
+              var theCommand = cmdobj.offCommand;
+            } else if (cmdobj.offCommand && (params.trim() == 'on')) {
+              var theCommand = cmdobj.command;
+            } else {
+              var theCommand = cmdobj.command + ' ' + params;
+            }
           } else {
-            var ChildProcess = cp.exec(cmdobj.command, {env: envVars});
+            var theCommand = cmdobj.command;
           }
+          var ChildProcess = cp.exec(theCommand, {env: envVars});
+          console.log('Running trigger: ' + trigger + '  Command: ' + theCommand);
           reportBack(token,computerid,cmdid);
         }
   })
