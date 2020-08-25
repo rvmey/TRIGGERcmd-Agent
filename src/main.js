@@ -92,9 +92,14 @@ let mainWindow;
 let editorWindow;
 var appWindow, exampleWindow;
 
-var gotTheLock = app.requestSingleInstanceLock();
+// Future:
+// var gotTheLock = app.requestSingleInstanceLock();
+// if (!gotTheLock) {
 
-if (!gotTheLock) {
+var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
+  return true;
+});
+if (shouldQuit) {
   // console.log('Agent is already running, quiting this instance soon.');
   doQuit = true;
   setTimeout(app.quit, squirreltimeout+ 1000);

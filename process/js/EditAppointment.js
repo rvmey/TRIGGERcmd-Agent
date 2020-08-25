@@ -14,6 +14,7 @@ class EditAppointment extends React.Component {
     this.handleAllowParamsChange = this.handleAllowParamsChange.bind(this);
     this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
     this.groundInstructions = this.groundInstructions.bind(this);
+    this.offCommandInstructions = this.offCommandInstructions.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
   }
 
@@ -23,6 +24,10 @@ class EditAppointment extends React.Component {
 
   groundInstructions(e) {
     this.props.handleGroundInstructions(e);
+  }
+
+  offCommandInstructions(e) {
+    this.props.handleOffCommandInstructions(e);
   }
 
   handleEdit(e) {
@@ -125,6 +130,7 @@ class EditAppointment extends React.Component {
                 <div className="col-sm-9">
                   <input type="text" className="form-control" disabled={disableOffCommandField}
                     id="offCommand"  ref={(ref) => this.inputOffCommand = ref } placeholder="If filled, runs instead of Command when off is the parameter" onChange={this.handleOffCommandChange} value={offCommandvalue} />
+                  <button type="button" className="btn btn-link" onClick={this.offCommandInstructions} >How to use Off Command</button>
                 </div>
               </div>
               <div className="form-group">

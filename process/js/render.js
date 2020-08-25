@@ -172,6 +172,10 @@ var MainInterface = React.createClass({
     electron.shell.openExternal('https://www.triggercmd.com/forum/topic/15/what-s-the-difference-between-background-and-foreground-commands');
   }, 
 
+  openOffCommandInstructions: function() {
+    electron.shell.openExternal('https://www.triggercmd.com/forum/topic/853/how-to-use-off-command');
+  }, 
+
   addItem: function(tempItem) {    
     var tempApts = this.state.myAppointments;
     tempApts.push(tempItem);
@@ -275,6 +279,7 @@ var MainInterface = React.createClass({
           <AddAppointment
             handleToggle = {this.toggleAptDisplay}
             handleGroundInstructions = {this.openGroundInstructions}
+            handleOffCommandInstructions = {this.openOffCommandInstructions}
             addApt = {this.addItem}
             operatingSystem = {this.state.operatingSystem}
             editTrigger = {this.state.editTrigger}
@@ -296,6 +301,7 @@ var MainInterface = React.createClass({
             operatingSystem = {this.state.operatingSystem}
             handleToggle = {this.toggleEditDisplay}
             handleGroundInstructions = {this.openGroundInstructions}
+            handleOffCommandInstructions = {this.openOffCommandInstructions}
             editApt = {this.changeItem}
             editTrigger = {this.state.editTrigger}
             editCommand = {this.state.editCommand}
