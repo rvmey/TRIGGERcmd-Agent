@@ -245,7 +245,12 @@ function computerExists(token,computerid,cb) {
     } else {
       console.log('Error while checking whether computer exists in your account.');
       console.log(error);
-      process.exit(1);
+      if(error.syscall == 'getaddrinfo') {
+        setTimeout(function() {
+          console.log('No Internet.  Trying again in 3 seconds.')
+          computerExists(token,computerid,cb);
+        }, 3000)
+      }
     }
   })
 }
