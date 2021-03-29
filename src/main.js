@@ -92,18 +92,27 @@ let mainWindow;
 let editorWindow;
 var appWindow, exampleWindow;
 
-// Future:
-// var gotTheLock = app.requestSingleInstanceLock();
-// if (!gotTheLock) {
-
-var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
-  return true;
-});
-if (shouldQuit) {
-  // console.log('Agent is already running, quiting this instance soon.');
-  doQuit = true;
-  setTimeout(app.quit, squirreltimeout+ 1000);
-//   return;
+if (process.platform === 'darwin') {
+  // Old method of closing any second instance of the agent:
+  var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
+    return true;
+  });
+  if (shouldQuit) {
+    // console.log('Agent is already running, quiting this instance soon.');
+    doQuit = true;
+    setTimeout(app.quit, squirreltimeout+ 1000);
+  //   return;
+  }
+} else {
+  // New method of closing any second instance of the agent:
+  var gotTheLock = app.requestSingleInstanceLock();
+  if (!gotTheLock) {
+    console.log('Agent is already running, quiting this instance soon.');
+    doQuit = true;
+    // setTimeout(app.quit, squirreltimeout+ 1000);
+  } else {
+    console.log('First instance')
+  }
 }
 
 app.on('ready', function(){
