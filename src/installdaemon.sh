@@ -10,6 +10,9 @@ if ! (command -v node > /dev/null) ; then {
   if command -v zypper > /dev/null; then
     zypper install nodejs4
   fi
+  if command -v pacman > /dev/null; then
+    pacman -S nodejs
+  fi
 }
 fi 
 
