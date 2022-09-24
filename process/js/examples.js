@@ -42,7 +42,7 @@ i18next
       es: {
         translation: {
           "Add": "Agregar",
-          "Publish Your Own Example": "Publish Your Own Example",
+          "Publish Your Own Example": "Publica tu propio ejemplo",
           "Operating System": "Publica tu propio ejemplo",
           "Example Commands": "Comandos de ejemplo"
         }
