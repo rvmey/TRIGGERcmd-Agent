@@ -64506,7 +64506,7 @@ try {
 _i18next["default"].use(_reactI18next.initReactI18next).init({
   lng: lang,
   fallbackLng: 'en',
-  debug: true,
+  debug: false,
   react: {
     useSuspense: true
   },
