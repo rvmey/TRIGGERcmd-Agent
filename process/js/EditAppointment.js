@@ -1,3 +1,4 @@
+import { withTranslation } from 'react-i18next';
 var React = require('react');
 
 // var EditAppointment = React.createClass({
@@ -76,6 +77,8 @@ class EditAppointment extends React.Component {
   }
 
   render() {
+    const { t } = this.props;
+
     const triggervalue = this.props.editTrigger || '';
     const commandvalue = this.props.editCommand || '';
     const offCommandvalue = this.props.editOffCommand || '';
@@ -115,47 +118,47 @@ class EditAppointment extends React.Component {
                 <label className="col-sm-3 control-label" htmlFor="petName">Trigger</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
-                    id="petName" ref={(ref) => this.inputPetName = ref } placeholder="Trigger name" onChange={this.handleTriggerChange} value={triggervalue} required/>
+                    id="petName" ref={(ref) => this.inputPetName = ref } placeholder={t('Trigger name')} onChange={this.handleTriggerChange} value={triggervalue} required/>
                 </div>
               </div>
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="petOwner">Command</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
-                    id="petOwner"  ref={(ref) => this.inputPetOwner = ref } placeholder="Your command" onChange={this.handleCommandChange} value={commandvalue} required/>
+                    id="petOwner"  ref={(ref) => this.inputPetOwner = ref } placeholder={t('Your command')} onChange={this.handleCommandChange} value={commandvalue} required/>
                 </div>
               </div>
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="offCommand">Off Command</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control" disabled={disableOffCommandField}
-                    id="offCommand"  ref={(ref) => this.inputOffCommand = ref } placeholder="If filled, runs instead of Command when off is the parameter" onChange={this.handleOffCommandChange} value={offCommandvalue} />
-                  <button type="button" className="btn btn-link" onClick={this.offCommandInstructions} >How to use Off Command</button>
+                    id="offCommand"  ref={(ref) => this.inputOffCommand = ref } placeholder={t('If filled, runs instead of Command when off is the parameter')} onChange={this.handleOffCommandChange} value={offCommandvalue} />
+                  <button type="button" className="btn btn-link" onClick={this.offCommandInstructions} >{t('How to use Off Command')}</button>
                 </div>
               </div>
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="aptDate">Ground</label>
                 <div className="col-sm-9"> 
                   {groundOptions}                 
-                  <button type="button" className="btn btn-link" onClick={this.groundInstructions} >How to use background commands</button>
+                  <button type="button" className="btn btn-link" onClick={this.groundInstructions} >{t('How to use background commands')}</button>
                 </div>                
               </div>
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="aptNotes">Voice</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
-                    id="aptNotes"  ref={(ref) => this.inputAptNotes = ref } placeholder="Word you'll say to Alexa or Google (optional)" onChange={this.handleVoiceChange} value={voicevalue} />
+                    id="aptNotes"  ref={(ref) => this.inputAptNotes = ref } placeholder={t('Word you\'ll say to Alexa or Google (optional)')} onChange={this.handleVoiceChange} value={voicevalue} />
                 </div>
               </div>
               <div className="form-group">
-                <label className="col-sm-3 control-label" htmlFor="voiceReply">Voice Reply</label>
+                <label className="col-sm-3 control-label" htmlFor="voiceReply">{t('Voice Reply')}</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
-                    id="voiceReply"  ref={(ref) => this.inputVoiceReply = ref } placeholder="Alexa or Google will say this when it runs (optional)" onChange={this.handleVoiceReplyChange} value={voiceReplyvalue} />
+                    id="voiceReply"  ref={(ref) => this.inputVoiceReply = ref } placeholder={t('Alexa or Google will say this when it runs (optional)')} onChange={this.handleVoiceReplyChange} value={voiceReplyvalue} />
                 </div>
               </div>
               <div className="form-group">
-                <label className="col-sm-3 control-label" htmlFor="allowParams">Allow Parameters</label>
+                <label className="col-sm-3 control-label" htmlFor="allowParams">{t('Allow Parameters')}</label>
                 <div className="col-sm-9">
                   <select id="mySelect" className="form-control" id="allowParams"  ref={(ref) => this.inputAllowParams = ref } onChange={this.handleAllowParamsChange} value={allowParamsvalue} >
                     <option>false</option>
@@ -166,8 +169,8 @@ class EditAppointment extends React.Component {
               <div className="form-group">
                 <div className="col-sm-offset-3 col-sm-9">
                   <div className="pull-right">
-                    <button type="button" className="btn btn-default"  onClick={this.toggleAptDisplay}>Cancel</button>&nbsp;
-                    <button type="submit" className="btn btn-primary">Save</button>
+                    <button type="button" className="btn btn-default"  onClick={this.toggleAptDisplay}>{t('Cancel')}</button>&nbsp;
+                    <button type="submit" className="btn btn-primary">{t('Save')}</button>
                   </div>
                 </div>
               </div>
@@ -179,4 +182,5 @@ class EditAppointment extends React.Component {
   } //render
 }; //EditAppointment
 
-module.exports=EditAppointment;
+// module.exports=EditAppointment;
+module.exports = withTranslation()(EditAppointment);

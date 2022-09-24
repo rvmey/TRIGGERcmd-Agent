@@ -1,20 +1,28 @@
 var React = require('react');
 
-var HeaderNav = React.createClass({
+// var HeaderNav = React.createClass({
 
-  handleSort: function(e) {
+class HeaderNav extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleSort = this.handleSort.bind(this);
+    this.handleOrder = this.handleOrder.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
+  }
+
+  handleSort(e) {
     this.props.onReOrder(e.target.id, this.props.orderDir);
-  }, //handleSort
+  } //handleSort
 
-  handleOrder: function(e) {
+  handleOrder(e) {
     this.props.onReOrder(this.props.orderBy, e.target.id);
-  }, //handleOrder
+  } //handleOrder
 
-  handleSearch: function(e) {
+  handleSearch(e) {
     this.props.onSearch(e.target.value);
-  }, //handleSearch
+  } //handleSearch
 
-  render: function() {
+  render() {
     return(
       <nav className="navigation navbar navbar-default">
         <div className="container-fluid">
@@ -40,6 +48,6 @@ var HeaderNav = React.createClass({
       </nav>
     ) // return
   }//render
-}); //HeaderNav
+}; //HeaderNav
 
 module.exports = HeaderNav;

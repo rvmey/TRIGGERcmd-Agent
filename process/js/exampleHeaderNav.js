@@ -1,20 +1,30 @@
+import { withTranslation } from 'react-i18next';
 var React = require('react');
 
-var HeaderNav = React.createClass({
+// var HeaderNav = React.createClass({
 
-  handleSort: function(e) {
+class HeaderNav extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleSort = this.handleSort.bind(this);
+    this.handleOrder = this.handleOrder.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
+  }
+
+  handleSort(e) {
     this.props.onReOrder(e.target.id, this.props.orderDir);
-  }, //handleSort
+  } //handleSort
 
-  handleOrder: function(e) {
+  handleOrder(e) {
     this.props.onReOrder(this.props.orderBy, e.target.id);
-  }, //handleOrder
+  } //handleOrder
 
-  handleSearch: function(e) {
+  handleSearch(e) {
     this.props.onSearch(e.target.value);
-  }, //handleSearch
+  } //handleSearch
 
-  render: function() {
+  render() {
+    const { t } = this.props;
     return(
 
       <nav className="navigation navbar navbar-default">
@@ -29,7 +39,7 @@ var HeaderNav = React.createClass({
                     <ul className="dropdown-menu dropdown-menu-right">
                       <li><a href="#" id="name" onClick={this.handleSort}>Trigger {(this.props.orderBy === 'name') ? <span className="glyphicon glyphicon-ok"></span>:null}</a></li>
                       <li><a href="#" id="command" onClick={this.handleSort}>Command {(this.props.orderBy === 'command') ? <span className="glyphicon glyphicon-ok"></span>:null}</a></li>
-                      <li><a href="#" id="os" onClick={this.handleSort}>Operating System  {(this.props.orderBy === 'os') ? <span className="glyphicon glyphicon-ok"></span>:null}</a></li>
+                      <li><a href="#" id="os" onClick={this.handleSort}>{t('Operating System')}  {(this.props.orderBy === 'os') ? <span className="glyphicon glyphicon-ok"></span>:null}</a></li>
                       <li role="separator" className="divider"></li>
                       <li><a href="#" id="asc" onClick={this.handleOrder}>Asc {(this.props.orderDir === 'asc') ? <span className="glyphicon glyphicon-ok"></span>:null}</a></li>
                       <li><a href="#" id="desc" onClick={this.handleOrder}>Desc {(this.props.orderDir === 'desc') ? <span className="glyphicon glyphicon-ok"></span>:null}</a></li>
@@ -41,6 +51,7 @@ var HeaderNav = React.createClass({
       </nav>
     ) // return
   }//render
-}); //HeaderNav
+}; //HeaderNav
 
-module.exports = HeaderNav;
+// module.exports = HeaderNav;
+module.exports = withTranslation()(HeaderNav);

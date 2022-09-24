@@ -1,25 +1,34 @@
+import { withTranslation } from 'react-i18next';
 var React = require('react');
 
-var Toolbar = React.createClass({
+// var Toolbar = React.createClass({
+class Toolbar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.publishOwn = this.publishOwn.bind(this);
+    this.toggleAbout = this.toggleAbout.bind(this);
+  }
 
-  publishOwn: function() {
+  publishOwn() {
     this.props.handlePublish();
-  }, //publishOwn 
+  } //publishOwn 
 
-  toggleAbout: function() {
+  toggleAbout() {
     this.props.handleAbout();
-  }, //toggleAbout
+  } //toggleAbout
 
-  render: function() {
+  render() {
+    const { t } = this.props;
     return(
       <div className="toolbar">
         <div className="toolbar-item" onClick={this.publishOwn}>
           <span className="toolbar-item-button glyphicon glyphicon-plus-sign"></span>
-          <span className="toolbar-item-text">Publish Your Own Example</span>
+          <span className="toolbar-item-text">{t('Publish Your Own Example')}</span>
         </div>
       </div>
     ) //return
   } //render
-}); //Toolbar
+}; //Toolbar
 
-module.exports = Toolbar;
+// module.exports = Toolbar;
+module.exports = withTranslation()(Toolbar);

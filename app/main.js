@@ -22,7 +22,10 @@ app.on('ready', function() {
   appWindow = new BrowserWindow({    
     show: false,
     width: 900,
-    height: 700
+    height: 700,
+    webPreferences: {
+      nodeIntegration: true
+    }
   }); //appWindow
 
   appWindow.loadURL('file://' + __dirname + '/index.html');
@@ -34,6 +37,9 @@ app.on('ready', function() {
   exampleWindow = new BrowserWindow({    
     show: false, 
     parent: appWindow,
+    webPreferences: {
+      nodeIntegration: true
+    }
   }); //exampleWindow
 
   exampleWindow.loadURL('file://' + __dirname + '/examples.html');

@@ -1,16 +1,28 @@
 var React = require('react');
 
-var AptList = React.createClass({
-  handleDelete: function() {
+// var AptList = React.createClass({
+
+class AptList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
+    this.handleRun = this.handleRun.bind(this);
+  }
+
+  handleDelete(e) {
     this.props.onDelete(this.props.whichItem);
-  },
-  handleEdit: function() {
+  }
+
+  handleEdit(e) {
     this.props.onEdit(this.props.whichItem);
-  },
-  handleRun: function() {
+  }
+
+  handleRun(e) {
     this.props.onRun(this.props.whichItem);
-  },
-  render: function() {
+  }
+
+  render() {
     let params = '';
     if (this.props.singleItem.allowParams == 'true') {
       params = ' [params]';
@@ -45,6 +57,6 @@ var AptList = React.createClass({
       </li>
     )
   }
-});
+};
 
 module.exports = AptList;

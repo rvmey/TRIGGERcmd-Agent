@@ -1,7 +1,52 @@
-var $ = jQuery = require('jquery');
+import i18next from "i18next";
+import { initReactI18next } from "react-i18next";
+var fs = eRequire('fs');
+// import LanguageDetector from 'i18next-browser-languagedetector';
+
+var lang;
+try {
+  lang = fs.readFileSync(languageLocation).toString();;
+  console.log("Found " + lang + " in " + languageLocation);
+} catch (err) {
+  console.log(err);
+  console.log("No language found in " + languageLocation + " using en.");
+  lang = 'en';
+}
+
+i18next
+  .use(initReactI18next)
+  .init({
+    lng: lang,
+    fallbackLng: 'en',
+    debug: false,
+    react: {
+      useSuspense: true
+    },
+    resources: {
+      en: {
+        translation: {
+          "Add": "Add",
+          "Publish Your Own Example": "Publish Your Own Example",
+          "Operating System": "Operating System",
+          "Example Commands": "Example Commands"
+        }
+      },
+      pt: {
+        translation: {
+          "Add": "Adicionar",
+          "Publish Your Own Example": "Publique Seu Próprio Exemplo",
+          "Operating System": "Sistema Operacional",
+          "Example Commands": "Comandos de Exemplo"
+        }
+      }
+    }
+  });
+
+var $ = require('jquery');
+global.jQuery = require("jquery");
+// var $ = jQuery = require('jquery');
 var _ = require('lodash');
 var bootstrap = require('bootstrap');
-var fs = eRequire('fs');
 var loadApts = JSON.parse(fs.readFileSync(dataLocation));
 // var loadCmds = JSON.parse(fs.readFileSync(cmdLocation));
 
@@ -15,31 +60,54 @@ var Toolbar = require('./exampleToolbar');
 var HeaderNav = require('./exampleHeaderNav');
 var AddAppointment = require('./AddAppointment');
 
-var MainInterface = React.createClass({
-  getInitialState: function() {
-    return {
+// var MainInterface = React.createClass({
+class MainInterface extends React.Component {
+  constructor(props) {
+    super(props);
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.componentWillUnmount = this.componentWillUnmount.bind(this);
+    this.componentDidUpdate = this.componentDidUpdate.bind(this);
+    this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
+    this.publishOwn = this.publishOwn.bind(this);
+    this.onlineInstructions = this.onlineInstructions.bind(this);
+    this.addItem = this.addItem.bind(this);
+    this.deleteMessage = this.deleteMessage.bind(this);
+    this.reOrder = this.reOrder.bind(this);
+    this.searchApts = this.searchApts.bind(this);
+    this.state = {
       aptBodyVisible: false,
       orderBy: 'name',
       orderDir: 'asc',
       queryText: '',
       myAppointments: loadApts,
       // myCmds: loadCmds
-    }//return
-  }, //getInitialState
+    }
+  }
 
-  componentDidMount: function() {
+  // getInitialState() {
+  //   return {
+  //     aptBodyVisible: false,
+  //     orderBy: 'name',
+  //     orderDir: 'asc',
+  //     queryText: '',
+  //     myAppointments: loadApts,
+  //     // myCmds: loadCmds
+  //   }//return
+  // } //getInitialState
+
+  componentDidMount() {
     ipc.on('addAppointment', function(event,message) {
       this.toggleAptDisplay();
     }.bind(this));
-  }, //componentDidMount
+  } //componentDidMount
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     ipc.removeListener('addAppointment', function(event,message) {
       this.toggleAptDisplay();
     }.bind(this));
-  }, //componentDidMount
+  } //componentDidMount
 
-  componentDidUpdate: function() {
+  componentDidUpdate() {
     if (!this.state.aptBodyVisible) {
       fs.writeFileSync(dataLocation, JSON.stringify(this.state.myAppointments, undefined, 1), 'utf8', function(err) {
         if (err) {
@@ -47,29 +115,29 @@ var MainInterface = React.createClass({
         }
       });//writeFile
     }    
-  }, //componentDidUpdate
+  } //componentDidUpdate
 
-  toggleAptDisplay: function() {
+  toggleAptDisplay(e) {
     var tempVisibility = !this.state.aptBodyVisible;
     this.setState({
       aptBodyVisible: tempVisibility
     }); //setState
-  }, //toggleAptDisplay
+  } //toggleAptDisplay
 
   // reloadCommands:function() {
     // console.log("reloadCommands function in examples.js ran, ipc.sendSync exampleAdded")
     // ipc.sendSync('exampleAdded');
   // }, //reloadCommands
 
-  publishOwn:function() {
+  publishOwn(e) {
     electron.shell.openExternal('https://www.triggercmd.com/forum/category/3/example-commands')
-  },
-
-  onlineInstructions:function(item) {
+  }
+  
+  onlineInstructions(item) {
     electron.shell.openExternal(item.url)
-  },
+  }
 
-  addItem: function(item) {
+  addItem(item) {
     var loadCmds = JSON.parse(fs.readFileSync(cmdLocation));
 
     // console.log(item);
@@ -102,30 +170,30 @@ var MainInterface = React.createClass({
 
     console.log("reloadCommands function in examples.js ran, ipc.sendSync exampleAdded")
     ipc.sendSync('exampleAdded');
-  }, //addItem
+  } //addItem
 
-  deleteMessage: function(item) {
+  deleteMessage(item) {
     var allApts = this.state.myAppointments;
     var newApts = _.without(allApts, item);
     this.setState({
       myAppointments: newApts
     }); //setState
-  }, //addMessage
+  } //addMessage
   
-  reOrder: function(orderBy, orderDir) {
+  reOrder(orderBy, orderDir) {
     this.setState({
       orderBy: orderBy,
       orderDir: orderDir
     }) //setState
-  }, //reOrder
+  } //reOrder
 
-  searchApts: function(query) {
+  searchApts(query) {
     this.setState({
       queryText: query
     }); //setState
-  }, //searchApts
+  } //searchApts
 
-  render: function() {
+  render() {
     var filteredApts = [];
     var queryText = this.state.queryText;
     var orderBy = this.state.orderBy;
@@ -190,7 +258,7 @@ var MainInterface = React.createClass({
           <div className="container">
            <div className="row">
              <div className="appointments col-sm-12">
-               <h2 className="appointments-headline">Example Commands</h2>
+               <h2 className="appointments-headline">{i18next.t('Example Commands')}</h2>
                <ul className="item-list media-list">{filteredApts}</ul>
              </div>{/* col-sm-12 */}
            </div>{/* row */}
@@ -199,7 +267,7 @@ var MainInterface = React.createClass({
       </div>
     );
   } //render
-});//MainInterface
+};//MainInterface
 
 ReactDOM.render(
   <MainInterface />,

@@ -1,3 +1,6 @@
+const i18n = require('i18next');
+const i18nextOptions = require('./configs/language.config');
+
 const {app, shell, Tray, Menu, BrowserWindow, ipcMain} = require('electron');
 
 // These are for the GUI editor:
@@ -65,6 +68,7 @@ var computeridfile;
 var computeridFromFile;
 var datafile;
 var datapath;
+var languagefile;
 
 agent.initFiles(null, function (tfile, cidfile, dfile, dpath) {
   tokenfile = tfile;
@@ -73,6 +77,7 @@ agent.initFiles(null, function (tfile, cidfile, dfile, dpath) {
   datapath = dpath;
   tokenFromFile = readMyFile(tokenfile);
   computeridFromFile = readMyFile(computeridfile);
+  languagefile = datapath + '/language.cfg';
 });
 
 var log_file = fs.createWriteStream(datapath + '/debug.log', {flags : 'w'});
@@ -119,6 +124,24 @@ app.on('ready', function(){
   var pap = require("posix-argv-parser");
   var args = pap.create();
   var v = pap.validators;
+
+  // initialize if not already initialized
+  if (!i18n.isInitialized) {
+    readLangFile(function (lang) {
+      if (lang) {
+        console.log("Language in language.cfg: " + lang);
+        i18nextOptions.lng = lang;
+      } else {
+        var language = app.getLocale();
+        var shortlang = language.substr(0,2);
+        console.log("Detected language: " + shortlang);
+        i18nextOptions.lng = shortlang;
+        writeLangFile(shortlang);
+      }
+      i18n.init(i18nextOptions);
+      console.log(i18n.t("Language translation initialized"));
+    })
+  }
 
   // Errors and quits unless you allow the squirrel parameters.
   args.createOption(["--squirrel-install", "--squirrel-updated", "--removeShortcut", "--squirrel-obsolete", "--squirrel-uninstall", "--createShortcut", "--squirrel-firstrun"], {
@@ -273,8 +296,36 @@ app.on("before-quit", (event) => {
   }
 });
 
+function writeLangFile(lang) {
+  fs.writeFileSync(languagefile, lang, function(err) {
+      if(err) {
+          return console.log(err);
+      }
+      console.log("Language " + lang + " saved for next time.");
+  });
+}
+
+function readLangFile(callback) {
+  var lang;
+  try {
+    lang = fs.readFileSync(languagefile).toString();
+  } catch (err) {
+    // console.log(err);
+  }
+  callback(lang);
+}
+
 function openEditor() {
-  editorWindow = new BrowserWindow({width: 800, height: 600, icon: __dirname + '/icon.png'});
+  // editorWindow = new BrowserWindow({width: 800, height: 600, icon: __dirname + '/icon.png'});
+
+  editorWindow = new BrowserWindow({width: 800, height: 600, 
+    icon: __dirname + '/icon.png', 
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+
+ 
   editorWindow.setMenu(null);
   // and load the index.html of the editor.
   editorWindow.loadURL('file://' + __dirname + '/editorindex.html');
@@ -351,22 +402,22 @@ var menuTemplate = [
     submenu: [
       {
         role: 'help',
-        label: 'Website',
+        label: i18n.t('Website'),
         click() { electron.shell.openExternal('http://www.triggercmd.com')}
       },        
     ]
   },{
-      label: 'View',
+      label: i18n.t('View'),
       submenu: [
         {
-          label: 'Reload',
+          label: i18n.t('Reload'),
           accelerator: 'CmdOrCtrl+R',
           click (item, focusedWindow) {
             if (focusedWindow) focusedWindow.reload()
           }
         },
         {
-          label: 'Toggle Developer Tools',
+          label: i18n.t('Toggle Developer Tools'),
           accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
           click (item, focusedWindow) {
             if (focusedWindow) focusedWindow.webContents.toggleDevTools()
@@ -381,15 +432,15 @@ var menuTemplate = [
       ]
     },
     {
-      label: "Edit",
+      label: i18n.t('Edit'),
       submenu: [
-          { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-          { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+          { label: i18n.t("Undo"), accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+          { label: i18n.t("Redo"), accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
           { type: "separator" },
-          { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-          { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-          { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-          { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+          { label: i18n.t("Cut"), accelerator: "CmdOrCtrl+X", selector: "cut:" },
+          { label: i18n.t("Copy"), accelerator: "CmdOrCtrl+C", selector: "copy:" },
+          { label: i18n.t("Paste"), accelerator: "CmdOrCtrl+V", selector: "paste:" },
+          { label: i18n.t("Select All"), accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
       ]
     }
 ];
@@ -407,7 +458,7 @@ function readMyFile(file) {
 function createWindow() {
     handleSubmission();
     // mainWindow = new BrowserWindow({ title: 'TRIGGERcmd Agent Sign In', width: 700, height: 390, titleBarStyle: 'hidden', icon: __dirname + '/icon.png' });
-    mainWindow = new BrowserWindow({ title: 'TRIGGERcmd Agent Sign In', 
+    mainWindow = new BrowserWindow({ title: i18n.t('TRIGGERcmd Agent Sign In'), 
       width: 700, 
       height: 390, 
       icon: __dirname + '/icon.png',
@@ -417,7 +468,7 @@ function createWindow() {
     });
     
     // mainWindow.toggleDevTools();
-    mainWindow.loadURL(`file://${__dirname}/index.html`);
+    mainWindow.loadURL(`file://${__dirname}/html/${i18n.t('en')}/index.html`);
 
     myAppMenu = Menu.buildFromTemplate(menuTemplate);
     Menu.setApplicationMenu(myAppMenu);
@@ -457,7 +508,7 @@ function handleSubmission() {
           if (token) {
             agent.createComputer(token,null, function (computerid) {
               if (computerid == 'MustSubscribe') {
-                mainWindow.loadURL(`file://${__dirname}/subscribefirst.html`);
+                mainWindow.loadURL(`file://${__dirname}/html/${i18n.t('en')}/subscribefirst.html`);
               } else {
                 agent.foreground(token,null,computerid);
                 startTrayIcon();
@@ -470,6 +521,153 @@ function handleSubmission() {
 }
 
 function startTrayIcon () {
+  if (process.platform === 'linux') {
+    var contextMenu = Menu.buildFromTemplate([
+      {
+        label: 'TRIGGERcmd.com',
+        click: function() {
+          console.log('Launching online computer list.');
+          shell.openExternal('https://www.triggercmd.com/user/computer/list');
+          // launchComputerList();  <- don't use this because it closes the app when the window closes.
+        }
+      },
+      {
+        label: i18n.t('Background Service'),
+        submenu: [
+          {
+            label: i18n.t('Install Background Service'),
+            click: function() {
+              console.log('Installing background service');
+              installService();
+            }
+          },
+          {
+            label: i18n.t('Remove Background Service'),
+            click: function() {
+              console.log('Removing background service');
+              removeService();
+            }
+          },
+        ]
+      },
+      {
+        label: i18n.t('Text Command Editor'),
+        // accelerator: 'Alt+Command+N',
+        click: function() {
+          console.log('Opening commands.json');        
+          openEditor();        
+        }
+      },
+      {
+        label: i18n.t('GUI Command Editor'),
+        // accelerator: 'Alt+Command+N',
+        click: function() {
+          console.log('Opening GUI editor');
+          openguiEditor();
+        }
+      },
+      { label: i18n.t('Quit'),
+        selector: 'terminate:',
+        click: function() {
+          doQuit = true;
+          app.exit(0);
+        }
+      }
+    ]);
+  } else if (process.platform === 'win32') {
+    var contextMenu = Menu.buildFromTemplate([
+      {
+        label: 'TRIGGERcmd.com',
+        click: function() {
+          console.log('Launching online computer list.');
+          shell.openExternal('https://www.triggercmd.com/user/computer/list');
+        }
+      },
+      {
+        label: i18n.t('Update Agent'),
+        click: function() {
+          console.log('Updating the TRIGGERcmd agent');
+          updateAgent();
+        }
+      },    
+      {
+        label: 'Background Service',
+        submenu: [
+          {
+            label: i18n.t('Install Background Service'),
+            click: function() {
+              console.log('Installing background service');
+              installService();
+            }
+          },
+          {
+            label: i18n.t('Remove Background Service'),
+            click: function() {
+              console.log('Removing background service');
+              removeService();
+            }
+          },
+        ]
+      },
+      {
+        label: i18n.t('Text Command Editor'),
+        // accelerator: 'Alt+Command+N',
+        click: function() {
+          console.log('Opening commands.json');
+          openEditor();
+        }
+      },
+      {
+        label: i18n.t('GUI Command Editor'),
+        // accelerator: 'Alt+Command+N',
+        click: function() {
+          console.log('Opening GUI editor');
+          openguiEditor();
+        }
+      },
+      { label: i18n.t('Quit'),
+        selector: 'terminate:',
+        click: function() {
+          doQuit = true;
+          app.exit(0);
+        }
+      }
+    ]);
+  } else {
+    var contextMenu = Menu.buildFromTemplate([
+      {
+        label: 'TRIGGERcmd.com',
+        click: function() {
+          console.log('Launching online computer list.');
+          shell.openExternal('https://www.triggercmd.com/user/computer/list');
+        }
+      },
+      {
+        label: i18n.t('Text Command Editor'),
+        // accelerator: 'Alt+Command+N',
+        click: function() {
+          console.log('Opening commands.json');
+          openEditor();
+        }
+      },
+      {
+        label: i18n.t('GUI Command Editor'),
+        // accelerator: 'Alt+Command+N',
+        click: function() {
+          console.log('Opening GUI editor');
+          openguiEditor();
+        }
+      },
+      { label: i18n.t('Quit'),
+        selector: 'terminate:',
+        click: function() {
+          doQuit = true;
+          app.exit(0);
+        }
+      }
+    ]);
+  }
+
   appIcon.setToolTip('TRIGGERcmd');
   appIcon.setContextMenu(contextMenu);
 }
@@ -495,49 +693,6 @@ function installService () {
     sudo.exec(cmd, options, function(error, stdout, stderr) {});
   }
 }
-
-function addToPath() {
-  console.log('Adding to path.');
-  if (process.platform === 'win32') {
-    // console.log('Installing service.');
-    var i = 250;
-    if (__dirname.includes('\\resources\\app\\src')){
-      i = __dirname.indexOf('\\resources\\app\\src')
-    }
-    var exepath = __dirname.substring(0,i);
-    console.log(exepath);
-    var cmd = 'node winpath --add ' + exepath;
-    wincmd.elevate(cmd,function(error, stdout, stderr){
-      if (error !== null) {
-          console.log('Path update error: ' + error);
-      }
-      console.log(stdout);
-      console.log(stderr);
-    });
-  }
-}
-
-function removeFromPath() {
-  console.log('Removing from path.');
-  if (process.platform === 'win32') {
-    // console.log('Installing service.');
-    var i = 250;
-    if (__dirname.includes('\\resources\\app\\src')){
-      i = __dirname.indexOf('\\resources\\app\\src')
-    }
-    var exepath = __dirname.substring(0,i);
-
-    var cmd = 'node winpath --remove ' + exepath;
-    wincmd.elevate(cmd,function(error, stdout, stderr){
-      if (error !== null) {
-          console.log('Path update error: ' + error);
-      }
-      console.log(stdout);
-      console.log(stderr);
-    });
-  }
-}
-
 
 function startService () {
     console.log('Starting background service.');
@@ -576,172 +731,6 @@ function launchComputerList(){
     }
   });
   clWindow.loadURL('https://www.triggercmd.com/user/auth/login');
-}
-
-if (process.platform === 'linux') {
-  var contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'TRIGGERcmd.com',
-      click: function() {
-        console.log('Launching online computer list.');
-        shell.openExternal('https://www.triggercmd.com/user/computer/list');
-        // launchComputerList();  <- don't use this because it closes the app when the window closes.
-      }
-    },
-    {
-      label: 'Background Service',
-      submenu: [
-        {
-          label: 'Install Background Service',
-          click: function() {
-            console.log('Installing background service');
-            installService();
-          }
-        },
-        {
-          label: 'Remove Background Service',
-          click: function() {
-            console.log('Removing background service');
-            removeService();
-          }
-        },
-      ]
-    },
-    {
-      label: 'Text Command Editor',
-      // accelerator: 'Alt+Command+N',
-      click: function() {
-        console.log('Opening commands.json');        
-        openEditor();        
-      }
-    },
-    {
-      label: 'GUI Command Editor',
-      // accelerator: 'Alt+Command+N',
-      click: function() {
-        console.log('Opening GUI editor');
-        openguiEditor();
-      }
-    },
-    { label: 'Quit',
-      selector: 'terminate:',
-      click: function() {
-        doQuit = true;
-        app.exit(0);
-      }
-    }
-  ]);
-} else if (process.platform === 'win32') {
-  var contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'TRIGGERcmd.com',
-      click: function() {
-        console.log('Launching online computer list.');
-        shell.openExternal('https://www.triggercmd.com/user/computer/list');
-      }
-    },
-    {
-      label: 'Update Agent',
-      click: function() {
-        console.log('Updating the TRIGGERcmd agent');
-        updateAgent();
-      }
-    },    
-    {
-      label: 'Background Service',
-      submenu: [
-        {
-          label: 'Install Background Service',
-          click: function() {
-            console.log('Installing background service');
-            installService();
-          }
-        },
-        {
-          label: 'Remove Background Service',
-          click: function() {
-            console.log('Removing background service');
-            removeService();
-          }
-        },
-      ]
-    },
-    {
-      label: 'System PATH',
-      submenu: [
-        {
-          label: 'Add to system PATH',
-          click: function() {
-            console.log('Add to path selected.');
-            addToPath();
-          }
-        },
-        {
-          label: 'Remove from system PATH',
-          click: function() {
-            console.log('Remove from path selected.');
-            removeFromPath();
-          }
-        },
-      ]
-    },
-    {
-      label: 'Text Command Editor',
-      // accelerator: 'Alt+Command+N',
-      click: function() {
-        console.log('Opening commands.json');
-        openEditor();
-      }
-    },
-    {
-      label: 'GUI Command Editor',
-      // accelerator: 'Alt+Command+N',
-      click: function() {
-        console.log('Opening GUI editor');
-        openguiEditor();
-      }
-    },
-    { label: 'Quit',
-      selector: 'terminate:',
-      click: function() {
-        doQuit = true;
-        app.exit(0);
-      }
-    }
-  ]);
-} else {
-  var contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'TRIGGERcmd.com',
-      click: function() {
-        console.log('Launching online computer list.');
-        shell.openExternal('https://www.triggercmd.com/user/computer/list');
-      }
-    },
-    {
-      label: 'Text Command Editor',
-      // accelerator: 'Alt+Command+N',
-      click: function() {
-        console.log('Opening commands.json');
-        openEditor();
-      }
-    },
-    {
-      label: 'GUI Command Editor',
-      // accelerator: 'Alt+Command+N',
-      click: function() {
-        console.log('Opening GUI editor');
-        openguiEditor();
-      }
-    },
-    { label: 'Quit',
-      selector: 'terminate:',
-      click: function() {
-        doQuit = true;
-        app.exit(0);
-      }
-    }
-  ]);
 }
 
 function handleSquirrelEvent() {
@@ -805,7 +794,6 @@ function handleSquirrelEvent() {
 
       // Install desktop and start menu shortcuts
       spawnUpdate(['--createShortcut', exeName, '--shortcut-locations=Desktop,Startup,StartMenu']);
-      // addToPath();
 
       setTimeout(app.quit, squirreltimeout);
       return true;

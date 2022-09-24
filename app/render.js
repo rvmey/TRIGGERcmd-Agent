@@ -2893,6 +2893,430 @@ module.exports = {
 },{}],36:[function(require,module,exports){
 'use strict';
 
+var _classCallCheck = require('@babel/runtime/helpers/classCallCheck');
+var _createClass = require('@babel/runtime/helpers/createClass');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var _classCallCheck__default = /*#__PURE__*/_interopDefaultLegacy(_classCallCheck);
+var _createClass__default = /*#__PURE__*/_interopDefaultLegacy(_createClass);
+
+var arr = [];
+var each = arr.forEach;
+var slice = arr.slice;
+function defaults(obj) {
+  each.call(slice.call(arguments, 1), function (source) {
+    if (source) {
+      for (var prop in source) {
+        if (obj[prop] === undefined) obj[prop] = source[prop];
+      }
+    }
+  });
+  return obj;
+}
+
+// eslint-disable-next-line no-control-regex
+var fieldContentRegExp = /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
+
+var serializeCookie = function serializeCookie(name, val, options) {
+  var opt = options || {};
+  opt.path = opt.path || '/';
+  var value = encodeURIComponent(val);
+  var str = "".concat(name, "=").concat(value);
+
+  if (opt.maxAge > 0) {
+    var maxAge = opt.maxAge - 0;
+    if (Number.isNaN(maxAge)) throw new Error('maxAge should be a Number');
+    str += "; Max-Age=".concat(Math.floor(maxAge));
+  }
+
+  if (opt.domain) {
+    if (!fieldContentRegExp.test(opt.domain)) {
+      throw new TypeError('option domain is invalid');
+    }
+
+    str += "; Domain=".concat(opt.domain);
+  }
+
+  if (opt.path) {
+    if (!fieldContentRegExp.test(opt.path)) {
+      throw new TypeError('option path is invalid');
+    }
+
+    str += "; Path=".concat(opt.path);
+  }
+
+  if (opt.expires) {
+    if (typeof opt.expires.toUTCString !== 'function') {
+      throw new TypeError('option expires is invalid');
+    }
+
+    str += "; Expires=".concat(opt.expires.toUTCString());
+  }
+
+  if (opt.httpOnly) str += '; HttpOnly';
+  if (opt.secure) str += '; Secure';
+
+  if (opt.sameSite) {
+    var sameSite = typeof opt.sameSite === 'string' ? opt.sameSite.toLowerCase() : opt.sameSite;
+
+    switch (sameSite) {
+      case true:
+        str += '; SameSite=Strict';
+        break;
+
+      case 'lax':
+        str += '; SameSite=Lax';
+        break;
+
+      case 'strict':
+        str += '; SameSite=Strict';
+        break;
+
+      case 'none':
+        str += '; SameSite=None';
+        break;
+
+      default:
+        throw new TypeError('option sameSite is invalid');
+    }
+  }
+
+  return str;
+};
+
+var cookie = {
+  create: function create(name, value, minutes, domain) {
+    var cookieOptions = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {
+      path: '/',
+      sameSite: 'strict'
+    };
+
+    if (minutes) {
+      cookieOptions.expires = new Date();
+      cookieOptions.expires.setTime(cookieOptions.expires.getTime() + minutes * 60 * 1000);
+    }
+
+    if (domain) cookieOptions.domain = domain;
+    document.cookie = serializeCookie(name, encodeURIComponent(value), cookieOptions);
+  },
+  read: function read(name) {
+    var nameEQ = "".concat(name, "=");
+    var ca = document.cookie.split(';');
+
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+
+      while (c.charAt(0) === ' ') {
+        c = c.substring(1, c.length);
+      }
+
+      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+
+    return null;
+  },
+  remove: function remove(name) {
+    this.create(name, '', -1);
+  }
+};
+var cookie$1 = {
+  name: 'cookie',
+  lookup: function lookup(options) {
+    var found;
+
+    if (options.lookupCookie && typeof document !== 'undefined') {
+      var c = cookie.read(options.lookupCookie);
+      if (c) found = c;
+    }
+
+    return found;
+  },
+  cacheUserLanguage: function cacheUserLanguage(lng, options) {
+    if (options.lookupCookie && typeof document !== 'undefined') {
+      cookie.create(options.lookupCookie, lng, options.cookieMinutes, options.cookieDomain, options.cookieOptions);
+    }
+  }
+};
+
+var querystring = {
+  name: 'querystring',
+  lookup: function lookup(options) {
+    var found;
+
+    if (typeof window !== 'undefined') {
+      var search = window.location.search;
+
+      if (!window.location.search && window.location.hash && window.location.hash.indexOf('?') > -1) {
+        search = window.location.hash.substring(window.location.hash.indexOf('?'));
+      }
+
+      var query = search.substring(1);
+      var params = query.split('&');
+
+      for (var i = 0; i < params.length; i++) {
+        var pos = params[i].indexOf('=');
+
+        if (pos > 0) {
+          var key = params[i].substring(0, pos);
+
+          if (key === options.lookupQuerystring) {
+            found = params[i].substring(pos + 1);
+          }
+        }
+      }
+    }
+
+    return found;
+  }
+};
+
+var hasLocalStorageSupport = null;
+
+var localStorageAvailable = function localStorageAvailable() {
+  if (hasLocalStorageSupport !== null) return hasLocalStorageSupport;
+
+  try {
+    hasLocalStorageSupport = window !== 'undefined' && window.localStorage !== null;
+    var testKey = 'i18next.translate.boo';
+    window.localStorage.setItem(testKey, 'foo');
+    window.localStorage.removeItem(testKey);
+  } catch (e) {
+    hasLocalStorageSupport = false;
+  }
+
+  return hasLocalStorageSupport;
+};
+
+var localStorage = {
+  name: 'localStorage',
+  lookup: function lookup(options) {
+    var found;
+
+    if (options.lookupLocalStorage && localStorageAvailable()) {
+      var lng = window.localStorage.getItem(options.lookupLocalStorage);
+      if (lng) found = lng;
+    }
+
+    return found;
+  },
+  cacheUserLanguage: function cacheUserLanguage(lng, options) {
+    if (options.lookupLocalStorage && localStorageAvailable()) {
+      window.localStorage.setItem(options.lookupLocalStorage, lng);
+    }
+  }
+};
+
+var hasSessionStorageSupport = null;
+
+var sessionStorageAvailable = function sessionStorageAvailable() {
+  if (hasSessionStorageSupport !== null) return hasSessionStorageSupport;
+
+  try {
+    hasSessionStorageSupport = window !== 'undefined' && window.sessionStorage !== null;
+    var testKey = 'i18next.translate.boo';
+    window.sessionStorage.setItem(testKey, 'foo');
+    window.sessionStorage.removeItem(testKey);
+  } catch (e) {
+    hasSessionStorageSupport = false;
+  }
+
+  return hasSessionStorageSupport;
+};
+
+var sessionStorage = {
+  name: 'sessionStorage',
+  lookup: function lookup(options) {
+    var found;
+
+    if (options.lookupSessionStorage && sessionStorageAvailable()) {
+      var lng = window.sessionStorage.getItem(options.lookupSessionStorage);
+      if (lng) found = lng;
+    }
+
+    return found;
+  },
+  cacheUserLanguage: function cacheUserLanguage(lng, options) {
+    if (options.lookupSessionStorage && sessionStorageAvailable()) {
+      window.sessionStorage.setItem(options.lookupSessionStorage, lng);
+    }
+  }
+};
+
+var navigator$1 = {
+  name: 'navigator',
+  lookup: function lookup(options) {
+    var found = [];
+
+    if (typeof navigator !== 'undefined') {
+      if (navigator.languages) {
+        // chrome only; not an array, so can't use .push.apply instead of iterating
+        for (var i = 0; i < navigator.languages.length; i++) {
+          found.push(navigator.languages[i]);
+        }
+      }
+
+      if (navigator.userLanguage) {
+        found.push(navigator.userLanguage);
+      }
+
+      if (navigator.language) {
+        found.push(navigator.language);
+      }
+    }
+
+    return found.length > 0 ? found : undefined;
+  }
+};
+
+var htmlTag = {
+  name: 'htmlTag',
+  lookup: function lookup(options) {
+    var found;
+    var htmlTag = options.htmlTag || (typeof document !== 'undefined' ? document.documentElement : null);
+
+    if (htmlTag && typeof htmlTag.getAttribute === 'function') {
+      found = htmlTag.getAttribute('lang');
+    }
+
+    return found;
+  }
+};
+
+var path = {
+  name: 'path',
+  lookup: function lookup(options) {
+    var found;
+
+    if (typeof window !== 'undefined') {
+      var language = window.location.pathname.match(/\/([a-zA-Z-]*)/g);
+
+      if (language instanceof Array) {
+        if (typeof options.lookupFromPathIndex === 'number') {
+          if (typeof language[options.lookupFromPathIndex] !== 'string') {
+            return undefined;
+          }
+
+          found = language[options.lookupFromPathIndex].replace('/', '');
+        } else {
+          found = language[0].replace('/', '');
+        }
+      }
+    }
+
+    return found;
+  }
+};
+
+var subdomain = {
+  name: 'subdomain',
+  lookup: function lookup(options) {
+    // If given get the subdomain index else 1
+    var lookupFromSubdomainIndex = typeof options.lookupFromSubdomainIndex === 'number' ? options.lookupFromSubdomainIndex + 1 : 1; // get all matches if window.location. is existing
+    // first item of match is the match itself and the second is the first group macht which sould be the first subdomain match
+    // is the hostname no public domain get the or option of localhost
+
+    var language = typeof window !== 'undefined' && window.location && window.location.hostname && window.location.hostname.match(/^(\w{2,5})\.(([a-z0-9-]{1,63}\.[a-z]{2,6})|localhost)/i); // if there is no match (null) return undefined
+
+    if (!language) return undefined; // return the given group match
+
+    return language[lookupFromSubdomainIndex];
+  }
+};
+
+function getDefaults() {
+  return {
+    order: ['querystring', 'cookie', 'localStorage', 'sessionStorage', 'navigator', 'htmlTag'],
+    lookupQuerystring: 'lng',
+    lookupCookie: 'i18next',
+    lookupLocalStorage: 'i18nextLng',
+    lookupSessionStorage: 'i18nextLng',
+    // cache user language
+    caches: ['localStorage'],
+    excludeCacheFor: ['cimode'] // cookieMinutes: 10,
+    // cookieDomain: 'myDomain'
+
+  };
+}
+
+var Browser = /*#__PURE__*/function () {
+  function Browser(services) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    _classCallCheck__default["default"](this, Browser);
+
+    this.type = 'languageDetector';
+    this.detectors = {};
+    this.init(services, options);
+  }
+
+  _createClass__default["default"](Browser, [{
+    key: "init",
+    value: function init(services) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var i18nOptions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      this.services = services;
+      this.options = defaults(options, this.options || {}, getDefaults()); // backwards compatibility
+
+      if (this.options.lookupFromUrlIndex) this.options.lookupFromPathIndex = this.options.lookupFromUrlIndex;
+      this.i18nOptions = i18nOptions;
+      this.addDetector(cookie$1);
+      this.addDetector(querystring);
+      this.addDetector(localStorage);
+      this.addDetector(sessionStorage);
+      this.addDetector(navigator$1);
+      this.addDetector(htmlTag);
+      this.addDetector(path);
+      this.addDetector(subdomain);
+    }
+  }, {
+    key: "addDetector",
+    value: function addDetector(detector) {
+      this.detectors[detector.name] = detector;
+    }
+  }, {
+    key: "detect",
+    value: function detect(detectionOrder) {
+      var _this = this;
+
+      if (!detectionOrder) detectionOrder = this.options.order;
+      var detected = [];
+      detectionOrder.forEach(function (detectorName) {
+        if (_this.detectors[detectorName]) {
+          var lookup = _this.detectors[detectorName].lookup(_this.options);
+
+          if (lookup && typeof lookup === 'string') lookup = [lookup];
+          if (lookup) detected = detected.concat(lookup);
+        }
+      });
+      if (this.services.languageUtils.getBestMatchFromCodes) return detected; // new i18next v19.5.0
+
+      return detected.length > 0 ? detected[0] : null; // a little backward compatibility
+    }
+  }, {
+    key: "cacheUserLanguage",
+    value: function cacheUserLanguage(lng, caches) {
+      var _this2 = this;
+
+      if (!caches) caches = this.options.caches;
+      if (!caches) return;
+      if (this.options.excludeCacheFor && this.options.excludeCacheFor.indexOf(lng) > -1) return;
+      caches.forEach(function (cacheName) {
+        if (_this2.detectors[cacheName]) _this2.detectors[cacheName].cacheUserLanguage(lng, _this2.options);
+      });
+    }
+  }]);
+
+  return Browser;
+}();
+
+Browser.type = 'languageDetector';
+
+module.exports = Browser;
+
+},{"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5}],37:[function(require,module,exports){
+'use strict';
+
 var _typeof = require('@babel/runtime/helpers/typeof');
 var _classCallCheck = require('@babel/runtime/helpers/classCallCheck');
 var _createClass = require('@babel/runtime/helpers/createClass');
@@ -5696,7 +6120,7 @@ instance.createInstance = I18n.createInstance;
 
 module.exports = instance;
 
-},{"@babel/runtime/helpers/assertThisInitialized":3,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/getPrototypeOf":7,"@babel/runtime/helpers/inherits":8,"@babel/runtime/helpers/possibleConstructorReturn":15,"@babel/runtime/helpers/toArray":18,"@babel/runtime/helpers/typeof":19}],37:[function(require,module,exports){
+},{"@babel/runtime/helpers/assertThisInitialized":3,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/getPrototypeOf":7,"@babel/runtime/helpers/inherits":8,"@babel/runtime/helpers/possibleConstructorReturn":15,"@babel/runtime/helpers/toArray":18,"@babel/runtime/helpers/typeof":19}],38:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.6.1
  * https://jquery.com/
@@ -16607,7 +17031,7 @@ if ( typeof noGlobal === "undefined" ) {
 return jQuery;
 } );
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 (function (global){(function (){
 /**
  * @license
@@ -33772,7 +34196,7 @@ return jQuery;
 }.call(this));
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -33864,7 +34288,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -33915,7 +34339,7 @@ exports.homedir = function () {
 	return '/'
 };
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -34101,7 +34525,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 (function (process){(function (){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -34207,7 +34631,7 @@ checkPropTypes.resetWarningCache = function() {
 module.exports = checkPropTypes;
 
 }).call(this)}).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":43,"_process":41}],43:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":44,"_process":42}],44:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -34221,7 +34645,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 (function (process){(function (){
 /** @license React v16.14.0
  * react-dom.development.js
@@ -59237,7 +59661,7 @@ exports.version = ReactVersion;
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":41,"object-assign":39,"prop-types/checkPropTypes":42,"react":60,"scheduler":65,"scheduler/tracing":66}],45:[function(require,module,exports){
+},{"_process":42,"object-assign":40,"prop-types/checkPropTypes":43,"react":61,"scheduler":66,"scheduler/tracing":67}],46:[function(require,module,exports){
 /** @license React v16.14.0
  * react-dom.production.min.js
  *
@@ -59531,7 +59955,7 @@ exports.flushSync=function(a,b){if((W&(fj|gj))!==V)throw Error(u(187));var c=W;W
 exports.unmountComponentAtNode=function(a){if(!gk(a))throw Error(u(40));return a._reactRootContainer?(Nj(function(){ik(null,null,a,!1,function(){a._reactRootContainer=null;a[Od]=null})}),!0):!1};exports.unstable_batchedUpdates=Mj;exports.unstable_createPortal=function(a,b){return kk(a,b,2<arguments.length&&void 0!==arguments[2]?arguments[2]:null)};
 exports.unstable_renderSubtreeIntoContainer=function(a,b,c,d){if(!gk(c))throw Error(u(200));if(null==a||void 0===a._reactInternalFiber)throw Error(u(38));return ik(a,b,c,!1,d)};exports.version="16.14.0";
 
-},{"object-assign":39,"react":60,"scheduler":65}],46:[function(require,module,exports){
+},{"object-assign":40,"react":61,"scheduler":66}],47:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -59573,7 +59997,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":44,"./cjs/react-dom.production.min.js":45,"_process":41}],47:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":45,"./cjs/react-dom.production.min.js":46,"_process":42}],48:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -59599,7 +60023,7 @@ function I18nextProvider(_ref) {
     value: value
   }, children);
 }
-},{"./context":50,"react":60}],48:[function(require,module,exports){
+},{"./context":51,"react":61}],49:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -59891,7 +60315,7 @@ function Trans(_ref) {
   var useAsParent = parent !== undefined ? parent : reactI18nextOptions.defaultTransParent;
   return useAsParent ? (0, _react.createElement)(useAsParent, additionalProps, content) : content;
 }
-},{"./context":50,"./utils":55,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":9,"@babel/runtime/helpers/objectWithoutProperties":13,"@babel/runtime/helpers/typeof":19,"html-parse-stringify":34,"react":60}],49:[function(require,module,exports){
+},{"./context":51,"./utils":56,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":9,"@babel/runtime/helpers/objectWithoutProperties":13,"@babel/runtime/helpers/typeof":19,"html-parse-stringify":34,"react":61}],50:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -59925,7 +60349,7 @@ function Translation(props) {
     lng: i18n.language
   }, ready);
 }
-},{"./useTranslation":54,"@babel/runtime/helpers/interopRequireDefault":9,"@babel/runtime/helpers/objectWithoutProperties":13,"@babel/runtime/helpers/slicedToArray":17}],50:[function(require,module,exports){
+},{"./useTranslation":55,"@babel/runtime/helpers/interopRequireDefault":9,"@babel/runtime/helpers/objectWithoutProperties":13,"@babel/runtime/helpers/slicedToArray":17}],51:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -60052,7 +60476,7 @@ function getInitialProps() {
   ret.initialLanguage = i18n.language;
   return ret;
 }
-},{"./unescape":52,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":9,"react":60}],51:[function(require,module,exports){
+},{"./unescape":53,"@babel/runtime/helpers/classCallCheck":4,"@babel/runtime/helpers/createClass":5,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":9,"react":61}],52:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -60201,7 +60625,7 @@ var selectOrdinal = function selectOrdinal() {
 };
 
 exports.selectOrdinal = selectOrdinal;
-},{"./I18nextProvider":47,"./Trans":48,"./Translation":49,"./context":50,"./useSSR":53,"./useTranslation":54,"./withSSR":56,"./withTranslation":57}],52:[function(require,module,exports){
+},{"./I18nextProvider":48,"./Trans":49,"./Translation":50,"./context":51,"./useSSR":54,"./useTranslation":55,"./withSSR":57,"./withTranslation":58}],53:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -60241,7 +60665,7 @@ var unescape = function unescape(text) {
 };
 
 exports.unescape = unescape;
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -60280,7 +60704,7 @@ function useSSR(initialI18nStore, initialLanguage) {
     i18n.initializedLanguageOnce = true;
   }
 }
-},{"./context":50,"react":60}],54:[function(require,module,exports){
+},{"./context":51,"react":61}],55:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -60413,7 +60837,7 @@ function useTranslation(ns) {
     });
   });
 }
-},{"./context":50,"./utils":55,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":9,"@babel/runtime/helpers/slicedToArray":17,"react":60}],55:[function(require,module,exports){
+},{"./context":51,"./utils":56,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":9,"@babel/runtime/helpers/slicedToArray":17,"react":61}],56:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -60511,7 +60935,7 @@ function hasLoadedNamespace(ns, i18n) {
 function getDisplayName(Component) {
   return Component.displayName || Component.name || (typeof Component === 'string' && Component.length > 0 ? Component : 'Unknown');
 }
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -60555,7 +60979,7 @@ function withSSR() {
     return I18nextWithSSR;
   };
 }
-},{"./context":50,"./useSSR":53,"./utils":55,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":9,"@babel/runtime/helpers/objectWithoutProperties":13,"react":60}],57:[function(require,module,exports){
+},{"./context":51,"./useSSR":54,"./utils":56,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":9,"@babel/runtime/helpers/objectWithoutProperties":13,"react":61}],58:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -60625,7 +61049,7 @@ function withTranslation(ns) {
     return options.withRef ? (0, _react.forwardRef)(forwardRef) : I18nextWithTranslation;
   };
 }
-},{"./useTranslation":54,"./utils":55,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":9,"@babel/runtime/helpers/objectWithoutProperties":13,"@babel/runtime/helpers/slicedToArray":17,"react":60}],58:[function(require,module,exports){
+},{"./useTranslation":55,"./utils":56,"@babel/runtime/helpers/defineProperty":6,"@babel/runtime/helpers/interopRequireDefault":9,"@babel/runtime/helpers/objectWithoutProperties":13,"@babel/runtime/helpers/slicedToArray":17,"react":61}],59:[function(require,module,exports){
 (function (process){(function (){
 /** @license React v16.14.0
  * react.development.js
@@ -62541,7 +62965,7 @@ exports.version = ReactVersion;
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":41,"object-assign":39,"prop-types/checkPropTypes":42}],59:[function(require,module,exports){
+},{"_process":42,"object-assign":40,"prop-types/checkPropTypes":43}],60:[function(require,module,exports){
 /** @license React v16.14.0
  * react.production.min.js
  *
@@ -62568,7 +62992,7 @@ key:d,ref:g,props:e,_owner:k}};exports.createContext=function(a,b){void 0===b&&(
 exports.lazy=function(a){return{$$typeof:A,_ctor:a,_status:-1,_result:null}};exports.memo=function(a,b){return{$$typeof:z,type:a,compare:void 0===b?null:b}};exports.useCallback=function(a,b){return Z().useCallback(a,b)};exports.useContext=function(a,b){return Z().useContext(a,b)};exports.useDebugValue=function(){};exports.useEffect=function(a,b){return Z().useEffect(a,b)};exports.useImperativeHandle=function(a,b,c){return Z().useImperativeHandle(a,b,c)};
 exports.useLayoutEffect=function(a,b){return Z().useLayoutEffect(a,b)};exports.useMemo=function(a,b){return Z().useMemo(a,b)};exports.useReducer=function(a,b,c){return Z().useReducer(a,b,c)};exports.useRef=function(a){return Z().useRef(a)};exports.useState=function(a){return Z().useState(a)};exports.version="16.14.0";
 
-},{"object-assign":39}],60:[function(require,module,exports){
+},{"object-assign":40}],61:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -62579,7 +63003,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"./cjs/react.development.js":58,"./cjs/react.production.min.js":59,"_process":41}],61:[function(require,module,exports){
+},{"./cjs/react.development.js":59,"./cjs/react.production.min.js":60,"_process":42}],62:[function(require,module,exports){
 (function (process){(function (){
 /** @license React v0.19.1
  * scheduler-tracing.development.js
@@ -62932,7 +63356,7 @@ exports.unstable_wrap = unstable_wrap;
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":41}],62:[function(require,module,exports){
+},{"_process":42}],63:[function(require,module,exports){
 /** @license React v0.19.1
  * scheduler-tracing.production.min.js
  *
@@ -62944,7 +63368,7 @@ exports.unstable_wrap = unstable_wrap;
 
 'use strict';var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_subscribe=function(){};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_unsubscribe=function(){};exports.unstable_wrap=function(a){return a};
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 (function (process){(function (){
 /** @license React v0.19.1
  * scheduler.development.js
@@ -63806,7 +64230,7 @@ exports.unstable_wrapCallback = unstable_wrapCallback;
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":41}],64:[function(require,module,exports){
+},{"_process":42}],65:[function(require,module,exports){
 /** @license React v0.19.1
  * scheduler.production.min.js
  *
@@ -63829,7 +64253,7 @@ exports.unstable_getCurrentPriorityLevel=function(){return R};exports.unstable_g
 exports.unstable_scheduleCallback=function(a,b,c){var d=exports.unstable_now();if("object"===typeof c&&null!==c){var e=c.delay;e="number"===typeof e&&0<e?d+e:d;c="number"===typeof c.timeout?c.timeout:Y(a)}else c=Y(a),e=d;c=e+c;a={id:P++,callback:b,priorityLevel:a,startTime:e,expirationTime:c,sortIndex:-1};e>d?(a.sortIndex=e,J(O,a),null===L(N)&&a===L(O)&&(U?h():U=!0,g(W,e-d))):(a.sortIndex=c,J(N,a),T||S||(T=!0,f(X)));return a};
 exports.unstable_shouldYield=function(){var a=exports.unstable_now();V(a);var b=L(N);return b!==Q&&null!==Q&&null!==b&&null!==b.callback&&b.startTime<=a&&b.expirationTime<Q.expirationTime||k()};exports.unstable_wrapCallback=function(a){var b=R;return function(){var c=R;R=b;try{return a.apply(this,arguments)}finally{R=c}}};
 
-},{}],65:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -63840,7 +64264,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"./cjs/scheduler.development.js":63,"./cjs/scheduler.production.min.js":64,"_process":41}],66:[function(require,module,exports){
+},{"./cjs/scheduler.development.js":64,"./cjs/scheduler.production.min.js":65,"_process":42}],67:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -63851,1134 +64275,823 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"./cjs/scheduler-tracing.development.js":61,"./cjs/scheduler-tracing.production.min.js":62,"_process":41}],67:[function(require,module,exports){
-"use strict";
-
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-
-var _reactI18next = require("react-i18next");
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
+},{"./cjs/scheduler-tracing.development.js":62,"./cjs/scheduler-tracing.production.min.js":63,"_process":42}],68:[function(require,module,exports){
 var React = require('react'); // var AddAppointment = React.createClass({
 
 
-var AddAppointment = /*#__PURE__*/function (_React$Component) {
-  _inherits(AddAppointment, _React$Component);
-
-  var _super = _createSuper(AddAppointment);
-
-  function AddAppointment(props) {
-    var _this;
-
-    _classCallCheck(this, AddAppointment);
-
-    _this = _super.call(this, props);
-    _this.handleTriggerChange = _this.handleTriggerChange.bind(_assertThisInitialized(_this));
-    _this.handleCommandChange = _this.handleCommandChange.bind(_assertThisInitialized(_this));
-    _this.handleOffCommandChange = _this.handleOffCommandChange.bind(_assertThisInitialized(_this));
-    _this.handleGroundChange = _this.handleGroundChange.bind(_assertThisInitialized(_this));
-    _this.handleVoiceChange = _this.handleVoiceChange.bind(_assertThisInitialized(_this));
-    _this.handleVoiceReplyChange = _this.handleVoiceReplyChange.bind(_assertThisInitialized(_this));
-    _this.handleAllowParamsChange = _this.handleAllowParamsChange.bind(_assertThisInitialized(_this));
-    _this.toggleAptDisplay = _this.toggleAptDisplay.bind(_assertThisInitialized(_this));
-    _this.groundInstructions = _this.groundInstructions.bind(_assertThisInitialized(_this));
-    _this.offCommandInstructions = _this.offCommandInstructions.bind(_assertThisInitialized(_this));
-    _this.handleAdd = _this.handleAdd.bind(_assertThisInitialized(_this));
-    return _this;
+class AddAppointment extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleTriggerChange = this.handleTriggerChange.bind(this);
+    this.handleCommandChange = this.handleCommandChange.bind(this);
+    this.handleOffCommandChange = this.handleOffCommandChange.bind(this);
+    this.handleGroundChange = this.handleGroundChange.bind(this);
+    this.handleVoiceChange = this.handleVoiceChange.bind(this);
+    this.handleVoiceReplyChange = this.handleVoiceReplyChange.bind(this);
+    this.handleAllowParamsChange = this.handleAllowParamsChange.bind(this);
+    this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
+    this.groundInstructions = this.groundInstructions.bind(this);
+    this.offCommandInstructions = this.offCommandInstructions.bind(this);
+    this.handleAdd = this.handleAdd.bind(this);
   }
 
-  _createClass(AddAppointment, [{
-    key: "toggleAptDisplay",
-    value: function toggleAptDisplay(e) {
-      this.props.handleToggle();
+  toggleAptDisplay(e) {
+    this.props.handleToggle();
+  }
+
+  groundInstructions(e) {
+    this.props.handleGroundInstructions(e);
+  }
+
+  offCommandInstructions(e) {
+    this.props.handleOffCommandInstructions(e);
+  } // handleAdd: function(e) {
+
+
+  handleAdd(e) {
+    e.preventDefault();
+    var tempItem = {
+      trigger: this.inputPetName.value,
+      command: this.inputPetOwner.value,
+      offCommand: this.inputOffCommand.value,
+      ground: this.inputAptDate.value,
+      voice: this.inputAptNotes.value,
+      voiceReply: this.inputVoiceReply.value,
+      allowParams: this.inputAllowParams.value
+    }; //tempitems
+
+    this.props.addApt(tempItem);
+    this.inputPetName.value = '';
+    this.inputPetOwner.value = '';
+    this.inputOffCommand.value = '';
+    this.inputAptDate.value = 'foreground';
+    this.inputAptNotes.value = '';
+    this.inputVoiceReply.value = '';
+    this.inputAllowParams.value = 'false';
+  } //handleAdd
+
+
+  handleTriggerChange(e) {
+    this.props.onTriggerChange(e.target.value);
+  }
+
+  handleCommandChange(e) {
+    this.props.onCommandChange(e.target.value);
+  }
+
+  handleOffCommandChange(e) {
+    this.props.onOffCommandChange(e.target.value);
+  }
+
+  handleGroundChange(e) {
+    this.props.onGroundChange(e.target.value);
+  }
+
+  handleVoiceChange(e) {
+    this.props.onVoiceChange(e.target.value);
+  }
+
+  handleVoiceReplyChange(e) {
+    this.props.onVoiceReplyChange(e.target.value);
+  }
+
+  handleAllowParamsChange(e) {
+    this.props.onAllowParamsChange(e.target.value);
+  }
+
+  render() {
+    const allowParamsvalue = this.props.editAllowParams || false;
+    var disableOffCommandField = true;
+
+    if (allowParamsvalue == "true") {
+      disableOffCommandField = false;
     }
-  }, {
-    key: "groundInstructions",
-    value: function groundInstructions(e) {
-      this.props.handleGroundInstructions(e);
-    }
-  }, {
-    key: "offCommandInstructions",
-    value: function offCommandInstructions(e) {
-      this.props.handleOffCommandInstructions(e);
-    } // handleAdd: function(e) {
 
-  }, {
-    key: "handleAdd",
-    value: function handleAdd(e) {
-      e.preventDefault();
-      var tempItem = {
-        trigger: this.inputPetName.value,
-        command: this.inputPetOwner.value,
-        offCommand: this.inputOffCommand.value,
-        ground: this.inputAptDate.value,
-        voice: this.inputAptNotes.value,
-        voiceReply: this.inputVoiceReply.value,
-        allowParams: this.inputAllowParams.value
-      }; //tempitems
+    let groundOptions;
 
-      this.props.addApt(tempItem);
-      this.inputPetName.value = '';
-      this.inputPetOwner.value = '';
-      this.inputOffCommand.value = '';
-      this.inputAptDate.value = 'foreground';
-      this.inputAptNotes.value = '';
-      this.inputVoiceReply.value = '';
-      this.inputAllowParams.value = 'false';
-    } //handleAdd
-
-  }, {
-    key: "handleTriggerChange",
-    value: function handleTriggerChange(e) {
-      this.props.onTriggerChange(e.target.value);
-    }
-  }, {
-    key: "handleCommandChange",
-    value: function handleCommandChange(e) {
-      this.props.onCommandChange(e.target.value);
-    }
-  }, {
-    key: "handleOffCommandChange",
-    value: function handleOffCommandChange(e) {
-      this.props.onOffCommandChange(e.target.value);
-    }
-  }, {
-    key: "handleGroundChange",
-    value: function handleGroundChange(e) {
-      this.props.onGroundChange(e.target.value);
-    }
-  }, {
-    key: "handleVoiceChange",
-    value: function handleVoiceChange(e) {
-      this.props.onVoiceChange(e.target.value);
-    }
-  }, {
-    key: "handleVoiceReplyChange",
-    value: function handleVoiceReplyChange(e) {
-      this.props.onVoiceReplyChange(e.target.value);
-    }
-  }, {
-    key: "handleAllowParamsChange",
-    value: function handleAllowParamsChange(e) {
-      this.props.onAllowParamsChange(e.target.value);
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this2 = this,
-          _React$createElement3;
-
-      var t = this.props.t;
-      var allowParamsvalue = this.props.editAllowParams || false;
-      var disableOffCommandField = true;
-
-      if (allowParamsvalue == "true") {
-        disableOffCommandField = false;
-      }
-
-      var groundOptions;
-
-      if (this.props.operatingSystem == 'darwin') {
-        var _React$createElement;
-
-        groundOptions = /*#__PURE__*/React.createElement("select", (_React$createElement = {
-          id: "mySelect",
-          className: "form-control"
-        }, _defineProperty(_React$createElement, "id", "aptDate"), _defineProperty(_React$createElement, "ref", function ref(_ref) {
-          return _this2.inputAptDate = _ref;
-        }), _defineProperty(_React$createElement, "onChange", this.handleGroundChange), _React$createElement), /*#__PURE__*/React.createElement("option", null, "foreground"));
-      } else {
-        var _React$createElement2;
-
-        groundOptions = /*#__PURE__*/React.createElement("select", (_React$createElement2 = {
-          id: "mySelect",
-          className: "form-control"
-        }, _defineProperty(_React$createElement2, "id", "aptDate"), _defineProperty(_React$createElement2, "ref", function ref(_ref2) {
-          return _this2.inputAptDate = _ref2;
-        }), _defineProperty(_React$createElement2, "onChange", this.handleGroundChange), _React$createElement2), /*#__PURE__*/React.createElement("option", null, "foreground"), /*#__PURE__*/React.createElement("option", null, "background"));
-      }
-
-      return /*#__PURE__*/React.createElement("div", {
-        className: "modal fade",
-        id: "addAppointment",
-        tabIndex: "-1",
-        role: "dialog"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "modal-dialog",
-        role: "document"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "modal-content"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "modal-header"
-      }, /*#__PURE__*/React.createElement("button", {
-        type: "button",
-        className: "close",
-        onClick: this.toggleAptDisplay,
-        "aria-label": "Close"
-      }, /*#__PURE__*/React.createElement("span", {
-        "aria-hidden": "true"
-      }, "\xD7")), /*#__PURE__*/React.createElement("h4", {
-        className: "modal-title"
-      }, "Add a command")), /*#__PURE__*/React.createElement("form", {
-        className: "modal-body add-appointment form-horizontal",
-        onSubmit: this.handleAdd
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "petName"
-      }, "Trigger"), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, /*#__PURE__*/React.createElement("input", {
-        type: "text",
-        className: "form-control",
-        id: "petName",
-        ref: function ref(_ref3) {
-          return _this2.inputPetName = _ref3;
-        },
-        placeholder: t('Trigger name'),
-        onChange: this.handleTriggerChange,
-        required: true
-      }))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "petOwner"
-      }, "Command"), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, /*#__PURE__*/React.createElement("input", {
-        type: "text",
-        className: "form-control",
-        id: "petOwner",
-        ref: function ref(_ref4) {
-          return _this2.inputPetOwner = _ref4;
-        },
-        placeholder: t('Your command'),
-        onChange: this.handleCommandChange,
-        required: true
-      }))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "offCommand"
-      }, "Off Command"), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, /*#__PURE__*/React.createElement("input", {
-        type: "text",
-        className: "form-control",
-        disabled: disableOffCommandField,
-        id: "offCommand",
-        ref: function ref(_ref5) {
-          return _this2.inputOffCommand = _ref5;
-        },
-        placeholder: t('If filled, runs instead of Command when off is the parameter'),
-        onChange: this.handleOffCommandChange
-      }), /*#__PURE__*/React.createElement("button", {
-        type: "button",
-        className: "btn btn-link",
-        onClick: this.offCommandInstructions
-      }, t('How to use Off Command')))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "aptDate"
-      }, "Ground"), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, groundOptions, /*#__PURE__*/React.createElement("button", {
-        type: "button",
-        className: "btn btn-link",
-        onClick: this.groundInstructions
-      }, t('How to use background commands')))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "aptNotes"
-      }, "Voice"), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, /*#__PURE__*/React.createElement("input", {
-        type: "text",
-        className: "form-control",
-        id: "aptNotes",
-        ref: function ref(_ref6) {
-          return _this2.inputAptNotes = _ref6;
-        },
-        placeholder: t('Word you\'ll say to Alexa or Google (optional)'),
-        onChange: this.handleVoiceChange
-      }))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "voiceReply"
-      }, t('Voice Reply')), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, /*#__PURE__*/React.createElement("input", {
-        type: "text",
-        className: "form-control",
-        id: "voiceReply",
-        ref: function ref(_ref7) {
-          return _this2.inputVoiceReply = _ref7;
-        },
-        placeholder: t('Alexa or Google will say this when it runs (optional)'),
-        onChange: this.handleVoiceReplyChange
-      }))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "allowParams"
-      }, t('Allow Parameters')), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, /*#__PURE__*/React.createElement("select", (_React$createElement3 = {
+    if (this.props.operatingSystem == 'darwin') {
+      groundOptions = /*#__PURE__*/React.createElement("select", {
         id: "mySelect",
-        className: "form-control"
-      }, _defineProperty(_React$createElement3, "id", "allowParams"), _defineProperty(_React$createElement3, "ref", function ref(_ref8) {
-        return _this2.inputAllowParams = _ref8;
-      }), _defineProperty(_React$createElement3, "onChange", this.handleAllowParamsChange), _React$createElement3), /*#__PURE__*/React.createElement("option", null, "false"), /*#__PURE__*/React.createElement("option", null, "true")))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-offset-3 col-sm-9"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "pull-right"
-      }, /*#__PURE__*/React.createElement("button", {
-        type: "button",
-        className: "btn btn-default",
-        onClick: this.toggleAptDisplay
-      }, t('Cancel')), "\xA0", /*#__PURE__*/React.createElement("button", {
-        type: "submit",
-        className: "btn btn-primary"
-      }, t('Save'))))))))); //return
-    } //render
+        className: "form-control",
+        id: "aptDate",
+        ref: ref => this.inputAptDate = ref,
+        onChange: this.handleGroundChange
+      }, /*#__PURE__*/React.createElement("option", null, "foreground"));
+    } else {
+      groundOptions = /*#__PURE__*/React.createElement("select", {
+        id: "mySelect",
+        className: "form-control",
+        id: "aptDate",
+        ref: ref => this.inputAptDate = ref,
+        onChange: this.handleGroundChange
+      }, /*#__PURE__*/React.createElement("option", null, "foreground"), /*#__PURE__*/React.createElement("option", null, "background"));
+    }
 
-  }]);
+    return /*#__PURE__*/React.createElement("div", {
+      className: "modal fade",
+      id: "addAppointment",
+      tabIndex: "-1",
+      role: "dialog"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "modal-dialog",
+      role: "document"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "modal-content"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "modal-header"
+    }, /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "close",
+      onClick: this.toggleAptDisplay,
+      "aria-label": "Close"
+    }, /*#__PURE__*/React.createElement("span", {
+      "aria-hidden": "true"
+    }, "\xD7")), /*#__PURE__*/React.createElement("h4", {
+      className: "modal-title"
+    }, "Add a command")), /*#__PURE__*/React.createElement("form", {
+      className: "modal-body add-appointment form-horizontal",
+      onSubmit: this.handleAdd
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "petName"
+    }, "Trigger"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      className: "form-control",
+      id: "petName",
+      ref: ref => this.inputPetName = ref,
+      placeholder: "Trigger name",
+      onChange: this.handleTriggerChange,
+      required: true
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "petOwner"
+    }, "Command"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      className: "form-control",
+      id: "petOwner",
+      ref: ref => this.inputPetOwner = ref,
+      placeholder: "Your command",
+      onChange: this.handleCommandChange,
+      required: true
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "offCommand"
+    }, "Off Command"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      className: "form-control",
+      disabled: disableOffCommandField,
+      id: "offCommand",
+      ref: ref => this.inputOffCommand = ref,
+      placeholder: "If filled, runs instead of Command when off is the parameter",
+      onChange: this.handleOffCommandChange
+    }), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "btn btn-link",
+      onClick: this.offCommandInstructions
+    }, "How to use Off Command"))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "aptDate"
+    }, "Ground"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, groundOptions, /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "btn btn-link",
+      onClick: this.groundInstructions
+    }, "How to use background commands"))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "aptNotes"
+    }, "Voice"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      className: "form-control",
+      id: "aptNotes",
+      ref: ref => this.inputAptNotes = ref,
+      placeholder: "Word you'll say to Alexa or Google (optional)",
+      onChange: this.handleVoiceChange
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "voiceReply"
+    }, "Voice Reply"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      className: "form-control",
+      id: "voiceReply",
+      ref: ref => this.inputVoiceReply = ref,
+      placeholder: "Alexa or Google will say this when it runs (optional)",
+      onChange: this.handleVoiceReplyChange
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "allowParams"
+    }, "Allow Parameters"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, /*#__PURE__*/React.createElement("select", {
+      id: "mySelect",
+      className: "form-control",
+      id: "allowParams",
+      ref: ref => this.inputAllowParams = ref,
+      onChange: this.handleAllowParamsChange
+    }, /*#__PURE__*/React.createElement("option", null, "false"), /*#__PURE__*/React.createElement("option", null, "true")))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-offset-3 col-sm-9"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "pull-right"
+    }, /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "btn btn-default",
+      onClick: this.toggleAptDisplay
+    }, "Cancel"), "\xA0", /*#__PURE__*/React.createElement("button", {
+      type: "submit",
+      className: "btn btn-primary"
+    }, "Save")))))))); //return
+  } //render
 
-  return AddAppointment;
-}(React.Component);
+
+}
 
 ; //AddAppointment
-// module.exports=AddAppointment;
 
-module.exports = (0, _reactI18next.withTranslation)()(AddAppointment);
+module.exports = AddAppointment;
 
-},{"react":60,"react-i18next":51}],68:[function(require,module,exports){
-"use strict";
-
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
+},{"react":61}],69:[function(require,module,exports){
 var React = require('react'); // var AptList = React.createClass({
 
 
-var AptList = /*#__PURE__*/function (_React$Component) {
-  _inherits(AptList, _React$Component);
-
-  var _super = _createSuper(AptList);
-
-  function AptList(props) {
-    var _this;
-
-    _classCallCheck(this, AptList);
-
-    _this = _super.call(this, props);
-    _this.handleDelete = _this.handleDelete.bind(_assertThisInitialized(_this));
-    _this.handleEdit = _this.handleEdit.bind(_assertThisInitialized(_this));
-    _this.handleRun = _this.handleRun.bind(_assertThisInitialized(_this));
-    return _this;
+class AptList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
+    this.handleRun = this.handleRun.bind(this);
   }
 
-  _createClass(AptList, [{
-    key: "handleDelete",
-    value: function handleDelete(e) {
-      this.props.onDelete(this.props.whichItem);
-    }
-  }, {
-    key: "handleEdit",
-    value: function handleEdit(e) {
-      this.props.onEdit(this.props.whichItem);
-    }
-  }, {
-    key: "handleRun",
-    value: function handleRun(e) {
-      this.props.onRun(this.props.whichItem);
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var params = '';
+  handleDelete(e) {
+    this.props.onDelete(this.props.whichItem);
+  }
 
-      if (this.props.singleItem.allowParams == 'true') {
-        params = ' [params]';
-      } else {
-        params = '';
-      }
+  handleEdit(e) {
+    this.props.onEdit(this.props.whichItem);
+  }
 
-      return /*#__PURE__*/React.createElement("li", {
-        className: "pet-item media"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "media-left"
-      }, /*#__PURE__*/React.createElement("button", {
-        className: "pet-delete btn btn-xs btn-danger",
-        onClick: this.handleDelete
-      }, /*#__PURE__*/React.createElement("span", {
-        className: "glyphicon glyphicon-remove"
-      }))), /*#__PURE__*/React.createElement("div", {
-        className: "media-left"
-      }, /*#__PURE__*/React.createElement("button", {
-        className: "pet-edit btn btn-xs btn-primary",
-        onClick: this.handleEdit
-      }, /*#__PURE__*/React.createElement("span", {
-        className: "glyphicon glyphicon-pencil"
-      }))), /*#__PURE__*/React.createElement("div", {
-        className: "media-left"
-      }, /*#__PURE__*/React.createElement("button", {
-        className: "pet-edit btn btn-xs btn-success",
-        onClick: this.handleRun
-      }, /*#__PURE__*/React.createElement("span", {
-        className: "glyphicon glyphicon-play"
-      }))), /*#__PURE__*/React.createElement("div", {
-        className: "pet-info media-body"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "pet-head"
-      }, /*#__PURE__*/React.createElement("span", {
-        className: "pet-name"
-      }, this.props.singleItem.trigger), /*#__PURE__*/React.createElement("span", {
-        className: "apt-date pull-right"
-      }, this.props.singleItem.voice), /*#__PURE__*/React.createElement("p", null), /*#__PURE__*/React.createElement("span", {
-        className: "apt-date pull-right"
-      }, this.props.singleItem.ground)), /*#__PURE__*/React.createElement("div", {
-        className: "owner-name"
-      }, /*#__PURE__*/React.createElement("span", {
-        className: "label-item"
-      }, "Command:"), this.props.singleItem.command, params), /*#__PURE__*/React.createElement("div", {
-        className: "apt-notes"
-      }, this.props.singleItem.aptNotes)));
+  handleRun(e) {
+    this.props.onRun(this.props.whichItem);
+  }
+
+  render() {
+    let params = '';
+
+    if (this.props.singleItem.allowParams == 'true') {
+      params = ' [params]';
+    } else {
+      params = '';
     }
-  }]);
 
-  return AptList;
-}(React.Component);
+    return /*#__PURE__*/React.createElement("li", {
+      className: "pet-item media"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "media-left"
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "pet-delete btn btn-xs btn-danger",
+      onClick: this.handleDelete
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "glyphicon glyphicon-remove"
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "media-left"
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "pet-edit btn btn-xs btn-primary",
+      onClick: this.handleEdit
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "glyphicon glyphicon-pencil"
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "media-left"
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "pet-edit btn btn-xs btn-success",
+      onClick: this.handleRun
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "glyphicon glyphicon-play"
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "pet-info media-body"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "pet-head"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "pet-name"
+    }, this.props.singleItem.trigger), /*#__PURE__*/React.createElement("span", {
+      className: "apt-date pull-right"
+    }, this.props.singleItem.voice), /*#__PURE__*/React.createElement("p", null), /*#__PURE__*/React.createElement("span", {
+      className: "apt-date pull-right"
+    }, this.props.singleItem.ground)), /*#__PURE__*/React.createElement("div", {
+      className: "owner-name"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "label-item"
+    }, "Command:"), this.props.singleItem.command, params), /*#__PURE__*/React.createElement("div", {
+      className: "apt-notes"
+    }, this.props.singleItem.aptNotes)));
+  }
+
+}
 
 ;
 module.exports = AptList;
 
-},{"react":60}],69:[function(require,module,exports){
-"use strict";
-
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-
-var _reactI18next = require("react-i18next");
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
+},{"react":61}],70:[function(require,module,exports){
 var React = require('react'); // var EditAppointment = React.createClass({
 
 
-var EditAppointment = /*#__PURE__*/function (_React$Component) {
-  _inherits(EditAppointment, _React$Component);
-
-  var _super = _createSuper(EditAppointment);
-
-  function EditAppointment(props) {
-    var _this;
-
-    _classCallCheck(this, EditAppointment);
-
-    _this = _super.call(this, props);
-    _this.handleTriggerChange = _this.handleTriggerChange.bind(_assertThisInitialized(_this));
-    _this.handleCommandChange = _this.handleCommandChange.bind(_assertThisInitialized(_this));
-    _this.handleOffCommandChange = _this.handleOffCommandChange.bind(_assertThisInitialized(_this));
-    _this.handleGroundChange = _this.handleGroundChange.bind(_assertThisInitialized(_this));
-    _this.handleVoiceChange = _this.handleVoiceChange.bind(_assertThisInitialized(_this));
-    _this.handleVoiceReplyChange = _this.handleVoiceReplyChange.bind(_assertThisInitialized(_this));
-    _this.handleAllowParamsChange = _this.handleAllowParamsChange.bind(_assertThisInitialized(_this));
-    _this.toggleAptDisplay = _this.toggleAptDisplay.bind(_assertThisInitialized(_this));
-    _this.groundInstructions = _this.groundInstructions.bind(_assertThisInitialized(_this));
-    _this.offCommandInstructions = _this.offCommandInstructions.bind(_assertThisInitialized(_this));
-    _this.handleEdit = _this.handleEdit.bind(_assertThisInitialized(_this));
-    return _this;
+class EditAppointment extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleTriggerChange = this.handleTriggerChange.bind(this);
+    this.handleCommandChange = this.handleCommandChange.bind(this);
+    this.handleOffCommandChange = this.handleOffCommandChange.bind(this);
+    this.handleGroundChange = this.handleGroundChange.bind(this);
+    this.handleVoiceChange = this.handleVoiceChange.bind(this);
+    this.handleVoiceReplyChange = this.handleVoiceReplyChange.bind(this);
+    this.handleAllowParamsChange = this.handleAllowParamsChange.bind(this);
+    this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
+    this.groundInstructions = this.groundInstructions.bind(this);
+    this.offCommandInstructions = this.offCommandInstructions.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
   }
 
-  _createClass(EditAppointment, [{
-    key: "toggleAptDisplay",
-    value: function toggleAptDisplay(e) {
-      this.props.handleToggle(e);
-    }
-  }, {
-    key: "groundInstructions",
-    value: function groundInstructions(e) {
-      this.props.handleGroundInstructions(e);
-    }
-  }, {
-    key: "offCommandInstructions",
-    value: function offCommandInstructions(e) {
-      this.props.handleOffCommandInstructions(e);
-    }
-  }, {
-    key: "handleEdit",
-    value: function handleEdit(e) {
-      e.preventDefault();
-      var tempItem = {
-        trigger: this.inputPetName.value,
-        command: this.inputPetOwner.value,
-        offCommand: this.inputOffCommand.value,
-        ground: this.inputAptDate.value,
-        voice: this.inputAptNotes.value,
-        voiceReply: this.inputVoiceReply.value,
-        allowParams: this.inputAllowParams.value,
-        mykey: this.props.editKey
-      }; //tempitems
+  toggleAptDisplay(e) {
+    this.props.handleToggle(e);
+  }
 
-      this.props.editApt(tempItem);
-    } //handleEdit
+  groundInstructions(e) {
+    this.props.handleGroundInstructions(e);
+  }
 
-  }, {
-    key: "handleTriggerChange",
-    value: function handleTriggerChange(e) {
-      this.props.onTriggerChange(e.target.value);
+  offCommandInstructions(e) {
+    this.props.handleOffCommandInstructions(e);
+  }
+
+  handleEdit(e) {
+    e.preventDefault();
+    var tempItem = {
+      trigger: this.inputPetName.value,
+      command: this.inputPetOwner.value,
+      offCommand: this.inputOffCommand.value,
+      ground: this.inputAptDate.value,
+      voice: this.inputAptNotes.value,
+      voiceReply: this.inputVoiceReply.value,
+      allowParams: this.inputAllowParams.value,
+      mykey: this.props.editKey
+    }; //tempitems
+
+    this.props.editApt(tempItem);
+  } //handleEdit
+
+
+  handleTriggerChange(e) {
+    this.props.onTriggerChange(e.target.value);
+  }
+
+  handleCommandChange(e) {
+    this.props.onCommandChange(e.target.value);
+  }
+
+  handleOffCommandChange(e) {
+    this.props.onOffCommandChange(e.target.value);
+  }
+
+  handleGroundChange(e) {
+    this.props.onGroundChange(e.target.value);
+  }
+
+  handleVoiceChange(e) {
+    this.props.onVoiceChange(e.target.value);
+  }
+
+  handleVoiceReplyChange(e) {
+    this.props.onVoiceReplyChange(e.target.value);
+  }
+
+  handleAllowParamsChange(e) {
+    this.props.onAllowParamsChange(e.target.value);
+  }
+
+  render() {
+    const triggervalue = this.props.editTrigger || '';
+    const commandvalue = this.props.editCommand || '';
+    const offCommandvalue = this.props.editOffCommand || '';
+    const groundvalue = this.props.editGround || 'foreground';
+    const voicevalue = this.props.editVoice || '';
+    const voiceReplyvalue = this.props.editVoiceReply || '';
+    const allowParamsvalue = this.props.editAllowParams || false;
+    var disableOffCommandField = true;
+
+    if (allowParamsvalue == "true") {
+      disableOffCommandField = false;
     }
-  }, {
-    key: "handleCommandChange",
-    value: function handleCommandChange(e) {
-      this.props.onCommandChange(e.target.value);
-    }
-  }, {
-    key: "handleOffCommandChange",
-    value: function handleOffCommandChange(e) {
-      this.props.onOffCommandChange(e.target.value);
-    }
-  }, {
-    key: "handleGroundChange",
-    value: function handleGroundChange(e) {
-      this.props.onGroundChange(e.target.value);
-    }
-  }, {
-    key: "handleVoiceChange",
-    value: function handleVoiceChange(e) {
-      this.props.onVoiceChange(e.target.value);
-    }
-  }, {
-    key: "handleVoiceReplyChange",
-    value: function handleVoiceReplyChange(e) {
-      this.props.onVoiceReplyChange(e.target.value);
-    }
-  }, {
-    key: "handleAllowParamsChange",
-    value: function handleAllowParamsChange(e) {
-      this.props.onAllowParamsChange(e.target.value);
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this2 = this,
-          _React$createElement3;
 
-      var t = this.props.t;
-      var triggervalue = this.props.editTrigger || '';
-      var commandvalue = this.props.editCommand || '';
-      var offCommandvalue = this.props.editOffCommand || '';
-      var groundvalue = this.props.editGround || 'foreground';
-      var voicevalue = this.props.editVoice || '';
-      var voiceReplyvalue = this.props.editVoiceReply || '';
-      var allowParamsvalue = this.props.editAllowParams || false;
-      var disableOffCommandField = true;
+    let groundOptions;
 
-      if (allowParamsvalue == "true") {
-        disableOffCommandField = false;
-      }
-
-      var groundOptions;
-
-      if (this.props.operatingSystem == 'darwin') {
-        var _React$createElement;
-
-        groundOptions = /*#__PURE__*/React.createElement("select", (_React$createElement = {
-          id: "mySelect",
-          className: "form-control"
-        }, _defineProperty(_React$createElement, "id", "aptDate"), _defineProperty(_React$createElement, "ref", function ref(_ref) {
-          return _this2.inputAptDate = _ref;
-        }), _defineProperty(_React$createElement, "onChange", this.handleGroundChange), _defineProperty(_React$createElement, "value", groundvalue), _React$createElement), /*#__PURE__*/React.createElement("option", null, "foreground"));
-      } else {
-        var _React$createElement2;
-
-        groundOptions = /*#__PURE__*/React.createElement("select", (_React$createElement2 = {
-          id: "mySelect",
-          className: "form-control"
-        }, _defineProperty(_React$createElement2, "id", "aptDate"), _defineProperty(_React$createElement2, "ref", function ref(_ref2) {
-          return _this2.inputAptDate = _ref2;
-        }), _defineProperty(_React$createElement2, "onChange", this.handleGroundChange), _defineProperty(_React$createElement2, "value", groundvalue), _React$createElement2), /*#__PURE__*/React.createElement("option", null, "foreground"), /*#__PURE__*/React.createElement("option", null, "background"));
-      }
-
-      return /*#__PURE__*/React.createElement("div", {
-        className: "modal fade",
-        id: "editAppointment",
-        tabIndex: "-1",
-        role: "dialog"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "modal-dialog",
-        role: "document"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "modal-content"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "modal-header"
-      }, /*#__PURE__*/React.createElement("button", {
-        type: "button",
-        className: "close",
-        onClick: this.toggleAptDisplay,
-        "aria-label": "Close"
-      }, /*#__PURE__*/React.createElement("span", {
-        "aria-hidden": "true"
-      }, "\xD7")), /*#__PURE__*/React.createElement("h4", {
-        className: "modal-title"
-      }, "Edit a command")), /*#__PURE__*/React.createElement("form", {
-        className: "modal-body edit-appointment form-horizontal",
-        onSubmit: this.handleEdit
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "petName"
-      }, "Trigger"), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, /*#__PURE__*/React.createElement("input", {
-        type: "text",
-        className: "form-control",
-        id: "petName",
-        ref: function ref(_ref3) {
-          return _this2.inputPetName = _ref3;
-        },
-        placeholder: t('Trigger name'),
-        onChange: this.handleTriggerChange,
-        value: triggervalue,
-        required: true
-      }))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "petOwner"
-      }, "Command"), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, /*#__PURE__*/React.createElement("input", {
-        type: "text",
-        className: "form-control",
-        id: "petOwner",
-        ref: function ref(_ref4) {
-          return _this2.inputPetOwner = _ref4;
-        },
-        placeholder: t('Your command'),
-        onChange: this.handleCommandChange,
-        value: commandvalue,
-        required: true
-      }))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "offCommand"
-      }, "Off Command"), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, /*#__PURE__*/React.createElement("input", {
-        type: "text",
-        className: "form-control",
-        disabled: disableOffCommandField,
-        id: "offCommand",
-        ref: function ref(_ref5) {
-          return _this2.inputOffCommand = _ref5;
-        },
-        placeholder: t('If filled, runs instead of Command when off is the parameter'),
-        onChange: this.handleOffCommandChange,
-        value: offCommandvalue
-      }), /*#__PURE__*/React.createElement("button", {
-        type: "button",
-        className: "btn btn-link",
-        onClick: this.offCommandInstructions
-      }, t('How to use Off Command')))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "aptDate"
-      }, "Ground"), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, groundOptions, /*#__PURE__*/React.createElement("button", {
-        type: "button",
-        className: "btn btn-link",
-        onClick: this.groundInstructions
-      }, t('How to use background commands')))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "aptNotes"
-      }, "Voice"), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, /*#__PURE__*/React.createElement("input", {
-        type: "text",
-        className: "form-control",
-        id: "aptNotes",
-        ref: function ref(_ref6) {
-          return _this2.inputAptNotes = _ref6;
-        },
-        placeholder: t('Word you\'ll say to Alexa or Google (optional)'),
-        onChange: this.handleVoiceChange,
-        value: voicevalue
-      }))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "voiceReply"
-      }, t('Voice Reply')), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, /*#__PURE__*/React.createElement("input", {
-        type: "text",
-        className: "form-control",
-        id: "voiceReply",
-        ref: function ref(_ref7) {
-          return _this2.inputVoiceReply = _ref7;
-        },
-        placeholder: t('Alexa or Google will say this when it runs (optional)'),
-        onChange: this.handleVoiceReplyChange,
-        value: voiceReplyvalue
-      }))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("label", {
-        className: "col-sm-3 control-label",
-        htmlFor: "allowParams"
-      }, t('Allow Parameters')), /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-9"
-      }, /*#__PURE__*/React.createElement("select", (_React$createElement3 = {
+    if (this.props.operatingSystem == 'darwin') {
+      groundOptions = /*#__PURE__*/React.createElement("select", {
         id: "mySelect",
-        className: "form-control"
-      }, _defineProperty(_React$createElement3, "id", "allowParams"), _defineProperty(_React$createElement3, "ref", function ref(_ref8) {
-        return _this2.inputAllowParams = _ref8;
-      }), _defineProperty(_React$createElement3, "onChange", this.handleAllowParamsChange), _defineProperty(_React$createElement3, "value", allowParamsvalue), _React$createElement3), /*#__PURE__*/React.createElement("option", null, "false"), /*#__PURE__*/React.createElement("option", null, "true")))), /*#__PURE__*/React.createElement("div", {
-        className: "form-group"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "col-sm-offset-3 col-sm-9"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "pull-right"
-      }, /*#__PURE__*/React.createElement("button", {
-        type: "button",
-        className: "btn btn-default",
-        onClick: this.toggleAptDisplay
-      }, t('Cancel')), "\xA0", /*#__PURE__*/React.createElement("button", {
-        type: "submit",
-        className: "btn btn-primary"
-      }, t('Save'))))))))); //return
-    } //render
+        className: "form-control",
+        id: "aptDate",
+        ref: ref => this.inputAptDate = ref,
+        onChange: this.handleGroundChange,
+        value: groundvalue
+      }, /*#__PURE__*/React.createElement("option", null, "foreground"));
+    } else {
+      groundOptions = /*#__PURE__*/React.createElement("select", {
+        id: "mySelect",
+        className: "form-control",
+        id: "aptDate",
+        ref: ref => this.inputAptDate = ref,
+        onChange: this.handleGroundChange,
+        value: groundvalue
+      }, /*#__PURE__*/React.createElement("option", null, "foreground"), /*#__PURE__*/React.createElement("option", null, "background"));
+    }
 
-  }]);
+    return /*#__PURE__*/React.createElement("div", {
+      className: "modal fade",
+      id: "editAppointment",
+      tabIndex: "-1",
+      role: "dialog"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "modal-dialog",
+      role: "document"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "modal-content"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "modal-header"
+    }, /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "close",
+      onClick: this.toggleAptDisplay,
+      "aria-label": "Close"
+    }, /*#__PURE__*/React.createElement("span", {
+      "aria-hidden": "true"
+    }, "\xD7")), /*#__PURE__*/React.createElement("h4", {
+      className: "modal-title"
+    }, "Edit a command")), /*#__PURE__*/React.createElement("form", {
+      className: "modal-body edit-appointment form-horizontal",
+      onSubmit: this.handleEdit
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "petName"
+    }, "Trigger"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      className: "form-control",
+      id: "petName",
+      ref: ref => this.inputPetName = ref,
+      placeholder: "Trigger name",
+      onChange: this.handleTriggerChange,
+      value: triggervalue,
+      required: true
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "petOwner"
+    }, "Command"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      className: "form-control",
+      id: "petOwner",
+      ref: ref => this.inputPetOwner = ref,
+      placeholder: "Your command",
+      onChange: this.handleCommandChange,
+      value: commandvalue,
+      required: true
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "offCommand"
+    }, "Off Command"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      className: "form-control",
+      disabled: disableOffCommandField,
+      id: "offCommand",
+      ref: ref => this.inputOffCommand = ref,
+      placeholder: "If filled, runs instead of Command when off is the parameter",
+      onChange: this.handleOffCommandChange,
+      value: offCommandvalue
+    }), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "btn btn-link",
+      onClick: this.offCommandInstructions
+    }, "How to use Off Command"))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "aptDate"
+    }, "Ground"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, groundOptions, /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "btn btn-link",
+      onClick: this.groundInstructions
+    }, "How to use background commands"))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "aptNotes"
+    }, "Voice"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      className: "form-control",
+      id: "aptNotes",
+      ref: ref => this.inputAptNotes = ref,
+      placeholder: "Word you'll say to Alexa or Google (optional)",
+      onChange: this.handleVoiceChange,
+      value: voicevalue
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "voiceReply"
+    }, "Voice Reply"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      className: "form-control",
+      id: "voiceReply",
+      ref: ref => this.inputVoiceReply = ref,
+      placeholder: "Alexa or Google will say this when it runs (optional)",
+      onChange: this.handleVoiceReplyChange,
+      value: voiceReplyvalue
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "col-sm-3 control-label",
+      htmlFor: "allowParams"
+    }, "Allow Parameters"), /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-9"
+    }, /*#__PURE__*/React.createElement("select", {
+      id: "mySelect",
+      className: "form-control",
+      id: "allowParams",
+      ref: ref => this.inputAllowParams = ref,
+      onChange: this.handleAllowParamsChange,
+      value: allowParamsvalue
+    }, /*#__PURE__*/React.createElement("option", null, "false"), /*#__PURE__*/React.createElement("option", null, "true")))), /*#__PURE__*/React.createElement("div", {
+      className: "form-group"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "col-sm-offset-3 col-sm-9"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "pull-right"
+    }, /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "btn btn-default",
+      onClick: this.toggleAptDisplay
+    }, "Cancel"), "\xA0", /*#__PURE__*/React.createElement("button", {
+      type: "submit",
+      className: "btn btn-primary"
+    }, "Save")))))))); //return
+  } //render
 
-  return EditAppointment;
-}(React.Component);
+
+}
 
 ; //EditAppointment
-// module.exports=EditAppointment;
 
-module.exports = (0, _reactI18next.withTranslation)()(EditAppointment);
+module.exports = EditAppointment;
 
-},{"react":60,"react-i18next":51}],70:[function(require,module,exports){
-"use strict";
-
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
+},{"react":61}],71:[function(require,module,exports){
 var React = require('react'); // var HeaderNav = React.createClass({
 
 
-var HeaderNav = /*#__PURE__*/function (_React$Component) {
-  _inherits(HeaderNav, _React$Component);
-
-  var _super = _createSuper(HeaderNav);
-
-  function HeaderNav(props) {
-    var _this;
-
-    _classCallCheck(this, HeaderNav);
-
-    _this = _super.call(this, props);
-    _this.handleSort = _this.handleSort.bind(_assertThisInitialized(_this));
-    _this.handleOrder = _this.handleOrder.bind(_assertThisInitialized(_this));
-    _this.handleSearch = _this.handleSearch.bind(_assertThisInitialized(_this));
-    return _this;
+class HeaderNav extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleSort = this.handleSort.bind(this);
+    this.handleOrder = this.handleOrder.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
   }
 
-  _createClass(HeaderNav, [{
-    key: "handleSort",
-    value: function handleSort(e) {
-      this.props.onReOrder(e.target.id, this.props.orderDir);
-    } //handleSort
+  handleSort(e) {
+    this.props.onReOrder(e.target.id, this.props.orderDir);
+  } //handleSort
 
-  }, {
-    key: "handleOrder",
-    value: function handleOrder(e) {
-      this.props.onReOrder(this.props.orderBy, e.target.id);
-    } //handleOrder
 
-  }, {
-    key: "handleSearch",
-    value: function handleSearch(e) {
-      this.props.onSearch(e.target.value);
-    } //handleSearch
+  handleOrder(e) {
+    this.props.onReOrder(this.props.orderBy, e.target.id);
+  } //handleOrder
 
-  }, {
-    key: "render",
-    value: function render() {
-      return /*#__PURE__*/React.createElement("nav", {
-        className: "navigation navbar navbar-default"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "container-fluid"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "navbar-header"
-      }, /*#__PURE__*/React.createElement("a", {
-        className: "navbar-brand",
-        href: "#"
-      }, "TRIGGERcmd")), /*#__PURE__*/React.createElement("div", {
-        className: "navbar-form navbar-right search-appointments"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "input-group"
-      }, /*#__PURE__*/React.createElement("input", {
-        id: "SearchApts",
-        onChange: this.handleSearch,
-        placeholder: "Search",
-        autoFocus: true,
-        type: "text",
-        className: "form-control",
-        "aria-label": "Search Appointments"
-      }), /*#__PURE__*/React.createElement("div", {
-        className: "input-group-btn"
-      }, /*#__PURE__*/React.createElement("button", {
-        type: "button",
-        className: "btn btn-info dropdown-toggle",
-        "data-toggle": "dropdown",
-        "aria-haspopup": "true",
-        "aria-expanded": "false"
-      }, "Sort by: ", /*#__PURE__*/React.createElement("span", {
-        className: "caret"
-      })), /*#__PURE__*/React.createElement("ul", {
-        className: "dropdown-menu dropdown-menu-right"
-      }, /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("a", {
-        href: "#",
-        id: "trigger",
-        onClick: this.handleSort
-      }, "Trigger ", this.props.orderBy === 'trigger' ? /*#__PURE__*/React.createElement("span", {
-        className: "glyphicon glyphicon-ok"
-      }) : null)), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("a", {
-        href: "#",
-        id: "command",
-        onClick: this.handleSort
-      }, "Command ", this.props.orderBy === 'command' ? /*#__PURE__*/React.createElement("span", {
-        className: "glyphicon glyphicon-ok"
-      }) : null)), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("a", {
-        href: "#",
-        id: "ground",
-        onClick: this.handleSort
-      }, "Ground  ", this.props.orderBy === 'ground' ? /*#__PURE__*/React.createElement("span", {
-        className: "glyphicon glyphicon-ok"
-      }) : null)), /*#__PURE__*/React.createElement("li", {
-        role: "separator",
-        className: "divider"
-      }), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("a", {
-        href: "#",
-        id: "asc",
-        onClick: this.handleOrder
-      }, "Asc ", this.props.orderDir === 'asc' ? /*#__PURE__*/React.createElement("span", {
-        className: "glyphicon glyphicon-ok"
-      }) : null)), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("a", {
-        href: "#",
-        id: "desc",
-        onClick: this.handleOrder
-      }, "Desc ", this.props.orderDir === 'desc' ? /*#__PURE__*/React.createElement("span", {
-        className: "glyphicon glyphicon-ok"
-      }) : null)))))))); // return
-    } //render
 
-  }]);
+  handleSearch(e) {
+    this.props.onSearch(e.target.value);
+  } //handleSearch
 
-  return HeaderNav;
-}(React.Component);
+
+  render() {
+    return /*#__PURE__*/React.createElement("nav", {
+      className: "navigation navbar navbar-default"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "container-fluid"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "navbar-header"
+    }, /*#__PURE__*/React.createElement("a", {
+      className: "navbar-brand",
+      href: "#"
+    }, "TRIGGERcmd")), /*#__PURE__*/React.createElement("div", {
+      className: "navbar-form navbar-right search-appointments"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "input-group"
+    }, /*#__PURE__*/React.createElement("input", {
+      id: "SearchApts",
+      onChange: this.handleSearch,
+      placeholder: "Search",
+      autoFocus: true,
+      type: "text",
+      className: "form-control",
+      "aria-label": "Search Appointments"
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "input-group-btn"
+    }, /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "btn btn-info dropdown-toggle",
+      "data-toggle": "dropdown",
+      "aria-haspopup": "true",
+      "aria-expanded": "false"
+    }, "Sort by: ", /*#__PURE__*/React.createElement("span", {
+      className: "caret"
+    })), /*#__PURE__*/React.createElement("ul", {
+      className: "dropdown-menu dropdown-menu-right"
+    }, /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("a", {
+      href: "#",
+      id: "trigger",
+      onClick: this.handleSort
+    }, "Trigger ", this.props.orderBy === 'trigger' ? /*#__PURE__*/React.createElement("span", {
+      className: "glyphicon glyphicon-ok"
+    }) : null)), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("a", {
+      href: "#",
+      id: "command",
+      onClick: this.handleSort
+    }, "Command ", this.props.orderBy === 'command' ? /*#__PURE__*/React.createElement("span", {
+      className: "glyphicon glyphicon-ok"
+    }) : null)), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("a", {
+      href: "#",
+      id: "ground",
+      onClick: this.handleSort
+    }, "Ground  ", this.props.orderBy === 'ground' ? /*#__PURE__*/React.createElement("span", {
+      className: "glyphicon glyphicon-ok"
+    }) : null)), /*#__PURE__*/React.createElement("li", {
+      role: "separator",
+      className: "divider"
+    }), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("a", {
+      href: "#",
+      id: "asc",
+      onClick: this.handleOrder
+    }, "Asc ", this.props.orderDir === 'asc' ? /*#__PURE__*/React.createElement("span", {
+      className: "glyphicon glyphicon-ok"
+    }) : null)), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("a", {
+      href: "#",
+      id: "desc",
+      onClick: this.handleOrder
+    }, "Desc ", this.props.orderDir === 'desc' ? /*#__PURE__*/React.createElement("span", {
+      className: "glyphicon glyphicon-ok"
+    }) : null)))))))); // return
+  } //render
+
+
+}
 
 ; //HeaderNav
 
 module.exports = HeaderNav;
 
-},{"react":60}],71:[function(require,module,exports){
-"use strict";
+},{"react":61}],72:[function(require,module,exports){
+// import i18next from "i18next";
+i18next = require("i18next"); // import { initReactI18next } from "react-i18next";
 
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+initReactI18next = require("react-i18next"); // import LanguageDetector from 'i18next-browser-languagedetector';
 
-var _reactI18next = require("react-i18next");
+LanguageDetector = require("i18next-browser-languagedetector");
+i18next.use(initReactI18next).use(LanguageDetector).init({
+  fallbackLng: 'en',
+  debug: true,
+  resources: {
+    en: {
+      translation: {
+        "Add Command": "Add Command en",
+        test: "Russ"
+      }
+    }
+  }
+});
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+const useTransition = require('react-i18next');
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+console.log(useTransition);
 
 var React = require('react'); // var Toolbar = React.createClass({
 
 
-var Toolbar = /*#__PURE__*/function (_React$Component) {
-  _inherits(Toolbar, _React$Component);
-
-  var _super = _createSuper(Toolbar);
-
-  function Toolbar(props) {
-    var _this;
-
-    _classCallCheck(this, Toolbar);
-
-    _this = _super.call(this, props);
-    _this.createAppointments = _this.createAppointments.bind(_assertThisInitialized(_this));
-    _this.browseExamples = _this.browseExamples.bind(_assertThisInitialized(_this));
-    _this.toggleAbout = _this.toggleAbout.bind(_assertThisInitialized(_this));
-    _this.computerList = _this.computerList.bind(_assertThisInitialized(_this));
-    return _this;
+class Toolbar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.createAppointments = this.createAppointments.bind(this);
+    this.browseExamples = this.browseExamples.bind(this);
+    this.toggleAbout = this.toggleAbout.bind(this);
+    this.computerList = this.computerList.bind(this);
   }
 
-  _createClass(Toolbar, [{
-    key: "createAppointments",
-    value: function createAppointments(e) {
-      this.props.handleToggle();
-    } //createAppointments
+  createAppointments(e) {
+    this.props.handleToggle();
+  } //createAppointments
 
-  }, {
-    key: "browseExamples",
-    value: function browseExamples(e) {
-      this.props.handleBrowse();
-    } //createAppointments
 
-  }, {
-    key: "toggleAbout",
-    value: function toggleAbout(e) {
-      this.props.handleAbout();
-    } //toggleAbout
+  browseExamples(e) {
+    this.props.handleBrowse();
+  } //createAppointments
 
-  }, {
-    key: "computerList",
-    value: function computerList(e) {
-      this.props.handleComputerList();
-    } //computerlist
 
-  }, {
-    key: "render",
-    value: function render() {
-      var t = this.props.t;
-      return /*#__PURE__*/React.createElement("div", {
-        className: "toolbar"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "toolbar-item",
-        onClick: this.createAppointments
-      }, /*#__PURE__*/React.createElement("span", {
-        className: "toolbar-item-button glyphicon glyphicon-plus-sign"
-      }), /*#__PURE__*/React.createElement("span", {
-        className: "toolbar-item-text"
-      }, t('Add Command'))), /*#__PURE__*/React.createElement("div", {
-        className: "toolbar-item",
-        onClick: this.browseExamples
-      }, /*#__PURE__*/React.createElement("span", {
-        className: "toolbar-item-button glyphicon glyphicon-plus-sign"
-      }), /*#__PURE__*/React.createElement("span", {
-        className: "toolbar-item-text"
-      }, t('Browse Examples'))), /*#__PURE__*/React.createElement("div", {
-        className: "toolbar-item",
-        onClick: this.computerList
-      }, /*#__PURE__*/React.createElement("span", {
-        className: "toolbar-item-button glyphicon glyphicon-plus-sign"
-      }), /*#__PURE__*/React.createElement("span", {
-        className: "toolbar-item-text"
-      }, t('Computer List')))); //return
-    } //render
+  toggleAbout(e) {
+    this.props.handleAbout();
+  } //toggleAbout
 
-  }]);
 
-  return Toolbar;
-}(React.Component);
+  computerList(e) {
+    this.props.handleComputerList();
+  } //computerlist
 
-; //Toolbar
-// module.exports = Toolbar;
-// export default withTranslation()(Toolbar);
 
-module.exports = (0, _reactI18next.withTranslation)()(Toolbar);
+  render() {
+    const t = useTransition();
+    return /*#__PURE__*/React.createElement("div", {
+      className: "toolbar"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "toolbar-item",
+      onClick: this.createAppointments
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "toolbar-item-button glyphicon glyphicon-plus-sign"
+    }), /*#__PURE__*/React.createElement("span", {
+      className: "toolbar-item-text"
+    }, t('Add a Command'))), /*#__PURE__*/React.createElement("div", {
+      className: "toolbar-item",
+      onClick: this.browseExamples
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "toolbar-item-button glyphicon glyphicon-plus-sign"
+    }), /*#__PURE__*/React.createElement("span", {
+      className: "toolbar-item-text"
+    }, "Browse Examples")), /*#__PURE__*/React.createElement("div", {
+      className: "toolbar-item",
+      onClick: this.computerList
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "toolbar-item-button glyphicon glyphicon-plus-sign"
+    }), /*#__PURE__*/React.createElement("span", {
+      className: "toolbar-item-text"
+    }, "Computer List"))); //return
+  } //render
 
-},{"react":60,"react-i18next":51}],72:[function(require,module,exports){
-(function (global){(function (){
-"use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-
-var _i18next = _interopRequireDefault(require("i18next"));
-
-var _reactI18next = require("react-i18next");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-var fs = eRequire('fs'); // import LanguageDetector from 'i18next-browser-languagedetector';
-
-var lang;
-
-try {
-  lang = fs.readFileSync(languageLocation).toString();
-  ;
-  console.log("Found " + lang + " in " + languageLocation);
-} catch (err) {
-  console.log("No language found in " + languageLocation + " using en.");
-  lang = 'en';
 }
 
-_i18next["default"].use(_reactI18next.initReactI18next).init({
-  lng: lang,
+; //Toolbar
+
+module.exports = Toolbar;
+
+},{"i18next":37,"i18next-browser-languagedetector":36,"react":61,"react-i18next":52}],73:[function(require,module,exports){
+// import i18next from "i18next";
+i18next = require("i18next"); // import { initReactI18next } from "react-i18next";
+
+initReactI18next = require("react-i18next"); // import LanguageDetector from 'i18next-browser-languagedetector';
+
+LanguageDetector = require("i18next-browser-languagedetector");
+i18next.use(initReactI18next).use(LanguageDetector).init({
   fallbackLng: 'en',
-  debug: false,
-  react: {
-    useSuspense: true
-  },
+  debug: true,
   resources: {
     en: {
       translation: {
-        "Add Command": "Add Command",
-        "Browse Examples": "Browse Examples",
-        "Computer List": "Computer List",
-        "Operating System": "Operating System",
-        "Cancel": "Cancel",
-        "Allow Parameters": "Allow Parameters",
-        "Save": "Save",
-        "Alexa or Google will say this when it runs (optional)": "Alexa or Google will say this when it runs (optional)",
-        "How to use background commands": "How to use background commands",
-        "How to use Off Command": "How to use Off Command",
-        "Voice Reply": "Voice Reply",
-        "Word you\'ll say to Alexa or Google (optional)": "Word you\'ll say to Alexa or Google (optional)",
-        "If filled, runs instead of Command when off is the parameter": "If filled, runs instead of Command when off is the parameter",
-        "Your command": "Your command",
-        "Trigger name": "Trigger name",
-        "Current Commands": "Current Commands"
-      }
-    },
-    pt: {
-      translation: {
-        "Add Command": "Adicionar Comando",
-        "Browse Examples": "Procurar Exemplos",
-        "Computer List": "Lista de Computadores",
-        "Operating System": "Sistema Operacional",
-        "Cancel": "Cancelar",
-        "Allow Parameters": "Permitir Parâmetros",
-        "Save": "Salvar",
-        "Alexa or Google will say this when it runs (optional)": "Alexa ou Google dirá isso quando for executado (opcional)",
-        "How to use background commands": "Como usar comandos em segundo plano",
-        "How to use Off Command": "Como usar o comando Off",
-        "Voice Reply": "Resposta de voz",
-        "Word you\'ll say to Alexa or Google (optional)": "Palavra que você dirá para Alexa ou Google (opcional)",
-        "If filled, runs instead of Command when off is the parameter": "Se preenchido, executa em vez de Command quando desligado é o parâmetro",
-        "Your command": "Seu comando",
-        "Trigger name": "Nome do gatilho",
-        "Current Commands": "Comandos Atuais"
+        "Add Command": "Add Command en",
+        test: "Russ"
       }
     }
   }
@@ -64986,15 +65099,13 @@ _i18next["default"].use(_reactI18next.initReactI18next).init({
 // var $ = jquery;
 // var jQuery = jquery;
 
-
-var $ = require('jquery');
-
-global.jQuery = require("jquery");
+var $ = jQuery = require('jquery');
 
 var _ = require('lodash');
 
 var bootstrap = require('bootstrap');
 
+var fs = eRequire('fs');
 var loadApts = JSON.parse(fs.readFileSync(dataLocation));
 var electron = eRequire('electron');
 var ipc = electron.ipcRenderer;
@@ -65018,40 +65129,32 @@ var AddAppointment = require('./AddAppointment');
 var EditAppointment = require('./EditAppointment'); // var MainInterface = React.createClass({  
 
 
-var MainInterface = /*#__PURE__*/function (_React$Component) {
-  _inherits(MainInterface, _React$Component);
-
-  var _super = _createSuper(MainInterface);
-
-  function MainInterface(props) {
-    var _this;
-
-    _classCallCheck(this, MainInterface);
-
-    _this = _super.call(this, props);
-    _this.componentDidMount = _this.componentDidMount.bind(_assertThisInitialized(_this));
-    _this.componentWillUnmount = _this.componentWillUnmount.bind(_assertThisInitialized(_this));
-    _this.componentDidUpdate = _this.componentDidUpdate.bind(_assertThisInitialized(_this));
-    _this.toggleAptDisplay = _this.toggleAptDisplay.bind(_assertThisInitialized(_this));
-    _this.toggleEditDisplay = _this.toggleEditDisplay.bind(_assertThisInitialized(_this));
-    _this.onTriggerChange = _this.onTriggerChange.bind(_assertThisInitialized(_this));
-    _this.onCommandChange = _this.onCommandChange.bind(_assertThisInitialized(_this));
-    _this.onOffCommandChange = _this.onOffCommandChange.bind(_assertThisInitialized(_this));
-    _this.onGroundChange = _this.onGroundChange.bind(_assertThisInitialized(_this));
-    _this.onVoiceChange = _this.onVoiceChange.bind(_assertThisInitialized(_this));
-    _this.onVoiceReplyChange = _this.onVoiceReplyChange.bind(_assertThisInitialized(_this));
-    _this.onAllowParamsChange = _this.onAllowParamsChange.bind(_assertThisInitialized(_this));
-    _this.changeItem = _this.changeItem.bind(_assertThisInitialized(_this));
-    _this.browseExamples = _this.browseExamples.bind(_assertThisInitialized(_this));
-    _this.openComputerList = _this.openComputerList.bind(_assertThisInitialized(_this));
-    _this.openGroundInstructions = _this.openGroundInstructions.bind(_assertThisInitialized(_this));
-    _this.openOffCommandInstructions = _this.openOffCommandInstructions.bind(_assertThisInitialized(_this));
-    _this.addItem = _this.addItem.bind(_assertThisInitialized(_this));
-    _this.deleteMessage = _this.deleteMessage.bind(_assertThisInitialized(_this));
-    _this.runCommand = _this.runCommand.bind(_assertThisInitialized(_this));
-    _this.reOrder = _this.reOrder.bind(_assertThisInitialized(_this));
-    _this.searchApts = _this.searchApts.bind(_assertThisInitialized(_this));
-    _this.state = {
+class MainInterface extends React.Component {
+  constructor(props) {
+    super(props);
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.componentWillUnmount = this.componentWillUnmount.bind(this);
+    this.componentDidUpdate = this.componentDidUpdate.bind(this);
+    this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
+    this.toggleEditDisplay = this.toggleEditDisplay.bind(this);
+    this.onTriggerChange = this.onTriggerChange.bind(this);
+    this.onCommandChange = this.onCommandChange.bind(this);
+    this.onOffCommandChange = this.onOffCommandChange.bind(this);
+    this.onGroundChange = this.onGroundChange.bind(this);
+    this.onVoiceChange = this.onVoiceChange.bind(this);
+    this.onVoiceReplyChange = this.onVoiceReplyChange.bind(this);
+    this.onAllowParamsChange = this.onAllowParamsChange.bind(this);
+    this.changeItem = this.changeItem.bind(this);
+    this.browseExamples = this.browseExamples.bind(this);
+    this.openComputerList = this.openComputerList.bind(this);
+    this.openGroundInstructions = this.openGroundInstructions.bind(this);
+    this.openOffCommandInstructions = this.openOffCommandInstructions.bind(this);
+    this.addItem = this.addItem.bind(this);
+    this.deleteMessage = this.deleteMessage.bind(this);
+    this.runCommand = this.runCommand.bind(this);
+    this.reOrder = this.reOrder.bind(this);
+    this.searchApts = this.searchApts.bind(this);
+    this.state = {
       operatingSystem: '',
       // added here because it wouldn't detect the OS in the render function
       aptBodyVisible: false,
@@ -65068,7 +65171,6 @@ var MainInterface = /*#__PURE__*/function (_React$Component) {
       editKey: null,
       myAppointments: loadApts
     };
-    return _this;
   } // getInitialState() {
   //   return {
   //     operatingSystem: '',  // added here because it wouldn't detect the OS in the render function
@@ -65089,340 +65191,315 @@ var MainInterface = /*#__PURE__*/function (_React$Component) {
   // } //getInitialState
 
 
-  _createClass(MainInterface, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      ipc.on('addAppointment', function (event, message) {
-        this.toggleAptDisplay();
-      }.bind(this));
-      ipc.on('editAppointment', function (event, message) {
-        this.toggleEditDisplay();
-      }.bind(this));
-    } //componentDidMount
+  componentDidMount() {
+    ipc.on('addAppointment', function (event, message) {
+      this.toggleAptDisplay();
+    }.bind(this));
+    ipc.on('editAppointment', function (event, message) {
+      this.toggleEditDisplay();
+    }.bind(this));
+  } //componentDidMount
 
-  }, {
-    key: "componentWillUnmount",
-    value: function componentWillUnmount() {
-      ipc.removeListener('addAppointment', function (event, message) {
-        this.toggleAptDisplay();
-      }.bind(this));
-      ipc.removeListener('editAppointment', function (event, message) {
-        this.toggleEditDisplay();
-      }.bind(this));
-    } //componentDidMount
 
-  }, {
-    key: "componentDidUpdate",
-    value: function componentDidUpdate() {
-      if (this.state.aptBodyVisible == false && this.state.editBodyVisible == false) {
-        var replacer = function replacer(key, value) {
-          // Filtering out properties
-          if (key === 'mykey') {
-            return undefined;
-          }
+  componentWillUnmount() {
+    ipc.removeListener('addAppointment', function (event, message) {
+      this.toggleAptDisplay();
+    }.bind(this));
+    ipc.removeListener('editAppointment', function (event, message) {
+      this.toggleEditDisplay();
+    }.bind(this));
+  } //componentDidMount
 
-          return value;
-        };
 
-        console.log('Neither add nor edit box visible, so updating file');
-        writeFileTransactional(dataLocation, JSON.stringify(this.state.myAppointments, replacer, 1), function (err) {
-          if (err) {
-            console.log(err);
-          }
-        });
-      }
-    } //componentDidUpdate
+  componentDidUpdate() {
+    if (this.state.aptBodyVisible == false && this.state.editBodyVisible == false) {
+      console.log('Neither add nor edit box visible, so updating file');
 
-  }, {
-    key: "toggleAptDisplay",
-    value: function toggleAptDisplay() {
-      var tempVisibility = !this.state.aptBodyVisible;
-      this.setState({
-        aptBodyVisible: tempVisibility,
-        editAllowParams: false
-      }); //setState
-    } //toggleAptDisplay
-
-  }, {
-    key: "toggleEditDisplay",
-    value: function toggleEditDisplay(item) {
-      var tempVisibility = !this.state.editBodyVisible;
-      this.setState({
-        editBodyVisible: tempVisibility,
-        editTrigger: item.trigger,
-        editCommand: item.command,
-        editOffCommand: item.offCommand,
-        editGround: item.ground,
-        editVoice: item.voice,
-        editVoiceReply: item.voiceReply,
-        editAllowParams: item.allowParams,
-        editKey: item.mykey
-      }); //setState
-    } //toggleAptDisplay
-
-  }, {
-    key: "onTriggerChange",
-    value: function onTriggerChange(value) {
-      this.setState({
-        editTrigger: value
-      }); //setState
-    }
-  }, {
-    key: "onCommandChange",
-    value: function onCommandChange(value) {
-      this.setState({
-        editCommand: value
-      }); //setState
-    }
-  }, {
-    key: "onOffCommandChange",
-    value: function onOffCommandChange(value) {
-      this.setState({
-        editOffCommand: value
-      }); //setState
-    }
-  }, {
-    key: "onGroundChange",
-    value: function onGroundChange(value) {
-      this.setState({
-        editGround: value
-      }); //setState
-    }
-  }, {
-    key: "onVoiceChange",
-    value: function onVoiceChange(value) {
-      this.setState({
-        editVoice: value
-      }); //setState
-    }
-  }, {
-    key: "onVoiceReplyChange",
-    value: function onVoiceReplyChange(value) {
-      this.setState({
-        editVoiceReply: value
-      }); //setState
-    }
-  }, {
-    key: "onAllowParamsChange",
-    value: function onAllowParamsChange(value) {
-      this.setState({
-        editAllowParams: value
-      }); //setState
-    }
-  }, {
-    key: "changeItem",
-    value: function changeItem(item) {
-      var allApts = this.state.myAppointments;
-
-      var newApts = _.without(allApts, this.state.myAppointments[item.mykey]);
-
-      var tempItem = {
-        trigger: this.state.editTrigger,
-        command: this.state.editCommand,
-        offCommand: this.state.editOffCommand,
-        ground: this.state.editGround,
-        voice: this.state.editVoice,
-        voiceReply: this.state.editVoiceReply,
-        allowParams: this.state.editAllowParams,
-        mykey: item.mykey
-      }; //tempitems
-
-      newApts.push(tempItem);
-      var tempVisibility = !this.state.editBodyVisible;
-      this.setState({
-        editBodyVisible: tempVisibility,
-        myAppointments: newApts,
-        aptBodyVisible: false
-      }); //setState
-    } //changeItem
-
-  }, {
-    key: "browseExamples",
-    value: function browseExamples(e) {
-      ipc.sendSync('openexampleWindow');
-    } //browseExamples
-
-  }, {
-    key: "openComputerList",
-    value: function openComputerList(e) {
-      electron.shell.openExternal('https://www.triggercmd.com/user/computer/list');
-    } //openComputerList
-
-  }, {
-    key: "openGroundInstructions",
-    value: function openGroundInstructions(e) {
-      electron.shell.openExternal('https://www.triggercmd.com/forum/topic/15/what-s-the-difference-between-background-and-foreground-commands');
-    }
-  }, {
-    key: "openOffCommandInstructions",
-    value: function openOffCommandInstructions(e) {
-      electron.shell.openExternal('https://www.triggercmd.com/forum/topic/853/how-to-use-off-command');
-    }
-  }, {
-    key: "addItem",
-    value: function addItem(tempItem) {
-      var tempApts = this.state.myAppointments;
-      tempApts.push(tempItem);
-      this.setState({
-        myAppointments: tempApts,
-        aptBodyVisible: false
-      }); //setState
-    } //addItem
-
-  }, {
-    key: "deleteMessage",
-    value: function deleteMessage(item) {
-      var allApts = this.state.myAppointments;
-
-      var newApts = _.without(allApts, item);
-
-      this.setState({
-        myAppointments: newApts
-      }); //setState
-    } //deleteMessage
-
-  }, {
-    key: "runCommand",
-    value: function runCommand(item) {
-      console.log('Running ' + item.command);
-      var ChildProcess = cp.exec(item.command);
-    } //runCommand
-
-  }, {
-    key: "reOrder",
-    value: function reOrder(orderBy, orderDir) {
-      this.setState({
-        orderBy: orderBy,
-        orderDir: orderDir
-      }); //setState
-    } //reOrder
-
-  }, {
-    key: "searchApts",
-    value: function searchApts(query) {
-      this.setState({
-        queryText: query
-      }); //setState
-    } //searchApts
-
-  }, {
-    key: "render",
-    value: function render() {
-      var filteredApts = [];
-      var queryText = this.state.queryText;
-      var orderBy = this.state.orderBy;
-      var orderDir = this.state.orderDir;
-      var myAppointments = this.state.myAppointments;
-
-      if (this.state.aptBodyVisible === true) {
-        $('#addAppointment').modal('show');
-      } else {
-        $('#addAppointment').modal('hide');
-      }
-
-      if (this.state.editBodyVisible === true) {
-        $('#editAppointment').modal('show');
-      } else {
-        $('#editAppointment').modal('hide');
-      }
-
-      for (var i = 0; i < myAppointments.length; i++) {
-        if (myAppointments[i].trigger && myAppointments[i].trigger.toLowerCase().indexOf(queryText) != -1 || myAppointments[i].command && myAppointments[i].command.toLowerCase().indexOf(queryText) != -1 || myAppointments[i].voice && myAppointments[i].voice.toLowerCase().indexOf(queryText) != -1) {
-          filteredApts.push(myAppointments[i]);
+      function replacer(key, value) {
+        // Filtering out properties
+        if (key === 'mykey') {
+          return undefined;
         }
+
+        return value;
       }
 
-      for (var i = 0; i < myAppointments.length; i++) {
-        myAppointments[i].mykey = i;
+      writeFileTransactional(dataLocation, JSON.stringify(this.state.myAppointments, replacer, 1), function (err) {
+        if (err) {
+          console.log(err);
+        }
+      });
+    }
+  } //componentDidUpdate
+
+
+  toggleAptDisplay() {
+    var tempVisibility = !this.state.aptBodyVisible;
+    this.setState({
+      aptBodyVisible: tempVisibility,
+      editAllowParams: false
+    }); //setState
+  } //toggleAptDisplay
+
+
+  toggleEditDisplay(item) {
+    var tempVisibility = !this.state.editBodyVisible;
+    this.setState({
+      editBodyVisible: tempVisibility,
+      editTrigger: item.trigger,
+      editCommand: item.command,
+      editOffCommand: item.offCommand,
+      editGround: item.ground,
+      editVoice: item.voice,
+      editVoiceReply: item.voiceReply,
+      editAllowParams: item.allowParams,
+      editKey: item.mykey
+    }); //setState
+  } //toggleAptDisplay
+
+
+  onTriggerChange(value) {
+    this.setState({
+      editTrigger: value
+    }); //setState
+  }
+
+  onCommandChange(value) {
+    this.setState({
+      editCommand: value
+    }); //setState
+  }
+
+  onOffCommandChange(value) {
+    this.setState({
+      editOffCommand: value
+    }); //setState
+  }
+
+  onGroundChange(value) {
+    this.setState({
+      editGround: value
+    }); //setState
+  }
+
+  onVoiceChange(value) {
+    this.setState({
+      editVoice: value
+    }); //setState
+  }
+
+  onVoiceReplyChange(value) {
+    this.setState({
+      editVoiceReply: value
+    }); //setState
+  }
+
+  onAllowParamsChange(value) {
+    this.setState({
+      editAllowParams: value
+    }); //setState
+  }
+
+  changeItem(item) {
+    var allApts = this.state.myAppointments;
+
+    var newApts = _.without(allApts, this.state.myAppointments[item.mykey]);
+
+    var tempItem = {
+      trigger: this.state.editTrigger,
+      command: this.state.editCommand,
+      offCommand: this.state.editOffCommand,
+      ground: this.state.editGround,
+      voice: this.state.editVoice,
+      voiceReply: this.state.editVoiceReply,
+      allowParams: this.state.editAllowParams,
+      mykey: item.mykey
+    }; //tempitems
+
+    newApts.push(tempItem);
+    var tempVisibility = !this.state.editBodyVisible;
+    this.setState({
+      editBodyVisible: tempVisibility,
+      myAppointments: newApts,
+      aptBodyVisible: false
+    }); //setState
+  } //changeItem
+
+
+  browseExamples(e) {
+    ipc.sendSync('openexampleWindow');
+  } //browseExamples
+
+
+  openComputerList(e) {
+    electron.shell.openExternal('https://www.triggercmd.com/user/computer/list');
+  } //openComputerList
+
+
+  openGroundInstructions(e) {
+    electron.shell.openExternal('https://www.triggercmd.com/forum/topic/15/what-s-the-difference-between-background-and-foreground-commands');
+  }
+
+  openOffCommandInstructions(e) {
+    electron.shell.openExternal('https://www.triggercmd.com/forum/topic/853/how-to-use-off-command');
+  }
+
+  addItem(tempItem) {
+    var tempApts = this.state.myAppointments;
+    tempApts.push(tempItem);
+    this.setState({
+      myAppointments: tempApts,
+      aptBodyVisible: false
+    }); //setState
+  } //addItem
+
+
+  deleteMessage(item) {
+    var allApts = this.state.myAppointments;
+
+    var newApts = _.without(allApts, item);
+
+    this.setState({
+      myAppointments: newApts
+    }); //setState
+  } //deleteMessage
+
+
+  runCommand(item) {
+    console.log('Running ' + item.command);
+    var ChildProcess = cp.exec(item.command);
+  } //runCommand
+
+
+  reOrder(orderBy, orderDir) {
+    this.setState({
+      orderBy: orderBy,
+      orderDir: orderDir
+    }); //setState
+  } //reOrder
+
+
+  searchApts(query) {
+    this.setState({
+      queryText: query
+    }); //setState
+  } //searchApts
+
+
+  render() {
+    var filteredApts = [];
+    var queryText = this.state.queryText;
+    var orderBy = this.state.orderBy;
+    var orderDir = this.state.orderDir;
+    var myAppointments = this.state.myAppointments;
+
+    if (this.state.aptBodyVisible === true) {
+      $('#addAppointment').modal('show');
+    } else {
+      $('#addAppointment').modal('hide');
+    }
+
+    if (this.state.editBodyVisible === true) {
+      $('#editAppointment').modal('show');
+    } else {
+      $('#editAppointment').modal('hide');
+    }
+
+    for (var i = 0; i < myAppointments.length; i++) {
+      if (myAppointments[i].trigger.toLowerCase().indexOf(queryText) != -1 || myAppointments[i].command.toLowerCase().indexOf(queryText) != -1 || myAppointments[i].ground.toLowerCase().indexOf(queryText) != -1 || myAppointments[i].voice.toLowerCase().indexOf(queryText) != -1) {
+        filteredApts.push(myAppointments[i]);
       }
+    }
 
-      filteredApts = _.orderBy(filteredApts, function (item) {
-        return item[orderBy].toLowerCase();
-      }, orderDir); // order array
+    for (var i = 0; i < myAppointments.length; i++) {
+      myAppointments[i].mykey = i;
+    }
 
-      filteredApts = filteredApts.map(function (item, index) {
-        return /*#__PURE__*/React.createElement(AptList, {
-          key: index,
-          singleItem: item,
-          whichItem: item,
-          onDelete: this.deleteMessage,
-          onEdit: this.toggleEditDisplay,
-          onRun: this.runCommand
-        }); // return
-      }.bind(this)); //Appointments.map
+    filteredApts = _.orderBy(filteredApts, function (item) {
+      return item[orderBy].toLowerCase();
+    }, orderDir); // order array
 
-      return /*#__PURE__*/React.createElement("div", {
-        className: "application"
-      }, /*#__PURE__*/React.createElement(HeaderNav, {
-        orderBy: this.state.orderBy,
-        orderDir: this.state.orderDir,
-        onReOrder: this.reOrder,
-        onSearch: this.searchApts
-      }), /*#__PURE__*/React.createElement("div", {
-        className: "interface"
-      }, /*#__PURE__*/React.createElement(Toolbar, {
-        handleToggle: this.toggleAptDisplay,
-        handleBrowse: this.browseExamples,
-        handleAbout: this.showAbout,
-        handleComputerList: this.openComputerList
-      }), /*#__PURE__*/React.createElement(AddAppointment, {
-        handleToggle: this.toggleAptDisplay,
-        handleGroundInstructions: this.openGroundInstructions,
-        handleOffCommandInstructions: this.openOffCommandInstructions,
-        addApt: this.addItem,
-        operatingSystem: this.state.operatingSystem,
-        editTrigger: this.state.editTrigger,
-        editCommand: this.state.editCommand,
-        editOffCommand: this.state.editOffCommand,
-        editGround: this.state.editGround,
-        editVoice: this.state.editVoice,
-        editVoiceReply: this.state.editVoiceReply,
-        editAllowParams: this.state.editAllowParams,
-        onTriggerChange: this.onTriggerChange,
-        onCommandChange: this.onCommandChange,
-        onOffCommandChange: this.onOffCommandChange,
-        onGroundChange: this.onGroundChange,
-        onVoiceChange: this.onVoiceChange,
-        onVoiceReplyChange: this.onVoiceReplyChange,
-        onAllowParamsChange: this.onAllowParamsChange
-      }), /*#__PURE__*/React.createElement(EditAppointment, {
-        operatingSystem: this.state.operatingSystem,
-        handleToggle: this.toggleEditDisplay,
-        handleGroundInstructions: this.openGroundInstructions,
-        handleOffCommandInstructions: this.openOffCommandInstructions,
-        editApt: this.changeItem,
-        editTrigger: this.state.editTrigger,
-        editCommand: this.state.editCommand,
-        editOffCommand: this.state.editOffCommand,
-        editGround: this.state.editGround,
-        editVoice: this.state.editVoice,
-        editVoiceReply: this.state.editVoiceReply,
-        editAllowParams: this.state.editAllowParams,
-        editKey: this.state.editKey,
-        onTriggerChange: this.onTriggerChange,
-        onCommandChange: this.onCommandChange,
-        onOffCommandChange: this.onOffCommandChange,
-        onGroundChange: this.onGroundChange,
-        onVoiceChange: this.onVoiceChange,
-        onVoiceReplyChange: this.onVoiceReplyChange,
-        onAllowParamsChange: this.onAllowParamsChange
-      }), /*#__PURE__*/React.createElement("div", {
-        className: "container"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "row"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "appointments col-sm-12"
-      }, /*#__PURE__*/React.createElement("h2", {
-        className: "appointments-headline"
-      }, _i18next["default"].t('Current Commands')), /*#__PURE__*/React.createElement("ul", {
-        className: "item-list media-list"
-      }, filteredApts))))));
-    } //render
+    filteredApts = filteredApts.map(function (item, index) {
+      return /*#__PURE__*/React.createElement(AptList, {
+        key: index,
+        singleItem: item,
+        whichItem: item,
+        onDelete: this.deleteMessage,
+        onEdit: this.toggleEditDisplay,
+        onRun: this.runCommand
+      }); // return
+    }.bind(this)); //Appointments.map
 
-  }]);
+    return /*#__PURE__*/React.createElement("div", {
+      className: "application"
+    }, /*#__PURE__*/React.createElement(HeaderNav, {
+      orderBy: this.state.orderBy,
+      orderDir: this.state.orderDir,
+      onReOrder: this.reOrder,
+      onSearch: this.searchApts
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "interface"
+    }, /*#__PURE__*/React.createElement(Toolbar, {
+      handleToggle: this.toggleAptDisplay,
+      handleBrowse: this.browseExamples,
+      handleAbout: this.showAbout,
+      handleComputerList: this.openComputerList
+    }), /*#__PURE__*/React.createElement(AddAppointment, {
+      handleToggle: this.toggleAptDisplay,
+      handleGroundInstructions: this.openGroundInstructions,
+      handleOffCommandInstructions: this.openOffCommandInstructions,
+      addApt: this.addItem,
+      operatingSystem: this.state.operatingSystem,
+      editTrigger: this.state.editTrigger,
+      editCommand: this.state.editCommand,
+      editOffCommand: this.state.editOffCommand,
+      editGround: this.state.editGround,
+      editVoice: this.state.editVoice,
+      editVoiceReply: this.state.editVoiceReply,
+      editAllowParams: this.state.editAllowParams,
+      onTriggerChange: this.onTriggerChange,
+      onCommandChange: this.onCommandChange,
+      onOffCommandChange: this.onOffCommandChange,
+      onGroundChange: this.onGroundChange,
+      onVoiceChange: this.onVoiceChange,
+      onVoiceReplyChange: this.onVoiceReplyChange,
+      onAllowParamsChange: this.onAllowParamsChange
+    }), /*#__PURE__*/React.createElement(EditAppointment, {
+      operatingSystem: this.state.operatingSystem,
+      handleToggle: this.toggleEditDisplay,
+      handleGroundInstructions: this.openGroundInstructions,
+      handleOffCommandInstructions: this.openOffCommandInstructions,
+      editApt: this.changeItem,
+      editTrigger: this.state.editTrigger,
+      editCommand: this.state.editCommand,
+      editOffCommand: this.state.editOffCommand,
+      editGround: this.state.editGround,
+      editVoice: this.state.editVoice,
+      editVoiceReply: this.state.editVoiceReply,
+      editAllowParams: this.state.editAllowParams,
+      editKey: this.state.editKey,
+      onTriggerChange: this.onTriggerChange,
+      onCommandChange: this.onCommandChange,
+      onOffCommandChange: this.onOffCommandChange,
+      onGroundChange: this.onGroundChange,
+      onVoiceChange: this.onVoiceChange,
+      onVoiceReplyChange: this.onVoiceReplyChange,
+      onAllowParamsChange: this.onAllowParamsChange
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "container"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "appointments col-sm-12"
+    }, /*#__PURE__*/React.createElement("h2", {
+      className: "appointments-headline"
+    }, "Current Commands"), /*#__PURE__*/React.createElement("ul", {
+      className: "item-list media-list"
+    }, filteredApts))))));
+  } //render
 
-  return MainInterface;
-}(React.Component);
+
+}
 
 ; //MainInterface
 
@@ -65430,7 +65507,7 @@ ReactDOM.render( /*#__PURE__*/React.createElement(MainInterface, null), document
 // Russ added this to fix a bug where the commands.json would get emptied sometimes.
 
 function writeFileTransactional(path, content, cb) {
-  var temporaryPath = "".concat(path, ".new");
+  let temporaryPath = `${path}.new`;
   fs.writeFile(temporaryPath, content, 'utf8', function (err) {
     if (err) {
       return cb(err);
@@ -65442,5 +65519,4 @@ function writeFileTransactional(path, content, cb) {
 
 ;
 
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./AddAppointment":67,"./AptList":68,"./EditAppointment":69,"./HeaderNav":70,"./Toolbar":71,"bootstrap":21,"i18next":36,"jquery":37,"lodash":38,"os":40,"react":60,"react-dom":46,"react-i18next":51}]},{},[72]);
+},{"./AddAppointment":68,"./AptList":69,"./EditAppointment":70,"./HeaderNav":71,"./Toolbar":72,"bootstrap":21,"i18next":37,"i18next-browser-languagedetector":36,"jquery":38,"lodash":39,"os":41,"react":61,"react-dom":47,"react-i18next":52}]},{},[73]);

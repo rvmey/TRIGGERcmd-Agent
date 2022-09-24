@@ -1,17 +1,27 @@
+import { withTranslation } from 'react-i18next';
 var React = require('react');
 
-var AptList = React.createClass({
-  handleAdd: function() {
+// var AptList = React.createClass({
+
+class AptList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleAdd = this.handleAdd.bind(this);
+    this.handleInstructions = this.handleInstructions.bind(this);
+  }
+
+  handleAdd() {
     this.props.onAdd(this.props.whichItem);
-  },
-  handleInstructions: function() {
+  }
+  handleInstructions() {
     this.props.onInstructions(this.props.whichItem);
-  },  
-  render: function() {
+  }  
+  render() {
+    const { t } = this.props;
     return(
       <li className="pet-item media">
         <div className="media-left">
-          <button className="pet-delete btn btn-xs btn-success" onClick={this.handleAdd}>Add</button>
+          <button className="pet-delete btn btn-xs btn-success" onClick={this.handleAdd}>{t('Add')}</button>
         </div>
         <div className="pet-info media-body">
           <div className="pet-head">
@@ -30,6 +40,7 @@ var AptList = React.createClass({
       </li>
     )
   }
-});
+};
 
-module.exports = AptList;
+// module.exports = AptList;
+module.exports = withTranslation()(AptList);
