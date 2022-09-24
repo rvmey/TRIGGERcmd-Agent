@@ -69,7 +69,7 @@ module.exports = {
         "Quit": "Abandonar",
         "Select All": "Seleccionar todo",
         "TRIGGERcmd Agent Sign In": "Inicio de sesión del agente TRIGGERcmd",
-        "Background Service": "Background Service",
+        "Background Service": "Servicio de fondo",
         "Install Background Service": "Instalar servicio en segundo plano",
         "Remove Background Service": "Eliminar servicio en segundo plano",
         "Text Command Editor": "Editor de comandos de texto",
