@@ -38,6 +38,14 @@ i18next
           "Operating System": "Sistema Operacional",
           "Example Commands": "Comandos de Exemplo"
         }
+      },
+      es: {
+        translation: {
+          "Add": "Agregar",
+          "Publish Your Own Example": "Publish Your Own Example",
+          "Operating System": "Publica tu propio ejemplo",
+          "Example Commands": "Comandos de ejemplo"
+        }
       }
     }
   });
