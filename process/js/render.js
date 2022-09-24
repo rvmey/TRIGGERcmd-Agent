@@ -172,9 +172,11 @@ class MainInterface extends React.Component {
     }.bind(this));
   } //componentDidMount
 
-  componentDidUpdate() {
-    if ((this.state.aptBodyVisible == false) && (this.state.editBodyVisible == false)) {
-      console.log('Neither add nor edit box visible, so updating file');
+  componentDidUpdate(prevProps, prevState) {
+    if ( (prevState.queryText == this.state.queryText) && 
+         (this.state.aptBodyVisible == false) && 
+         (this.state.editBodyVisible == false) ) {
+      console.log('Updating file');
 
       function replacer(key, value) {
         // Filtering out properties

@@ -65113,8 +65113,9 @@ var MainInterface = /*#__PURE__*/function (_React$Component) {
 
   }, {
     key: "componentDidUpdate",
-    value: function componentDidUpdate() {
-      if (this.state.aptBodyVisible == false && this.state.editBodyVisible == false) {
+    value: function componentDidUpdate(prevProps, prevState) {
+      // console.log(prevState);
+      if (prevState.queryText == this.state.queryText && this.state.aptBodyVisible == false && this.state.editBodyVisible == false) {
         var replacer = function replacer(key, value) {
           // Filtering out properties
           if (key === 'mykey') {
@@ -65124,7 +65125,7 @@ var MainInterface = /*#__PURE__*/function (_React$Component) {
           return value;
         };
 
-        console.log('Neither add nor edit box visible, so updating file');
+        console.log('Updating file');
         writeFileTransactional(dataLocation, JSON.stringify(this.state.myAppointments, replacer, 1), function (err) {
           if (err) {
             console.log(err);
