@@ -50,6 +50,31 @@ module.exports = {
         "Text Command Editor": "Editor de comandos de texto",
         "GUI Command Editor": "Editor de Comandos GUI"
       }
+    },
+    es: {
+      translation: {
+        "en": "es",
+        "Update Agent": "Agente de actualización",
+        "Language translation initialized": "Traducción de idioma inicializada: es",
+        "Website": "Sitio web",
+        "View": "Vista",
+        "Reload": "Recargar",
+        "Toggle Developer Tools": "Toggle Herramientas para desarrolladores",
+        "Edit": "Editar",
+        "Undo": "Deshacer",
+        "Redo": "Rehacer",
+        "Cut": "Cortar",
+        "Copy": "Copiar",
+        "Paste": "Pegar",
+        "Quit": "Abandonar",
+        "Select All": "Seleccionar todo",
+        "TRIGGERcmd Agent Sign In": "Inicio de sesión del agente TRIGGERcmd",
+        "Background Service": "Servicio de fondo",
+        "Install Background Service": "Instalar servicio en segundo plano",
+        "Remove Background Service": "Eliminar servicio en segundo plano",
+        "Text Command Editor": "Editor de comandos de texto",
+        "GUI Command Editor": "Editor de comandos GUI"
+      }
     }
   },
   interpolation: {
@@ -57,7 +82,7 @@ module.exports = {
   },
   saveMissing: true,
   fallbackLng: 'en',
-  whitelist: ['pt', 'en'],
+  whitelist: ['pt', 'en', 'es'],
   react: {
     wait: false
   }
