@@ -64526,6 +64526,14 @@ _i18next["default"].use(_reactI18next.initReactI18next).init({
         "Operating System": "Sistema Operacional",
         "Example Commands": "Comandos de Exemplo"
       }
+    },
+    es: {
+      translation: {
+        "Add": "Agregar",
+        "Publish Your Own Example": "Publica tu propio ejemplo",
+        "Operating System": "Publica tu propio ejemplo",
+        "Example Commands": "Comandos de ejemplo"
+      }
     }
   }
 });

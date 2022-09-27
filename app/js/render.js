@@ -64980,6 +64980,26 @@ _i18next["default"].use(_reactI18next.initReactI18next).init({
         "Trigger name": "Nome do gatilho",
         "Current Commands": "Comandos Atuais"
       }
+    },
+    es: {
+      translation: {
+        "Add Command": "Añadir comando",
+        "Browse Examples": "Examinar ejemplos",
+        "Computer List": "Lista de computadoras",
+        "Operating System": "Sistema operativo",
+        "Cancel": "Cancelar",
+        "Allow Parameters": "Permitir parámetros",
+        "Save": "Ahorrar",
+        "Alexa or Google will say this when it runs (optional)": "Alexa o Google dirán esto cuando se ejecute (opcional)",
+        "How to use background commands": "Cómo usar comandos en segundo plano",
+        "How to use Off Command": "Cómo usar el comando desactivado",
+        "Voice Reply": "Respuesta de voz",
+        "Word you\'ll say to Alexa or Google (optional)": "Palabra que le dirás a Alexa o Google",
+        "If filled, runs instead of Command when off is the parameter": "Si está lleno, se ejecuta en lugar de Comando cuando el parámetro está desactivado.",
+        "Your command": "Tu comando",
+        "Trigger name": "Nombre del disparador",
+        "Current Commands": "Comandos actuales"
+      }
     }
   }
 }); // import jquery from 'jquery';
@@ -65114,7 +65134,6 @@ var MainInterface = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate(prevProps, prevState) {
-      // console.log(prevState);
       if (prevState.queryText == this.state.queryText && this.state.aptBodyVisible == false && this.state.editBodyVisible == false) {
         var replacer = function replacer(key, value) {
           // Filtering out properties
