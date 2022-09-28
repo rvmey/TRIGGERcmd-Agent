@@ -75,6 +75,106 @@ module.exports = {
         "Text Command Editor": "Editor de comandos de texto",
         "GUI Command Editor": "Editor de comandos GUI"
       }
+    },
+    de: {
+      translation: {
+        "en": "de",
+        "Update Agent": "Update-Agent", // tl note: it seems english is used in this context
+        "Language translation initialized": "Sprachübersetzung initialisiert: de",
+        "Website": "Webseite",
+        "View": "Anzeige",
+        "Reload": "Neu laden",
+        "Toggle Developer Tools": "Entwicklertools umschalten",
+        "Edit": "Bearbeiten",
+        "Undo": "Rückgängig machen",
+        "Redo": "Wiederholen",
+        "Cut": "Ausschneiden",
+        "Copy": "Kopieren",
+        "Paste": "Einfügen",
+        "Quit": "Aufhören",
+        "Select All": "Wählen Sie Alle",
+        "TRIGGERcmd Agent Sign In": "TRIGGERcmd Agent Einloggen",
+        "Background Service": "Hintergrunddienst",
+        "Install Background Service": "Installieren Sie den Hintergrunddienst",
+        "Remove Background Service": "Entfernen Sie den Hintergrunddienst",
+        "Text Command Editor": "Textbefehls-Editor",
+        "GUI Command Editor": "GUI-Befehls-Editor"
+      }
+    },
+    fr: {
+      translation: {
+        "en": "fr",
+        "Update Agent": "Agent de mise à jour",
+        "Language translation initialized": "Traduction de langue initialisée: fr",
+        "Website": "Site Internet",
+        "View": "Voir",
+        "Reload": "Recharger",
+        "Toggle Developer Tools": "Basculer les outils de développement",
+        "Edit": "Éditer",
+        "Undo": "Annuler",
+        "Redo": "Refaire",
+        "Cut": "Couper",
+        "Copy": "Copier",
+        "Paste": "Coller",
+        "Quit": "Quitter",
+        "Select All": "Tout sélectionner",
+        "TRIGGERcmd Agent Sign In": "Connexion de l'agent TRIGGERcmd",
+        "Background Service": "Service d'arrière-plan",
+        "Install Background Service": "Installer le service d'arrière-plan",
+        "Remove Background Service": "Supprimer le service d'arrière-plan",
+        "Text Command Editor": "Éditeur de commandes de texte",
+        "GUI Command Editor": "Éditeur de commandes GUI"
+      }
+    },
+    it: {
+      translation: {
+        "en": "it",
+        "Update Agent": "Agente di aggiornamento",
+        "Language translation initialized": "Traduzione linguistica inizializzata: it",
+        "Website": "Sito web",
+        "View": "Vedere",
+        "Reload": "Ricaricare",
+        "Toggle Developer Tools": "Attiva/disattiva Strumenti per sviluppatori",
+        "Edit": "Modificare",
+        "Undo": "Annullare",
+        "Redo": "Rifare",
+        "Cut": "Taglia",
+        "Copy": "Copia",
+        "Paste": "Incolla",
+        "Quit": "Uscire",
+        "Select All": "Seleziona tutto",
+        "TRIGGERcmd Agent Sign In": "Accesso agente TRIGGERcmd",
+        "Background Service": "Servizio in background",
+        "Install Background Service": "Installa il servizio in background",
+        "Remove Background Service": "Rimuovi servizio in background",
+        "Text Command Editor": "Editor di comandi di testo",
+        "GUI Command Editor": "Editor dei comandi della GUI"
+      }
+    },
+    jp: {
+      translation: {
+        "en": "jp",
+        "Update Agent": "更新エージェント",
+        "Language translation initialized": "初期化された言語翻訳: jp",
+        "Website": "ウェブサイト",
+        "View": "眺める",
+        "Reload": "リロード",
+        "Toggle Developer Tools": "開発者ツールの切り替え",
+        "Edit": "編集",
+        "Undo": "アンドゥ",
+        "Redo": "やり直す",
+        "Cut": "カット",
+        "Copy": "コピー",
+        "Paste": "ペースト",
+        "Quit": "終了する",
+        "Select All": "すべて選択",
+        "TRIGGERcmd Agent Sign In": "TRIGGERcmd エージェントのサインイン",
+        "Background Service": "バックグラウンド サービス",
+        "Install Background Service": "バックグラウンド サービスをインストールする",
+        "Remove Background Service": "バックグラウンド サービスを削除する",
+        "Text Command Editor": "テキスト コマンド エディタ",
+        "GUI Command Editor": "GUI コマンド エディタ"
+      }
     }
   },
   interpolation: {
@@ -82,7 +182,7 @@ module.exports = {
   },
   saveMissing: true,
   fallbackLng: 'en',
-  whitelist: ['pt', 'en', 'es'],
+  whitelist: ['pt', 'en', 'es', 'de', 'fr', 'it', 'jp'],
   react: {
     wait: false
   }
