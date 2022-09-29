@@ -81,6 +81,86 @@ i18next
           "Trigger name": "Nombre del disparador",
           "Current Commands": "Comandos actuales"
         }
+      },
+      de: {
+        translation: {
+          "Add Command": "Befehl hinzufügen",
+          "Browse Examples": "Durchsuchen Sie Beispiele",
+          "Computer List": "Computerliste",
+          "Operating System": "Betriebssystem",
+          "Cancel": "Absagen",
+          "Allow Parameters": "Parameter zulassen",
+          "Save": "Speichern",
+          "Alexa or Google will say this when it runs (optional)": "Alexa oder Google sagen dies, wenn es ausgeführt wird (optional)",
+          "How to use background commands": "So verwenden Sie Hintergrundbefehle",
+          "How to use Off Command": "So verwenden Sie den Off-Befehl",
+          "Voice Reply": "Sprachantwort",
+          "Word you\'ll say to Alexa or Google (optional)": "Wort, das Sie Alexa oder Google sagen (optional)",
+          "If filled, runs instead of Command when off is the parameter": "Wenn gefüllt, wird anstelle von Command ausgeführt, wenn off der Parameter ist",
+          "Your command": "Ihr Befehl",
+          "Trigger name": "Auslösername",
+          "Current Commands": "Aktuelle Befehle"
+        }
+      },
+      fr: {
+        translation: {
+          "Add Command": "Ajouter une commande",
+          "Browse Examples": "Parcourir les exemples",
+          "Computer List": "Liste d'ordinateurs",
+          "Operating System": "Système opérateur",
+          "Cancel": "Annuler",
+          "Allow Parameters": "Autoriser les paramètres",
+          "Save": "Salvare",
+          "Alexa or Google will say this when it runs (optional)": "Alexa ou Google le dira lors de son exécution (facultatif)",
+          "How to use background commands": "Comment utiliser les commandes d'arrière-plan",
+          "How to use Off Command": "Comment utiliser la commande Off",
+          "Voice Reply": "Réponse vocale",
+          "Word you\'ll say to Alexa or Google (optional)": "Mot que vous direz à Alexa ou Google (facultatif)",
+          "If filled, runs instead of Command when off is the parameter": "S'il est rempli, s'exécute à la place de Command lorsque off est le paramètre",
+          "Your command": "Votre commande",
+          "Trigger name": "Nom du déclencheur",
+          "Current Commands": "Commandes actuelles"
+        }
+      },
+      it: {
+        translation: {
+          "Add Command": "Aggiungi comando",
+          "Browse Examples": "Sfoglia esempi",
+          "Computer List": "Elenco dei computer",
+          "Operating System": "Sistema operativo",
+          "Cancel": "Annulla",
+          "Allow Parameters": "Consenti parametri",
+          "Save": "Salvare",
+          "Alexa or Google will say this when it runs (optional)": "Alexa o Google lo diranno quando è in esecuzione (opzionale)",
+          "How to use background commands": "Come usare i comandi in background",
+          "How to use Off Command": "Come usare il comando Off",
+          "Voice Reply": "Risposta vocale",
+          "Word you\'ll say to Alexa or Google (optional)": "Parola che dirai ad Alexa o Google (opzionale)",
+          "If filled, runs instead of Command when off is the parameter": "Se riempito, viene eseguito al posto di Command quando off è il parametro",
+          "Your command": "Il tuo comando",
+          "Trigger name": "Nome del trigger",
+          "Current Commands": "Comandi attuali"
+        }
+      },
+      jp: {
+        translation: {
+          "Add Command": "コマンドを追加",
+          "Browse Examples": "例を参照",
+          "Computer List": "コンピュータ一覧",
+          "Operating System": "オペレーティング·システム",
+          "Cancel": "キャンセル",
+          "Allow Parameters": "パラメータを許可",
+          "Save": "保存",
+          "Alexa or Google will say this when it runs (optional)": "Alexa または Google は、実行時にこれを言います (オプション)",
+          "How to use background commands": "バックグラウンド コマンドの使用方法",
+          "How to use Off Command": "オフコマンドの使い方",
+          "Voice Reply": "音声応答",
+          "Word you\'ll say to Alexa or Google (optional)": "Alexa または Google に話しかける言葉 (オプション)",
+          "If filled, runs instead of Command when off is the parameter": "入力すると、パラメータが off の場合に Command の代わりに実行されます",
+          "Your command": "あなたの命令",
+          "Trigger name": "トリガー名",
+          "Current Commands": "現在のコマンド"
+        }
       }
     }
   });

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../foundation.css">
+    <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+<form>
+    <div class="row">
+        <div class="medium-12 columns">
+            <h4>Vous devez vous abonner avant d'ajouter un autre ordinateur.</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="medium-12 columns">
+            <label>
+                Token
+                <input type="text" name="token" id="token" autocomplete="off" placeholder="Entrez le jeton" maxlength="255" required="required" class="form-control" value="" />
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="medium-12 columns">
+            <button class="large expanded button" type="submit">S'identifier</button>
+        </div>
+    </div>
+</form>
+</body>
+<script>
+    // You can also require other files to run in this process
+    require('../renderer.js')
+</script>
+</html>
