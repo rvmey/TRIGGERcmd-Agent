@@ -83,6 +83,7 @@
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
     "browserify-shim": "^3.8.15",
+    "electron-compilers": "^5.9.0",
     "electron-prebuilt-compile": "8.2.0",
     "electron-rebuild": "^1.5.6",
     "eslint": "^3.12.2",
