@@ -64534,6 +64534,38 @@ _i18next["default"].use(_reactI18next.initReactI18next).init({
         "Operating System": "Publica tu propio ejemplo",
         "Example Commands": "Comandos de ejemplo"
       }
+    },
+    de: {
+      translation: {
+        "Add": "Hinzufügen",
+        "Publish Your Own Example": "Veröffentlichen Sie Ihr eigenes Beispiel",
+        "Operating System": "Betriebssystem",
+        "Example Commands": "Beispielbefehle"
+      }
+    },
+    fr: {
+      translation: {
+        "Add": "Ajouter",
+        "Publish Your Own Example": "Publiez votre propre exemple",
+        "Operating System": "Système opérateur",
+        "Example Commands": "Exemples de commandes"
+      }
+    },
+    it: {
+      translation: {
+        "Add": "Aggiungere",
+        "Publish Your Own Example": "Pubblica il tuo esempio",
+        "Operating System": "Sistema operativo",
+        "Example Commands": "Esempi di comandi"
+      }
+    },
+    jp: {
+      translation: {
+        "Add": "追加",
+        "Publish Your Own Example": "独自の例を公開する",
+        "Operating System": "オペレーティング·システム",
+        "Example Commands": "コマンド例"
+      }
     }
   }
 });
