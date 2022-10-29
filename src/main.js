@@ -2,6 +2,7 @@ const i18n = require('i18next');
 const i18nextOptions = require('./configs/language.config');
 
 const {app, shell, Tray, Menu, BrowserWindow, ipcMain} = require('electron');
+const { version } = require('../package.json');
 
 // These are for the GUI editor:
 var electron = require('electron');
@@ -576,6 +577,9 @@ function startTrayIcon () {
     ]);
   } else if (process.platform === 'win32') {
     var contextMenu = Menu.buildFromTemplate([
+      {
+        label: 'Version ' + version,
+      },
       {
         label: 'TRIGGERcmd.com',
         click: function() {
