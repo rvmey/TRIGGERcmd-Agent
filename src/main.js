@@ -17,7 +17,7 @@ var fs = require('fs');
 var http = require('http');
 var path = require('path');
 const ChildProcess = require('child_process');
-
+import 'intl-pluralrules';
 
 // For GUI editor
 var myAppMenu, menuTemplate;
@@ -99,7 +99,7 @@ let editorWindow;
 var appWindow, exampleWindow;
 
 if (process.platform === 'darwin') {
-  // Old method of closing any second instance of the agent:
+  // Old method of closing any second instance of the agent (Mac requires it):
   var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
     return true;
   });
@@ -131,7 +131,7 @@ app.on('ready', function(){
     readLangFile(function (lang) {
       if (lang) {
         console.log("Language in language.cfg: " + lang);
-        i18nextOptions.lng = lang;
+        i18nextOptions.lng = lang.trim();
       } else {
         var language = app.getLocale();
         var shortlang = language.substr(0,2);

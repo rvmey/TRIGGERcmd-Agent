@@ -184,6 +184,7 @@ module.exports = {
       }
     }
   },
+  compatibilityJSON: 'v3',
   interpolation: {
     escapeValue: false
   },
