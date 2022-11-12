@@ -579,6 +579,10 @@ function startTrayIcon () {
     var contextMenu = Menu.buildFromTemplate([
       {
         label: 'Version ' + version,
+        click: function() {
+          console.log('Launching Windows version article.');
+          shell.openExternal('https://www.triggercmd.com/forum/topic/14/new-windows-agent-version');
+        }
       },
       {
         label: 'TRIGGERcmd.com',
