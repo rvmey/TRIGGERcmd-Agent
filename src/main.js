@@ -552,6 +552,53 @@ function startTrayIcon () {
         ]
       },
       {
+        label: 'Language',
+        submenu: [
+          {
+            label: 'English',
+            click: function() {
+              writeLangFile('en')
+            }
+          },
+          {
+            label: 'Spanish',
+            click: function() {
+              writeLangFile('es')
+            }
+          },
+          {
+            label: 'Portuguese',
+            click: function() {
+              writeLangFile('pt')
+            }
+          },
+          {
+            label: 'German',
+            click: function() {
+              writeLangFile('de')
+            }
+          },
+          {
+            label: 'French',
+            click: function() {
+              writeLangFile('fr')
+            }
+          },
+          {
+            label: 'Japanese',
+            click: function() {
+              writeLangFile('jp')
+            }
+          },
+          {
+            label: 'Italian',
+            click: function() {
+              writeLangFile('it')
+            }
+          }
+        ]
+      },
+      {
         label: i18n.t('Text Command Editor'),
         // accelerator: 'Alt+Command+N',
         click: function() {
@@ -578,7 +625,7 @@ function startTrayIcon () {
   } else if (process.platform === 'win32') {
     var contextMenu = Menu.buildFromTemplate([
       {
-        label: 'Version ' + version,
+        label: i18n.t('Version') + ' ' + version,
         click: function() {
           console.log('Launching Windows version article.');
           shell.openExternal('https://www.triggercmd.com/forum/topic/14/new-windows-agent-version');
@@ -599,7 +646,7 @@ function startTrayIcon () {
         }
       },    
       {
-        label: 'Background Service',
+        label: i18n.t('Background Service'),
         submenu: [
           {
             label: i18n.t('Install Background Service'),
@@ -615,6 +662,53 @@ function startTrayIcon () {
               removeService();
             }
           },
+        ]
+      },
+      {
+        label: 'Language',
+        submenu: [
+          {
+            label: 'English',
+            click: function() {
+              writeLangFile('en')
+            }
+          },
+          {
+            label: 'Spanish',
+            click: function() {
+              writeLangFile('es')
+            }
+          },
+          {
+            label: 'Portuguese',
+            click: function() {
+              writeLangFile('pt')
+            }
+          },
+          {
+            label: 'German',
+            click: function() {
+              writeLangFile('de')
+            }
+          },
+          {
+            label: 'French',
+            click: function() {
+              writeLangFile('fr')
+            }
+          },
+          {
+            label: 'Japanese',
+            click: function() {
+              writeLangFile('jp')
+            }
+          },
+          {
+            label: 'Italian',
+            click: function() {
+              writeLangFile('it')
+            }
+          }
         ]
       },
       {
@@ -649,6 +743,53 @@ function startTrayIcon () {
           console.log('Launching online computer list.');
           shell.openExternal('https://www.triggercmd.com/user/computer/list');
         }
+      },
+      {
+        label: 'Language',
+        submenu: [
+          {
+            label: 'English',
+            click: function() {
+              writeLangFile('en')
+            }
+          },
+          {
+            label: 'Spanish',
+            click: function() {
+              writeLangFile('es')
+            }
+          },
+          {
+            label: 'Portuguese',
+            click: function() {
+              writeLangFile('pt')
+            }
+          },
+          {
+            label: 'German',
+            click: function() {
+              writeLangFile('de')
+            }
+          },
+          {
+            label: 'French',
+            click: function() {
+              writeLangFile('fr')
+            }
+          },
+          {
+            label: 'Japanese',
+            click: function() {
+              writeLangFile('jp')
+            }
+          },
+          {
+            label: 'Italian',
+            click: function() {
+              writeLangFile('it')
+            }
+          }
+        ]
       },
       {
         label: i18n.t('Text Command Editor'),
