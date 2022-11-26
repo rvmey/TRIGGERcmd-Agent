@@ -745,7 +745,7 @@ function startTrayIcon () {
         }
       },
       {
-        label: 'Language',
+        label:  i18n.t('Language'),
         submenu: [
           {
             label: 'English',

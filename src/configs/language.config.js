@@ -24,7 +24,8 @@ module.exports = {
         "Remove Background Service": "Remove Background Service",
         "Text Command Editor": "Text Command Editor",
         "GUI Command Editor": "GUI Command Editor",
-        "Version": "Version"
+        "Version": "Version",
+        "Language": "Language"
       }
     },
     pt: {
@@ -50,7 +51,8 @@ module.exports = {
         "Remove Background Service": "Remover Serviço Background",
         "Text Command Editor": "Editor de comandos de texto",
         "GUI Command Editor": "Editor de Comandos GUI",
-        "Version": "Versão"
+        "Version": "Versão",
+        "Language": "Língua"
       }
     },
     es: {
@@ -76,7 +78,8 @@ module.exports = {
         "Remove Background Service": "Eliminar servicio en segundo plano",
         "Text Command Editor": "Editor de comandos de texto",
         "GUI Command Editor": "Editor de comandos GUI",
-        "Version": "Versión"
+        "Version": "Versión",
+        "Language": "Idioma"
       }
     },
     de: {
@@ -102,7 +105,8 @@ module.exports = {
         "Remove Background Service": "Entfernen Sie den Hintergrunddienst",
         "Text Command Editor": "Textbefehls-Editor",
         "GUI Command Editor": "GUI-Befehls-Editor",
-        "Version": "Ausführung"
+        "Version": "Ausführung",
+        "Language": "Sprache"
       }
     },
     fr: {
@@ -128,7 +132,8 @@ module.exports = {
         "Remove Background Service": "Supprimer le service d'arrière-plan",
         "Text Command Editor": "Éditeur de commandes de texte",
         "GUI Command Editor": "Éditeur de commandes GUI",
-        "Version": "Version"
+        "Version": "Version",
+        "Language": "Langue"
       }
     },
     it: {
@@ -154,7 +159,8 @@ module.exports = {
         "Remove Background Service": "Rimuovi servizio in background",
         "Text Command Editor": "Editor di comandi di testo",
         "GUI Command Editor": "Editor dei comandi della GUI",
-        "Version": "Versione"
+        "Version": "Versione",
+        "Language": "Linguaggio"
       }
     },
     jp: {
@@ -180,7 +186,8 @@ module.exports = {
         "Remove Background Service": "バックグラウンド サービスを削除する",
         "Text Command Editor": "テキスト コマンド エディタ",
         "GUI Command Editor": "GUI コマンド エディタ",
-        "Version": "バージョン"
+        "Version": "バージョン",
+        "Language": "言語"
       }
     }
   },
