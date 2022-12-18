@@ -1,4 +1,4 @@
-// NODE_TLS_REJECT_UNAUTHORIZED is necessary for old versions of nodejs that don't have up-to-date certificate trust stores.
+// NODE_TLS_REJECT_UNAUTHORIZED was necessary for old versions of nodejs.
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 process.chdir(__dirname);
@@ -127,8 +127,8 @@ function initFiles(backgrounddpath, callback) {
 var cafile = path.resolve(__dirname, 'gd_bundle-g2-g1.crt');
 
 // var urlprefix = 'https://599ce3f1.ngrok.io'
-var urlprefix = 'http://localhost:1337'
-// var urlprefix = 'https://www.triggercmd.com'
+// var urlprefix = 'http://localhost:1337'
+var urlprefix = 'https://www.triggercmd.com'
 
 // console.log('Connecting to ' + urlprefix);
 var options = {
@@ -244,7 +244,7 @@ function computerExists(token,computerid,cb) {
     } else {
       console.log('Error while checking whether computer exists in your account.');
       console.log(error);
-      if(error.syscall == 'getaddrinfo') {
+      if(error && error.syscall == 'getaddrinfo') {
         setTimeout(function() {
           console.log('No Internet.  Trying again in 3 seconds.')
           computerExists(token,computerid,cb);
