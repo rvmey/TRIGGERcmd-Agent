@@ -21,8 +21,8 @@ module.exports = {
   computerExists: function (token,computerid,callback) {
     computerExists(token,computerid,callback);
   },
-  createComputer: function (token,userid,callback) {
-    createComputer(token,userid,callback);
+  createComputer: function (token,userid,computername,callback) {
+    createComputer(token,userid,computername,callback);
   },
   initFiles: function (path, callback) {
     initFiles(path, callback);
@@ -184,7 +184,7 @@ function consoleLogin(daemoninstall) {
     var token = result.token;
     token = token.trim();
     tokenLogin(token, function (token) {
-      createComputer(token,useridFromFile, function (computerid) {
+      createComputer(token,useridFromFile,null, function (computerid) {
         if ((!daemoninstall) && (computerid != 'MustSubscribe')) {
           foreground(token,useridFromFile,computerid);
         }
@@ -325,10 +325,10 @@ function getToken(email,password,callback) {
   })
 }
 
-function createComputer(token,userid,callback) {
+function createComputer(token,userid,computer_name,callback) {
   // console.log('ran createComputer');
   // Configure the request
-  var computername = os.hostname();
+  var computername = computer_name || os.hostname();
 
   headers.Authorization = 'Bearer ' + token;
   options.headers = headers;

@@ -350,18 +350,8 @@ function toggleWindow(whichWindow) {
 function openguiEditor() {
   agent.fetchexamples();
   
-  // Paste from /app/main.js, but change this line: 
-  //    this line: appWindow.loadURL('file://' + __dirname + '/index.html');
-  //    to this:   appWindow.loadURL('file://' + __dirname + '/../app/index.html');
-  // and this line:  exampleWindow.loadURL('file://' + __dirname + '/examples.html');
-  //       to this:  exampleWindow.loadURL('file://' + __dirname + '/../app/examples.html');
-
   appWindow.loadURL('file://' + __dirname + '/../app/index.html');
 
-/*  appWindow.once('ready-to-show', function() {
-    appWindow.show();
-  }); //ready-to-show
-*/
   appWindow.show();
 
   appWindow.on('close', function (event) {
@@ -461,7 +451,7 @@ function createWindow() {
     // mainWindow = new BrowserWindow({ title: 'TRIGGERcmd Agent Sign In', width: 700, height: 390, titleBarStyle: 'hidden', icon: __dirname + '/icon.png' });
     mainWindow = new BrowserWindow({ title: i18n.t('TRIGGERcmd Agent Sign In'), 
       width: 700, 
-      height: 390, 
+      height: 470, 
       icon: __dirname + '/icon.png',
       webPreferences: {
         nodeIntegration: true
@@ -500,14 +490,16 @@ function submissionFunction() {
 function handleSubmission() {
     ipcMain.on('did-submit-form', (event, argument) => {
         var { token } = argument;
+        var { computername } = argument;
         token = token.trim();
+        computername = computername.trim();
         console.log('Attempting to log in with token ' + token);
 
         // agent.getToken(email,password,submissionFunction);
         agent.tokenLogin(token,function (token) {
           console.log('handleSubmission token ' + token)
           if (token) {
-            agent.createComputer(token,null, function (computerid) {
+            agent.createComputer(token,null, computername, function (computerid) {
               if (computerid == 'MustSubscribe') {
                 mainWindow.loadURL(`file://${__dirname}/html/${i18n.t('en')}/subscribefirst.html`);
               } else {

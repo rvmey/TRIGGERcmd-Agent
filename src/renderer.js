@@ -10,6 +10,7 @@ const form = document.querySelector('form');
 
 const inputs = {
     token: form.querySelector('input[name="token"]'),
+    computername: form.querySelector('input[name="computername"]'),
 };
 
 const buttons = {
@@ -33,5 +34,6 @@ form.addEventListener('submit', (event) => {
     event.preventDefault();
     ipcRenderer.send('did-submit-form', {
         token: inputs.token.value,
+        computername: inputs.computername.value,
     });
 });
