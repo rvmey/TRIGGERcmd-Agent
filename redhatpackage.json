@@ -57,6 +57,7 @@
         "requires": [
           "lsb",
           "libXScrnSaver",
+          "GConf2",
           "nodejs"
         ]
       }
