@@ -17,7 +17,7 @@ var fs = require('fs');
 var http = require('http');
 var path = require('path');
 const ChildProcess = require('child_process');
-import 'intl-pluralrules';
+// import 'intl-pluralrules';
 
 // For GUI editor
 var myAppMenu, menuTemplate;
@@ -98,7 +98,7 @@ let mainWindow;
 let editorWindow;
 var appWindow, exampleWindow;
 
-if (process.platform === 'darwin') {
+if (process.platform === 'darwin' || process.platform === 'linux') {
   // Old method of closing any second instance of the agent (Mac requires it):
   var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
     return true;
