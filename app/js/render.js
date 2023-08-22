@@ -64139,7 +64139,7 @@ var AddAppointment = /*#__PURE__*/function (_React$Component) {
         ref: function ref(_ref7) {
           return _this2.inputVoiceReply = _ref7;
         },
-        placeholder: t('Alexa or Google will say this when it runs (optional)'),
+        placeholder: t('In the conversational skills, Alexa will say this back (optional)'),
         onChange: this.handleVoiceReplyChange
       }))), /*#__PURE__*/React.createElement("div", {
         className: "form-group"
@@ -64590,7 +64590,7 @@ var EditAppointment = /*#__PURE__*/function (_React$Component) {
         ref: function ref(_ref7) {
           return _this2.inputVoiceReply = _ref7;
         },
-        placeholder: t('Alexa or Google will say this when it runs (optional)'),
+        placeholder: t('In the conversational skills, Alexa will say this back (optional)'),
         onChange: this.handleVoiceReplyChange,
         value: voiceReplyvalue
       }))), /*#__PURE__*/React.createElement("div", {

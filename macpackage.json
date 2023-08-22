@@ -1,7 +1,7 @@
 {
   "name": "TRIGGERcmdAgent",
   "productName": "TRIGGERcmdAgent",
-  "version": "1.0.31",
+  "version": "1.0.32",
   "description": "TRIGGERcmd Mac Agent",
   "main": "src/main.js",
   "scripts": {

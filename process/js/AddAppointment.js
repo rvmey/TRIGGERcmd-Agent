@@ -153,7 +153,7 @@ class AddAppointment extends React.Component {
                 <label className="col-sm-3 control-label" htmlFor="voiceReply">{t('Voice Reply')}</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
-                    id="voiceReply"  ref={(ref) => this.inputVoiceReply = ref } placeholder={t('Alexa or Google will say this when it runs (optional)')} onChange={this.handleVoiceReplyChange} />
+                    id="voiceReply"  ref={(ref) => this.inputVoiceReply = ref } placeholder={t('In the conversational skills, Alexa will say this back (optional)')} onChange={this.handleVoiceReplyChange} />
                 </div>
               </div>
               <div className="form-group">

@@ -64497,7 +64497,7 @@ class AddAppointment extends React.Component {
       className: "form-control",
       id: "voiceReply",
       ref: ref => this.inputVoiceReply = ref,
-      placeholder: "Alexa or Google will say this when it runs (optional)",
+      placeholder: "Alexa will say this in the 3 conversational skills (optional)",
       onChange: this.handleVoiceReplyChange
     }))), /*#__PURE__*/React.createElement("div", {
       className: "form-group"
@@ -64842,7 +64842,7 @@ class EditAppointment extends React.Component {
       className: "form-control",
       id: "voiceReply",
       ref: ref => this.inputVoiceReply = ref,
-      placeholder: "Alexa or Google will say this when it runs (optional)",
+      placeholder: "Alexa will say this in the 3 conversational skills (optional)",
       onChange: this.handleVoiceReplyChange,
       value: voiceReplyvalue
     }))), /*#__PURE__*/React.createElement("div", {
