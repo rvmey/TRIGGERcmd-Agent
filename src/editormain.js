@@ -1,4 +1,6 @@
 const {app, BrowserWindow} = require('electron');
+import * as remoteMain from '@electron/remote/main';
+remoteMain.initialize();
 
 let mainWindow;
 
@@ -12,7 +14,19 @@ app.on('window-all-closed', function() {
 // initialization and ready for creating browser windows.
 app.on('ready', function() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600});
+  mainWindow = new BrowserWindow({
+    width: 800, height: 600,
+    webPreferences: { 
+      plugins: true, 
+      nodeIntegration: true, 
+      contextIsolation: false,
+      backgroundThrottling: false,
+      nativeWindowOpen: false,
+      webSecurity: false 
+    }
+  });
+  remoteMain.enable(mainWindow.webContents);
+  // require("@electron/remote/main").enable(mainWindow.webContents);
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/editorindex.html');

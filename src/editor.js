@@ -4,7 +4,9 @@ var menu;
 var fileEntry;
 var hasWriteAccess;
 
-const {remote, clipboard} = require('electron');
+// const {remote, clipboard} = require('electron');
+const remote = require('@electron/remote');
+const { clipboard } = require('electron');
 const {Menu, MenuItem, dialog } = remote;
 const fs = require("fs");
 var agent = require('./agent');

@@ -8,6 +8,9 @@ const { version } = require('../package.json');
 var electron = require('electron');
 var ipc = ipcMain;
 
+const remoteMain = require('@electron/remote/main');
+remoteMain.initialize();
+
 var cp = require('child_process');
 // var spawn = require('child_process').spawn;
 
@@ -273,16 +276,24 @@ app.on('ready', function(){
     width: 900,
     height: 700,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
     }
   }); //appWindow
+  
+  remoteMain.enable(appWindow.webContents);
 
   exampleWindow = new BrowserWindow({    
     show: false,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
     }
   }); //exampleWindow  
+
+  remoteMain.enable(exampleWindow.webContents);
 
 });
 
@@ -322,12 +333,15 @@ function openEditor() {
   editorWindow = new BrowserWindow({width: 800, height: 600, 
     icon: __dirname + '/icon.png', 
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
     }
   });
 
+  remoteMain.enable(editorWindow.webContents);
  
-  editorWindow.setMenu(null);
+  // editorWindow.setMenu(null);
   // and load the index.html of the editor.
   editorWindow.loadURL('file://' + __dirname + '/editorindex.html');
   // Emitted when the window is closed.
@@ -442,6 +456,7 @@ function readMyFile(file) {
     return fs.readFileSync(file).toString();
   }
   catch (e) {
+    console.log(e);
     return null;
   }
 }
@@ -454,10 +469,14 @@ function createWindow() {
       height: 470, 
       icon: __dirname + '/icon.png',
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
+        contextIsolation: false,
+        enableRemoteModule: true
       }
     });
     
+    remoteMain.enable(mainWindow.webContents);
+
     // mainWindow.toggleDevTools();
     mainWindow.loadURL(`file://${__dirname}/html/${i18n.t('en')}/index.html`);
 

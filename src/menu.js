@@ -1,4 +1,5 @@
-const { remote, shell } = require('electron');
+const { shell } = require('electron');
+const remote = require('@electron/remote');
 const { Menu } = remote;
 
 module.exports = () => {

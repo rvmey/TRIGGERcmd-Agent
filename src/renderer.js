@@ -3,7 +3,7 @@
 // All of the Node.js APIs are available in this process.
 
 const { ipcRenderer, remote, shell } = require('electron');
-const { dialog } = remote;
+// const { dialog } = remote;
 const setApplicationMenu = require('./menu');
 
 const form = document.querySelector('form');

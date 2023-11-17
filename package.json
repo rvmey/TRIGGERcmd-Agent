@@ -1,56 +1,41 @@
 {
   "name": "triggercmdagent",
   "productName": "TRIGGERcmdAgent",
-  "version": "1.0.32",
+  "version": "1.0.33",
   "description": "TRIGGERcmd Windows Agent",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
-    "lint": "eslint src"
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
   },
   "keywords": [],
   "author": "TRIGGERcmd",
   "license": "LicenseRef-LICENSE",
-  "config": {
-    "forge": {
-      "make_targets": {
-        "win32": [
-          "squirrel"
-        ],
-        "darwin": [
-          "zip"
-        ],
-        "linux": [
-          "deb",
-          "rpm"
-        ]
-      },
-      "electronPackagerConfig": {
-        "icon": "src/ms-icon-310x310.ico",
-        "win32metadata": {
-          "ProductName": "TRIGGERcmd Agent",
-          "FileDescription": "TRIGGERcmd Agent",
-          "InternalName": "TRIGGERcmd Agent",
-          "CompanyName": "TRIGGERcmd",
-          "OriginalFilename": "TRIGGERcmdAgent.exe"
-        }
-      },
-      "electronWinstallerConfig": {
-        "name": "TRIGGERcmdAgent",
-        "iconUrl": "http://www.triggercmd.com/iconico.ico"
-      },
-      "electronInstallerDebian": {},
-      "electronInstallerRedhat": {}
-    }
+  "devDependencies": {
+    "@electron-forge/cli": "^6.4.2",
+    "@electron-forge/maker-deb": "^6.4.2",
+    "@electron-forge/maker-rpm": "^6.4.2",
+    "@electron-forge/maker-squirrel": "^6.4.2",
+    "@electron-forge/maker-zip": "^6.4.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^6.4.2",
+    "@vercel/webpack-asset-relocator-loader": "^1.7.3",
+    "css-loader": "^6.8.1",
+    "electron": "27.0.4",
+    "node-loader": "^2.0.0",
+    "style-loader": "^3.3.3"
   },
   "dependencies": {
+    "@electron/remote": "^2.1.0",
+    "electron-squirrel-startup": "^1.0.0",
     "auto-launch": "^5.0.5",
     "bootstrap": "^3.3.7",
     "child_process": "^1.0.2",
     "chokidar": "^1.6.1",
     "electron-compile": "^6.4.4",
     "electron-reload": "^1.0.2",
-    "electron-squirrel-startup": "^1.0.0",
     "fs": "0.0.1-security",
     "i18next": "^21.9.1",
     "i18next-browser-languagedetector": "^6.1.5",
@@ -68,40 +53,5 @@
     "request": "^2.79.0",
     "sails.io.js": "^1.1.4",
     "socket.io-client": "^2.0.2"
-  },
-  "devDependencies": {
-    "@babel/preset-env": "^7.19.1",
-    "@babel/preset-react": "^7.18.6",
-    "babel-core": "7.0.0-bridge.0",
-    "babel-loader": "^8.2.5",
-    "babel-plugin-transform-jquery": "^1.0.3",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.16.0",
-    "babelify": "^10.0.0",
-    "browserify": "^17.0.0",
-    "browserify-shim": "^3.8.15",
-    "electron-compilers": "^5.9.0",
-    "electron-prebuilt-compile": "8.2.0",
-    "electron-rebuild": "^1.5.6",
-    "eslint": "^3.12.2",
-    "eslint-config-airbnb": "^13.0.0",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^2.2.3",
-    "eslint-plugin-react": "^6.8.0",
-    "gulp": "^4.0.2",
-    "gulp-babel": "^6.1.3",
-    "gulp-browserify": "^0.5.1",
-    "gulp-concat-css": "^2.3.0",
-    "gulp-reactify": "^3.0.1",
-    "gulp-run": "^1.7.1",
-    "gulp-uglify": "^3.0.2",
-    "gulplog": "^2.0.0",
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0",
-    "reactify": "^1.1.1",
-    "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^2.0.0"
   }
 }
