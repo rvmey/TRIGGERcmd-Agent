@@ -101,7 +101,7 @@ let mainWindow;
 let editorWindow;
 var appWindow, exampleWindow;
 
-if (process.platform === 'darwin' || process.platform === 'linux') {
+if (process.platform === 'darwin') {
   // Old method of closing any second instance of the agent (Mac requires it):
   var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
     return true;
@@ -188,8 +188,6 @@ app.on('ready', function(){
         // return console.log(errors[0])
       }; 
 
-      appIcon = new Tray(iconPath);
-
       if (!tokenFromFile) {
         console.log('First time run after download.  No token exists.  Login to request one.');
         createWindow();
@@ -250,8 +248,6 @@ app.on('ready', function(){
               AutoLauncher.enable();   
             }
           }
-
-          appIcon = new Tray(iconPath);
 
           if (!tokenFromFile) {
             console.log('No token exists.  Login to request one.');
@@ -456,7 +452,7 @@ function readMyFile(file) {
     return fs.readFileSync(file).toString();
   }
   catch (e) {
-    console.log(e);
+    // console.log(e);
     return null;
   }
 }
@@ -828,6 +824,7 @@ function startTrayIcon () {
     ]);
   }
 
+  appIcon = new Tray(iconPath);
   appIcon.setToolTip('TRIGGERcmd');
   appIcon.setContextMenu(contextMenu);
 }
