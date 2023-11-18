@@ -1,7 +1,7 @@
 [
   {"trigger":"Reboot","command":"shutdown -r","ground":"background","voice":"reboot","allowParams": "false"},
-  {"trigger":"Gnome Editor","command":"gedit","ground":"foreground","voice":"edit","allowParams": "false"},
-  {"trigger":"Calculator","command":"gnome-calculator","ground":"foreground","voice":"edit","allowParams": "false"},
+  {"trigger":"Gnome Editor","command":"gedit","ground":"foreground","voice":"notepad","allowParams": "false"},
+  {"trigger":"Calculator","command":"gnome-calculator","ground":"foreground","voice":"calculator","allowParams": "false"},
   {"trigger":"yum update","command":"yum -y update","ground":"background","voice":"yum update","allowParams": "false"},
   {"trigger":"apt update","command":"apt-get -y update","ground":"background","voice":"update","allowParams": "false"}
 ]
