@@ -34,5 +34,10 @@ pipeline {
             }
         }
 
+        stage('copy artifacts') {
+            steps {
+                sh 'cp -r ./out/make/* /mnt/nas/TriggerCMD/'
+            }
+        }
     }
 }
