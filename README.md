@@ -8,7 +8,7 @@ Electron / Node.js based agent to run commands on computers via TRIGGERcmd.com
  - Linux, Mac, and Windows package.json files
  - Sails.JS websockets
 
-See a video showing how it works at:  http://triggercmd.com 
+See a video showing how it works at:  https://triggercmd.com 
 
 ## Linux Build Prereq:
 ```
