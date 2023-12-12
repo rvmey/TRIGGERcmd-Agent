@@ -14,6 +14,32 @@
   "keywords": [],
   "author": "TRIGGERcmd",
   "license": "LicenseRef-LICENSE",
+  "config": {
+    "forge": {
+      "make_targets": {
+        "darwin": [
+          "zip"
+        ]
+      },
+      "electronPackagerConfig": {
+        "appCopyright": "(c) Copyright 2017-2023 VanderMey Consulting, LLC, all rights reserved.",
+        "osxSign": true,
+        "appCategoryType": "public.app-category.utilities",
+        "appBundleId": "com.vandermeyconsulting.triggercmdagent",
+        "icon": "src/icon.icns",
+        "win32metadata": {
+          "ProductName": "TRIGGERcmd Agent",
+          "FileDescription": "TRIGGERcmd Agent",
+          "InternalName": "TRIGGERcmd Agent",
+          "CompanyName": "TRIGGERcmd",
+          "OriginalFilename": "TRIGGERcmdAgent.exe"
+        },
+        "extendInfo": {
+          "LSUIElement": "1"
+        }
+      }
+    }
+  },
   "devDependencies": {
     "@electron-forge/cli": "^6.4.2",
     "@electron-forge/maker-deb": "^6.4.2",
