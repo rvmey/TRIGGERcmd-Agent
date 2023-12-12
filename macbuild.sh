@@ -2,6 +2,7 @@ cp macpackage.json package.json
 npm install
 rm -rf out/make/*
 npm run make
+unzip -q out/make/TRIGGERcmdAgent*.zip -d ./out/make
 echo Signing TRIGGERcmdAgent.app
 electron-osx-sign ./out/make/TRIGGERcmdAgent.app
 codesign -dv out/make/TRIGGERcmdAgent.app
