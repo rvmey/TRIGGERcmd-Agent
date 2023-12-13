@@ -3,8 +3,6 @@ winIcon="src/ms-icon-310x310.ico";
 linuxIcon='icons/icon512.png';
 if (process.platform === 'darwin') {
   icon=macIcon;
-} else if (process.platform === 'linux') {
-  icon=linuxIcon
 } else {
   icon=winIcon;
 }
@@ -50,11 +48,19 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {},
+      config: {
+        options: {
+          icon: linuxIcon
+        }
+      },
     },
     {
       name: '@electron-forge/maker-rpm',
-      config: {},
+      config: {
+        options: {
+          icon: linuxIcon
+        }
+      },
     },
   ],
   plugins: [
