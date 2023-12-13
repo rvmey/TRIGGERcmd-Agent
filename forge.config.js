@@ -1,7 +1,10 @@
 macIcon="src/icon.icns";
 winIcon="src/ms-icon-310x310.ico";
+linuxIcon='icons/icon512.png';
 if (process.platform === 'darwin') {
   icon=macIcon;
+} else if (process.platform === 'linux') {
+  icon=linuxIcon
 } else {
   icon=winIcon;
 }
