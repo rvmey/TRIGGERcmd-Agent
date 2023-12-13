@@ -1,14 +1,23 @@
+macIcon="src/icon.icns";
+winIcon="src/ms-icon-310x310.ico";
+if (process.platform === 'darwin') {
+  icon=macIcon;
+} else {
+  icon=winIcon;
+}
+
 module.exports = {
   packagerConfig: {
     asar: false,
-    icon: "src/ms-icon-310x310.ico",
+    icon: icon,
     win32metadata: {
       "ProductName": "TRIGGERcmd Agent",
       "FileDescription": "TRIGGERcmd Agent",
       "InternalName": "TRIGGERcmd Agent",
       "CompanyName": "TRIGGERcmd",
       "OriginalFilename": "TRIGGERcmdAgent.exe"
-    }
+    },
+    osxSign: {}
   },
   rebuildConfig: {},
   makers: [
@@ -18,12 +27,22 @@ module.exports = {
         // An URL to an ICO file to use as the application icon (displayed in Control Panel > Programs and Features).
         iconUrl: 'http://www.triggercmd.com/iconico.ico',
         // The ICO file to use as the icon for the generated Setup.exe
-        setupIcon: 'src/ms-icon-310x310.ico'
+        setupIcon: winIcon
       }
     },
     {
-      name: '@electron-forge/maker-zip',
-      platforms: ['darwin'],
+      name: '@electron-forge/maker-zip'
+    },
+    {
+      name: '@electron-forge/maker-dmg',
+      config: {
+        name: 'TRIGGERcmd',
+        background: './icons/bg.png',
+        icon: macIcon,
+        format: 'UDZO',
+        debug: true
+      },
+      platforms: ['darwin']
     },
     {
       name: '@electron-forge/maker-deb',
