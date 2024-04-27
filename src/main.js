@@ -286,8 +286,12 @@ app.on("before-quit", (event) => {
   if (doQuit) {    
     console.log("Quitting")    
   } else {
-    console.log("Don't quit yet");
-    event.preventDefault();
+    if(process.platform === 'darwin') {
+      console.log("Quitting.");
+    } else {
+      console.log("Don't quit yet");
+      event.preventDefault();
+    }
   }
 });
 

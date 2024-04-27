@@ -18,7 +18,9 @@ module.exports = {
       "CompanyName": "TRIGGERcmd",
       "OriginalFilename": "TRIGGERcmdAgent.exe"
     },
-    osxSign: {},
+    osxSign: {
+      ignore: "python3"
+    },
     osxNotarize: {
       tool: 'notarytool',
       appleId: process.env.APPLE_ID,
