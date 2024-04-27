@@ -130,6 +130,12 @@ var options = {
     jar: true
 }
 
+var cafile = path.resolve(__dirname, 'gd_bundle-g2-g1.crt');
+
+if (process.platform=="linux") {
+    options.ca = fs.readFileSync(cafile);
+}
+
 if (process.argv[2] == "--daemoninstall") {
   consoleagent(true);
 }
