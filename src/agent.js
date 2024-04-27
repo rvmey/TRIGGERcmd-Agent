@@ -1,6 +1,3 @@
-// NODE_TLS_REJECT_UNAUTHORIZED was necessary for old versions of nodejs.
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 process.chdir(__dirname);
 
 var ground;
@@ -123,9 +120,6 @@ function initFiles(backgrounddpath, callback) {
   callback(tokenfile, computeridfile, datafile, datapath);
 }
 
-// var cafile = path.resolve(__dirname, 'selfsigned.crt');  // dev only
-var cafile = path.resolve(__dirname, 'gd_bundle-g2-g1.crt');
-
 // var urlprefix = 'https://599ce3f1.ngrok.io'
 // var urlprefix = 'http://localhost:1337'
 var urlprefix = 'https://www.triggercmd.com'
@@ -133,8 +127,7 @@ var urlprefix = 'https://www.triggercmd.com'
 // console.log('Connecting to ' + urlprefix);
 var options = {
     headers: headers,
-    jar: true,
-    ca: fs.readFileSync(cafile)
+    jar: true
 }
 
 if (process.argv[2] == "--daemoninstall") {
