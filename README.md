@@ -14,3 +14,6 @@ See a video showing how it works at:  https://triggercmd.com
 ```
 sudo apt install rpm
 ```
+
+## Latest Tested Working Node Version
+v16.20.2

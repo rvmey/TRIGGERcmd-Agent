@@ -7,6 +7,7 @@ const { ipcRenderer, remote, shell } = require('electron');
 const setApplicationMenu = require('./menu');
 
 const form = document.querySelector('form');
+var submitted = false
 
 const inputs = {
     token: form.querySelector('input[name="token"]'),
@@ -31,9 +32,12 @@ ipcRenderer.on('processing-did-fail', (event, error) => {
 });
 
 form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    ipcRenderer.send('did-submit-form', {
-        token: inputs.token.value,
-        computername: inputs.computername.value,
-    });
-});
+    if (submitted == false) {
+        submitted = true;
+        event.preventDefault();
+        ipcRenderer.send('did-submit-form', {
+            token: inputs.token.value,
+            computername: inputs.computername.value,
+        });
+    }
+}); 
