@@ -16,4 +16,4 @@ sudo apt install rpm
 ```
 
 ## Latest Tested Working Node Version
-v16.20.2
+v20.13.1
