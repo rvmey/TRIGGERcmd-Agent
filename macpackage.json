@@ -24,7 +24,7 @@
     "@electron/notarize": "^2.2.0",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
     "css-loader": "^6.8.1",
-    "electron": "27.0.4",
+    "electron": "27.3.11",
     "node-loader": "^2.0.0",
     "style-loader": "^3.3.3"
   },
