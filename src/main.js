@@ -101,11 +101,13 @@ let mainWindow;
 let editorWindow;
 var appWindow, exampleWindow;
 
-// New method of closing any second instance of the agent:
+// New method of closing any second instance of the agent: 
+// for some reason this is not working?
 var gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   console.log('Agent is already running, quiting this instance soon.');
   doQuit = true;
+  app.exit(0); // actually needs to exit the app
   // setTimeout(app.quit, squirreltimeout+ 1000);
 } else {
   console.log('First instance')

@@ -46,7 +46,7 @@ app.on('ready', function() {
 
   exampleWindow.on('close', function (event) {
     exampleWindow.hide();
-    event.preventDefault();
+    event.preventDefault(); // possibly related to the error
   })
 
   ipc.on('exampleAdded', function(event, arg){
