@@ -525,6 +525,13 @@ function startTrayIcon () {
   if (process.platform === 'linux') {
     var contextMenu = Menu.buildFromTemplate([
       {
+        label: i18n.t('Version') + ' ' + version,
+        click: function() {
+          console.log('Launching Windows version article.');
+          shell.openExternal('https://www.triggercmd.com/forum/topic/14/new-windows-agent-version');
+        }
+      },
+      {
         label: 'TRIGGERcmd.com',
         click: function() {
           console.log('Launching online computer list.');
@@ -737,6 +744,13 @@ function startTrayIcon () {
     ]);
   } else {
     var contextMenu = Menu.buildFromTemplate([
+      {
+        label: i18n.t('Version') + ' ' + version,
+        click: function() {
+          console.log('Launching Windows version article.');
+          shell.openExternal('https://www.triggercmd.com/forum/topic/14/new-windows-agent-version');
+        }
+      },
       {
         label: 'TRIGGERcmd.com',
         click: function() {
