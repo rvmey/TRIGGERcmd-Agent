@@ -527,8 +527,8 @@ function startTrayIcon () {
       {
         label: i18n.t('Version') + ' ' + version,
         click: function() {
-          console.log('Launching Linux version article.');
-          // shell.openExternal('');
+          console.log('Launching agent version article.');
+          shell.openExternal('https://www.triggercmd.com/forum/topic/14/triggercmd-agent-versions');
         }
       },
       {
@@ -634,8 +634,8 @@ function startTrayIcon () {
       {
         label: i18n.t('Version') + ' ' + version,
         click: function() {
-          console.log('Launching Windows version article.');
-          shell.openExternal('https://www.triggercmd.com/forum/topic/14/new-windows-agent-version');
+          console.log('Launching agent version article.');
+          shell.openExternal('https://www.triggercmd.com/forum/topic/14/triggercmd-agent-versions');
         }
       },
       {
@@ -747,8 +747,8 @@ function startTrayIcon () {
       {
         label: i18n.t('Version') + ' ' + version,
         click: function() {
-          console.log('Launching Mac version article.');
-          // shell.openExternal('');
+          console.log('Launching agent version article.');
+          shell.openExternal('https://www.triggercmd.com/forum/topic/14/triggercmd-agent-versions');
         }
       },
       {
