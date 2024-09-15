@@ -13,7 +13,7 @@ pipeline {
                 $class: 'GitSCM',
                 braches: [[name: '/master']],
                 userRemoteConfigs: [[
-                    credentialsId: "jenkins,
+                    credentialsId: "jenkins",
                     url: 'git@github.com:rvmey/TRIGGERcmd-Agent.git'
                 ]]
             ])
