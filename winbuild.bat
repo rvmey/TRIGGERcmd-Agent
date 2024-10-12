@@ -1,11 +1,10 @@
 echo Run 'gulp' to update the GUI editor before running this.
 
-sc stop triggercmdagent.exe
-sc delete triggercmdagent.exe
+@REM sc stop triggercmdagent.exe
+@REM sc delete triggercmdagent.exe
 timeout /t 5
-rd /s /q C:\triggercmdDev\github\TRIGGERcmd-Agent\src\daemon
-copy /y c:\triggercmdDev\bkup\passthrough.js C:\triggercmdDev\github\TRIGGERcmd-Agent\node_modules\electron-compilers\lib
-cd C:\triggercmdDev\github\TRIGGERcmd-Agent
+rd /s /q src\daemon
+@REM copy /y c:\triggercmdDev\bkup\passthrough.js C:\triggercmdDev\github\TRIGGERcmd-Agent\node_modules\electron-compilers\lib
 copy winpackage.json package.json
 del src\*.cfg
 del src\*.tkn
