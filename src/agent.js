@@ -494,6 +494,9 @@ function updateCmds(token,userid,computerid,startsocket) {
                     onlinecmds.records[o].voiceReply == localcmds[l].voiceReply &&
                     Boolean(onlinecmds.records[o].allowParams) == localallowParams
                 ) { foundonline = true }
+                if (onlinecmds.records[o].name == localcmds[l].trigger) {
+                  foundonline = true
+                }
               }
               if (!foundonline) {
                 if (localcmds[l].ground == ground) {
