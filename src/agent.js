@@ -121,8 +121,8 @@ function initFiles(backgrounddpath, callback) {
 }
 
 // var urlprefix = 'https://599ce3f1.ngrok.io'
-var urlprefix = 'http://localhost:1337'
-//var urlprefix = 'https://www.triggercmd.com'
+// var urlprefix = 'http://localhost:1337'
+var urlprefix = 'https://www.triggercmd.com'
 
 // console.log('Connecting to ' + urlprefix);
 var options = {
