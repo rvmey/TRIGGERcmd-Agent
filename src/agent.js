@@ -121,8 +121,8 @@ function initFiles(backgrounddpath, callback) {
 }
 
 // var urlprefix = 'https://599ce3f1.ngrok.io'
-// var urlprefix = 'http://localhost:1337'
-var urlprefix = 'https://www.triggercmd.com'
+var urlprefix = 'http://localhost:1337'
+//var urlprefix = 'https://www.triggercmd.com'
 
 // console.log('Connecting to ' + urlprefix);
 var options = {
@@ -494,6 +494,9 @@ function updateCmds(token,userid,computerid,startsocket) {
                     onlinecmds.records[o].voiceReply == localcmds[l].voiceReply &&
                     Boolean(onlinecmds.records[o].allowParams) == localallowParams
                 ) { foundonline = true }
+                if (onlinecmds.records[o].name == localcmds[l].trigger) {
+                  foundonline = true
+                }
               }
               if (!foundonline) {
                 if (localcmds[l].ground == ground) {
