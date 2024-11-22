@@ -656,11 +656,14 @@ function startSocket(token,computerid) {
               if (error) {
                 // Log any errors
                 console.error('error:', error.message);
-                return;
+                console.error('error code:', error.code);
+                reportBack(token,computerid,cmdid,"Command ran with error code " + error.code);
+                // return;
+              } else {
+                reportBack(token,computerid,cmdid,"Command ran");
               }
           });
 
-          reportBack(token,computerid,cmdid);
         }
   })
 
@@ -678,13 +681,13 @@ function startSocket(token,computerid) {
 }
 
 
-function reportBack(token,computerid,cmdid) {
+function reportBack(token,computerid,cmdid,status) {
 
   headers.Authorization = 'Bearer ' + token;
   options.headers = headers;
   options.url = urlprefix + '/api/run/save';
   options.method = 'POST';
-  options.form = {'status': 'Command ran', 'computer': computerid, 'command': cmdid };
+  options.form = {'status': status, 'computer': computerid, 'command': cmdid };
 
   // Start the request
   request(options, function (error, response, body) {
