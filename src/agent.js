@@ -648,8 +648,18 @@ function startSocket(token,computerid) {
           } else {
             var theCommand = cmdobj.command;
           }
-          var ChildProcess = cp.exec(theCommand, {env: envVars});
           console.log('Running trigger: ' + trigger + '  Command: ' + theCommand);
+          var ChildProcess = cp.exec(theCommand, {env: envVars}, (error, stdout, stderr) => {
+              console.log('stdout:', stdout);
+              console.log('stderr:', stderr);
+
+              if (error) {
+                // Log any errors
+                console.error('error:', error.message);
+                return;
+              }
+          });
+
           reportBack(token,computerid,cmdid);
         }
   })
