@@ -1,13 +1,13 @@
 {
   "name": "TRIGGERcmdAgent",
   "productName": "TRIGGERcmdAgent",
-  "version": "1.0.37",
+  "version": "1.0.38",
   "description": "TRIGGERcmd Agent",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make",
+    "make": "electron-forge make --arch=arm64,x64",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },

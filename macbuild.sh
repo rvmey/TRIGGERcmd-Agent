@@ -9,4 +9,9 @@ source ~/apple_creds.sh
 cp macpackage.json package.json
 npm install
 rm -rf out/make/*
-npm run make
+# npm run make
+
+npx electron-forge make --arch=arm64
+mv out/make/TRIGGERcmd.dmg out/make/TRIGGERcmdAgent-arm64.dmg
+npx electron-forge make --arch=x64
+mv out/make/TRIGGERcmd.dmg out/make/TRIGGERcmdAgent-x64.dmg
