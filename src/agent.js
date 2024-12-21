@@ -45,6 +45,8 @@ var path = require('path');
 // var argv = require('minimist')(process.argv.slice(2));
 var prompt = require('prompt');
 var os = require('os');
+const HomeAssistantWebSocket = require('./ha');
+var haWebSocket;
 
 // Set the headers
 var headers = {
@@ -261,6 +263,11 @@ function computerExists(token,computerid,cb) {
 
 function background(datapath) {
   ground = 'background';
+
+  // Start HA in background mode if it's enabled.
+  haWebSocket = new HomeAssistantWebSocket(ground);
+  haWebSocket.start();
+
   initFiles(datapath, function (tfile, cidfile, dfile, dpath) {
     console.log('Tokenfile: ' + tfile);
     console.log('ComputerIDfile: ' + cidfile);
@@ -276,6 +283,11 @@ function background(datapath) {
 
 function foreground(token,userid,computerid) {
   ground = 'foreground';
+
+  // Start HA in background mode if it's enabled.
+  haWebSocket = new HomeAssistantWebSocket(ground);
+  haWebSocket.start();
+  
   initFiles(false, function (tfile, cidfile, dfile, dpath) {
     console.log('Tokenfile: ' + tfile);
     console.log('ComputerIDfile: ' + cidfile);
@@ -630,45 +642,47 @@ function startSocket(token,computerid) {
         var trigger = event.trigger;
         var cmdid = event.id;
         var params = event.params;
+        var sender = event.sender;
         var envVars = process.env;
         
-        //console.log(event);
-        console.log(event);
+        console.log("triggercmd.com data:", event);
         var commands = JSON.parse(fs.readFileSync(datafile));
         var cmdobj = triggerToCmdObj(commands,trigger);
         if (cmdobj.ground == ground) {
-          // This wasn't compatible with Raspberry Pi2's:
-          // Object.assign(envVars, { TCMD_COMPUTER_ID: computerid }, { TCMD_COMMAND_ID: cmdid });
-          // But this works:
-          envVars.TCMD_COMPUTER_ID=computerid;
-          envVars.TCMD_COMMAND_ID=cmdid;
-
-          if (cmdobj.allowParams && params) {
-            if (cmdobj.offCommand && (params.trim() == 'off')) {
-              var theCommand = cmdobj.offCommand;
-            } else if (cmdobj.offCommand && (params.trim() == 'on')) {
-              var theCommand = cmdobj.command;
-            } else {
-              var theCommand = cmdobj.command + ' ' + params;
-            }
+          if(haWebSocket.isConnected && sender == "Home Assistant") {
+            console.log("Ignored duplicate trigger", trigger, "sent from Home Assistant via triggercmd.com because this agent is connected to Home Assistant directly.");
           } else {
-            var theCommand = cmdobj.command;
-          }
-          console.log('Running trigger: ' + trigger + '  Command: ' + theCommand);
-          var ChildProcess = cp.exec(theCommand, {env: envVars}, (error, stdout, stderr) => {
-              console.log('stdout:', stdout);
-              console.log('stderr:', stderr);
-
-              if (error) {
-                // Log any errors
-                console.error('error:', error.message);
-                console.error('error code:', error.code);
-                reportBack(token,computerid,cmdid,"Command ran with error code " + error.code);
-                // return;
+            envVars.TCMD_COMPUTER_ID=computerid;
+            envVars.TCMD_COMMAND_ID=cmdid;
+  
+            if (cmdobj.allowParams && params) {
+              if (cmdobj.offCommand && (params.trim() == 'off')) {
+                var theCommand = cmdobj.offCommand;
+              } else if (cmdobj.offCommand && (params.trim() == 'on')) {
+                var theCommand = cmdobj.command;
               } else {
-                reportBack(token,computerid,cmdid,"Command ran");
+                var theCommand = cmdobj.command + ' ' + params;
               }
-          });
+            } else {
+              var theCommand = cmdobj.command;
+            }
+  
+            console.log('Running trigger: ' + trigger + '  Command: ' + theCommand);
+            var ChildProcess = cp.exec(theCommand, {env: envVars}, (error, stdout, stderr) => {
+                console.log('stdout:', stdout);
+                console.log('stderr:', stderr);
+  
+                if (error) {
+                  // Log any errors
+                  console.error('error:', error.message);
+                  console.error('error code:', error.code);
+                  reportBack(token,computerid,cmdid,"Command ran with error code " + error.code);
+                  // return;
+                } else {
+                  reportBack(token,computerid,cmdid,"Command ran");
+                }
+            });
+          }
 
         }
   })
