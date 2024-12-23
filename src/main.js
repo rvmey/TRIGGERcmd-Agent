@@ -521,6 +521,67 @@ function handleSubmission() {
     });
 }
 
+function openhaconfig() {
+  haWindow = new BrowserWindow({ title: i18n.t('Home Assistant Config'), 
+    width: 700, 
+    height: 470, 
+    icon: __dirname + '/icon.png',
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
+    }
+  });
+  
+  remoteMain.enable(haWindow.webContents);
+
+  haWindow.loadURL(`file://${__dirname}/homeassistant.html`);
+  
+  haWindow.on('closed', () => {
+      haWindow = null;
+  });
+}
+
+ipcMain.handle('homeAssistantSave', async (event, formData) => {
+  console.log("trying to save form")
+  console.log(formData)
+
+  filePath = path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/home_assistant_config.json')
+
+  try {
+    // Prepare configuration data
+    const updatedConfig = {
+      HA_URL: formData.ha_url,
+      HA_TOKEN: formData.ha_token,
+      HA_ENABLED: formData.ha_enabled,
+    };
+
+    // Write configuration to JSON file
+    fs.writeFileSync(filePath, JSON.stringify(updatedConfig, null, 2), 'utf-8');
+    console.log('Configuration saved:', updatedConfig);
+
+    haWindow.hide(); // Close the window after saving
+
+  } catch (error) {
+    console.error('Error saving configuration:', error);
+  }
+
+  haWindow.hide();
+});
+
+ipcMain.handle('load-ha-config', async () => {
+  console.log("trying to load form")
+  const filePath = path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/home_assistant_config.json')
+
+  try {
+    const data = fs.readFileSync(filePath, 'utf-8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading configuration file:', error);
+    return { ha_url: '', ha_token: '', ha_enabled: false }; // Default values
+  }
+});
+
 function startTrayIcon () {
   if (process.platform === 'linux') {
     var contextMenu = Menu.buildFromTemplate([
@@ -620,6 +681,18 @@ function startTrayIcon () {
           console.log('Opening GUI editor');
           openguiEditor();
         }
+      },
+      {
+        label: 'Integrations',
+        submenu: [
+          {
+            label: 'Home Assistant',
+            click: function() {
+              console.log('Opening Home Assisant Config');
+              openhaconfig();
+            }
+          }
+        ]
       },
       { label: i18n.t('Quit'),
         selector: 'terminate:',
@@ -734,6 +807,18 @@ function startTrayIcon () {
           openguiEditor();
         }
       },
+      {
+        label: 'Integrations',
+        submenu: [
+          {
+            label: 'Home Assistant',
+            click: function() {
+              console.log('Opening Home Assisant Config');
+              openhaconfig();
+            }
+          }
+        ]
+      },
       { label: i18n.t('Quit'),
         selector: 'terminate:',
         click: function() {
@@ -820,6 +905,18 @@ function startTrayIcon () {
           console.log('Opening GUI editor');
           openguiEditor();
         }
+      },
+      {
+        label: 'Integrations',
+        submenu: [
+          {
+            label: 'Home Assistant',
+            click: function() {
+              console.log('Opening Home Assisant Config');
+              openhaconfig();
+            }
+          }
+        ]
       },
       { label: i18n.t('Quit'),
         selector: 'terminate:',

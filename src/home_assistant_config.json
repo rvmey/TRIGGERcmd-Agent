@@ -3,5 +3,5 @@
 
     "HA_TOKEN": "Put your home assistant token here",
 
-    "HA_ENABLED": true
+    "HA_ENABLED": false
 }
