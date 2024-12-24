@@ -1,7 +1,7 @@
 {
   "name": "triggercmdagent",
   "productName": "triggercmdagent",
-  "version": "1.0.37",
+  "version": "1.0.39",
   "description": "TRIGGERcmd Agent",
   "main": "src/main.js",
   "scripts": {

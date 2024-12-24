@@ -74,6 +74,8 @@ var datafile;
 var datapath;
 var languagefile;
 
+agent.startHomeAssistant("foreground");
+
 agent.initFiles(null, function (tfile, cidfile, dfile, dpath) {
   tokenfile = tfile;
   computeridfile = cidfile;
@@ -534,6 +536,9 @@ function openhaconfig() {
     }
   });
   
+  myAppMenu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(myAppMenu);
+
   remoteMain.enable(haWindow.webContents);
 
   haWindow.loadURL(`file://${__dirname}/homeassistant.html`);
@@ -544,8 +549,8 @@ function openhaconfig() {
 }
 
 ipcMain.handle('homeAssistantSave', async (event, formData) => {
-  console.log("trying to save form")
-  console.log(formData)
+  // console.log("Saving HA config form")
+  // console.log(formData)
 
   filePath = path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/home_assistant_config.json')
 
@@ -571,7 +576,6 @@ ipcMain.handle('homeAssistantSave', async (event, formData) => {
 });
 
 ipcMain.handle('load-ha-config', async () => {
-  console.log("trying to load form")
   const filePath = path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/home_assistant_config.json')
 
   try {
@@ -599,6 +603,13 @@ function startTrayIcon () {
           console.log('Launching online computer list.');
           shell.openExternal('https://www.triggercmd.com/user/computer/list');
           // launchComputerList();  <- don't use this because it closes the app when the window closes.
+        }
+      },
+      {
+        label: 'Home Assistant Config',
+        click: function() {
+          console.log('Opening Home Assisant Config');
+          openhaconfig();
         }
       },
       {
@@ -683,18 +694,6 @@ function startTrayIcon () {
           openguiEditor();
         }
       },
-      {
-        label: 'Integrations',
-        submenu: [
-          {
-            label: 'Home Assistant',
-            click: function() {
-              console.log('Opening Home Assisant Config');
-              openhaconfig();
-            }
-          }
-        ]
-      },
       { label: i18n.t('Quit'),
         selector: 'terminate:',
         click: function() {
@@ -726,6 +725,13 @@ function startTrayIcon () {
           updateAgent();
         }
       },    
+      {
+        label: 'Home Assistant Config',
+        click: function() {
+          console.log('Opening Home Assisant Config');
+          openhaconfig();
+        }
+      },
       {
         label: i18n.t('Background Service'),
         submenu: [
@@ -808,18 +814,6 @@ function startTrayIcon () {
           openguiEditor();
         }
       },
-      {
-        label: 'Integrations',
-        submenu: [
-          {
-            label: 'Home Assistant',
-            click: function() {
-              console.log('Opening Home Assisant Config');
-              openhaconfig();
-            }
-          }
-        ]
-      },
       { label: i18n.t('Quit'),
         selector: 'terminate:',
         click: function() {
@@ -842,6 +836,13 @@ function startTrayIcon () {
         click: function() {
           console.log('Launching online computer list.');
           shell.openExternal('https://www.triggercmd.com/user/computer/list');
+        }
+      },
+      {
+        label: 'Home Assistant Config',
+        click: function() {
+          console.log('Opening Home Assisant Config');
+          openhaconfig();
         }
       },
       {
@@ -906,18 +907,6 @@ function startTrayIcon () {
           console.log('Opening GUI editor');
           openguiEditor();
         }
-      },
-      {
-        label: 'Integrations',
-        submenu: [
-          {
-            label: 'Home Assistant',
-            click: function() {
-              console.log('Opening Home Assisant Config');
-              openhaconfig();
-            }
-          }
-        ]
       },
       { label: i18n.t('Quit'),
         selector: 'terminate:',

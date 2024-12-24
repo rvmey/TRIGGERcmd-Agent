@@ -99,14 +99,22 @@ class HomeAssistantWebSocket {
 
     var computeridFromFile = readMyFile(path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/computerid.cfg'));
     var tokenFromFile = readMyFile(path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/token.tkn'));
+    var computerNameFile = path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/computername.cfg');
 
     fetchComputerData(computeridFromFile, tokenFromFile)
     .then(data => {
       this.computer_name = getComputerNameById(data,computeridFromFile)
-      console.log('Computer name for Local Home Assistant listener:', this.computer_name);
+      console.log('Computer name for Local Home Assistant listener: ' + this.computer_name);
+      fs.writeFile(computerNameFile, this.computer_name, 'utf8', function(err) {
+        if (err) {
+          console.log('Error writing computer name to file:');
+          console.log(err);
+        }
+      });
     })
     .catch(error => {
       console.error('Error fetching computer name:', error);
+      this.computer_name = readMyFile(computerNameFile);
     });
 
   }
@@ -133,20 +141,19 @@ class HomeAssistantWebSocket {
 
     this.socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      // console.log("HA Event received:");
-      // console.log(message);
 
       if (message.type === "auth_ok") {
         console.log("Local Home Assistant Authentication successful!");
         this.subscribeToAllEvents();
       } else if (message.type === "event") {
         var data = message.event.data;
-        console.log("HA Event data:");
-        console.log(data);
+        // console.log("HA Event data:");
+        // console.log(data);
         var prefix = "switch." + this.computer_name.toLowerCase().replace(/[-\s]/g, "_") + "_";
-        console.log("prefix: " + prefix);
+        // console.log("prefix: " + prefix);
         if(data.domain == "switch" && data.service_data.entity_id.startsWith(prefix) ) {
-            // console.log("Home Assistant data:", data);
+            console.log("Home Assistant data:");
+            console.log(data);
             var trigger = data.service_data.entity_id.substring(prefix.length);
 
             var commands = JSON.parse(fs.readFileSync(this.datafile));

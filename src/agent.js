@@ -35,6 +35,9 @@ module.exports = {
   },
   restartHomeAssistant: function () {
     restartHomeAssistant();
+  },
+  startHomeAssistant: function (ground) {
+    startHomeAssistant(ground);
   }
 };
 
@@ -48,7 +51,6 @@ var path = require('path');
 var prompt = require('prompt');
 var os = require('os');
 const HomeAssistantWebSocket = require('./ha');
-var haWebSocket;
 
 // Set the headers
 var headers = {
@@ -74,6 +76,15 @@ exports.computeridfile = computeridfile;
 var tokenFromFile;
 var computeridFromFile;
 var useridFromFile;
+var loggedNoInternet=false;
+var haWebSocket;
+
+function startHomeAssistant(ground) {
+  // Start Home Assistant listener if it's enabled.
+  const HomeAssistantWebSocket = require('./ha');
+  haWebSocket = new HomeAssistantWebSocket(ground);
+  haWebSocket.start();
+}
 
 function initFiles(backgrounddpath, callback) {
   // var installpath = path.resolve(process.env.LOCALAPPDATA, 'TRIGGERcmdAgent');
@@ -230,8 +241,9 @@ function fetchexamples() {
 function computerExists(token,computerid,cb) {
   // http://localhost:1337/api/computer/list?computer_id=587a2f04c8f501607e8f9164
   // Configure the request
-  console.log('Checking if the ' + computerid + ' computer exists.');
-
+  if(!loggedNoInternet) {
+    console.log('Checking if the ' + computerid + ' computer exists.');
+  }
   headers.Authorization = 'Bearer ' + token;
   options.headers = headers;
   options.url = urlprefix + '/api/computer/list?computer_id=' + computerid;
@@ -251,13 +263,16 @@ function computerExists(token,computerid,cb) {
           cb(false);
       }
     } else {
-      console.log('Error while checking whether computer exists in your account.');
-      console.log(error);
+      if(!loggedNoInternet) {
+        console.log('Error while checking whether computer exists in your account.');
+        console.log(error);
+        console.log('No Internet.  Trying again every 10 seconds.')
+        loggedNoInternet = true;
+      }
       if(error && error.syscall == 'getaddrinfo') {
         setTimeout(function() {
-          console.log('No Internet.  Trying again in 3 seconds.')
           computerExists(token,computerid,cb);
-        }, 3000)
+        }, 10000)
       }
     }
   })
@@ -265,10 +280,6 @@ function computerExists(token,computerid,cb) {
 
 function background(datapath) {
   ground = 'background';
-
-  // Start HA in background mode if it's enabled.
-  haWebSocket = new HomeAssistantWebSocket(ground);
-  haWebSocket.start();
 
   initFiles(datapath, function (tfile, cidfile, dfile, dpath) {
     console.log('Tokenfile: ' + tfile);
@@ -281,15 +292,13 @@ function background(datapath) {
   } else {
     console.log('No token.  Exiting background service.');
   }
+
+  startHomeAssistant(ground);
 }
 
 function foreground(token,userid,computerid) {
   ground = 'foreground';
 
-  // Start HA in background mode if it's enabled.
-  haWebSocket = new HomeAssistantWebSocket(ground);
-  haWebSocket.start();
-  
   initFiles(false, function (tfile, cidfile, dfile, dpath) {
     console.log('Tokenfile: ' + tfile);
     console.log('ComputerIDfile: ' + cidfile);
