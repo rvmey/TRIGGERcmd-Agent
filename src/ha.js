@@ -7,7 +7,7 @@ const request = require('request'); // Ensure you have installed the request mod
 function triggerToCmdObj(cmds, trigger) {
     for(var i = 0; i < cmds.length; i++)
     {
-      if(cmds[i].trigger.toLowerCase().replace(/[-\s]/g, "_") == trigger)
+      if(cmds[i].trigger.toLowerCase().replace(/ /g,"_") == trigger)
       {
         return cmds[i];
       }
@@ -143,7 +143,7 @@ class HomeAssistantWebSocket {
         var data = message.event.data;
         console.log("HA Event data:");
         console.log(data);
-        var prefix = "switch." + this.computer_name.toLowerCase() + "_"
+        var prefix = "switch." + this.computer_name.toLowerCase().replace(/[-\s]/g, "_") + "_";
         console.log("prefix: " + prefix);
         if(data.domain == "switch" && data.service_data.entity_id.startsWith(prefix) ) {
             // console.log("Home Assistant data:", data);
