@@ -485,15 +485,16 @@ function createWindow() {
     });
 }
 
-function submissionFunction() {
-  console.log('Submitted...');
-  tokenFromFile = readMyFile(tokenfile);
-  if (tokenFromFile) {
-    console.log('Token file exists now.  Closing login window and starting tray icon.');
-    startTrayIcon();
-    mainWindow.hide();
-  }
-}
+// // unused old function
+// function submissionFunction() {
+//   console.log('Submitted...');
+//   tokenFromFile = readMyFile(tokenfile);
+//   if (tokenFromFile) {
+//     console.log('Token file exists now.  Closing login window and starting tray icon.');
+//     startTrayIcon();
+//     mainWindow.hide();
+//   }
+// }
 
 function handleSubmission() {
     ipcMain.on('did-submit-form', (event, argument) => {
@@ -560,13 +561,13 @@ ipcMain.handle('homeAssistantSave', async (event, formData) => {
     fs.writeFileSync(filePath, JSON.stringify(updatedConfig, null, 2), 'utf-8');
     console.log('Configuration saved:', updatedConfig);
 
-    haWindow.hide(); // Close the window after saving
+    agent.restartHomeAssistant();
 
   } catch (error) {
     console.error('Error saving configuration:', error);
   }
 
-  haWindow.hide();
+  haWindow.hide(); // Close the window after saving
 });
 
 ipcMain.handle('load-ha-config', async () => {

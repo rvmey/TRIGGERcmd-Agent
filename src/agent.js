@@ -32,8 +32,10 @@ module.exports = {
   },
   fetchexamples: function () {
     fetchexamples();
+  },
+  restartHomeAssistant: function () {
+    restartHomeAssistant();
   }
-
 };
 
 var socketIOClient = require('socket.io-client');
@@ -797,4 +799,10 @@ function readMyFile(file) {
   catch (e) {
     return null;
   }
+}
+
+function restartHomeAssistant() {
+  haWebSocket.stop();
+  haWebSocket = new HomeAssistantWebSocket(ground);
+  haWebSocket.start();
 }
