@@ -647,7 +647,8 @@ function startSocket(token,computerid) {
         var sender = event.sender;
         var envVars = process.env;
         
-        console.log("triggercmd.com data:", event);
+        console.log("triggercmd.com data:");
+        console.log(event);
         var commands = JSON.parse(fs.readFileSync(datafile));
         var cmdobj = triggerToCmdObj(commands,trigger);
         if (cmdobj.ground == ground) {
