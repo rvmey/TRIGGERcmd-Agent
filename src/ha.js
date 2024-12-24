@@ -144,8 +144,9 @@ class HomeAssistantWebSocket {
         console.log("HA Event data:");
         console.log(data);
         var prefix = "switch." + this.computer_name.toLowerCase() + "_"
+        console.log("prefix: " + prefix);
         if(data.domain == "switch" && data.service_data.entity_id.startsWith(prefix) ) {
-            console.log("Home Assistant data:", data);
+            // console.log("Home Assistant data:", data);
             var trigger = data.service_data.entity_id.substring(prefix.length);
 
             var commands = JSON.parse(fs.readFileSync(this.datafile));
