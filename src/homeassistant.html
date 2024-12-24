@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./foundation.css">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<form>
+    <div class="row">
+        <div class="medium-12 columns">
+            <h4>Home Assistant Offline Configuration</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="medium-12 columns">
+            <label>
+                Home Assistant URL
+                <input type="text" name="ha_url" id="ha_url" autocomplete="off" maxlength="255" required="required" class="form-control" value="" />
+            </label>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="medium-12 columns">
+            <label>
+                Home Assistant Token
+                <input type="text" name="ha_token" id="ha_token" autocomplete="off" maxlength="255" class="form-control" value="" />
+            </label>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="medium-12 columns">
+            <label>
+                Enabled
+                <input type="checkbox" name="ha_enabled" id="ha_enabled" class="form-control"/>
+            </label>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="medium-12 columns">
+            <button class="large expanded button" type="submit">Save</button>
+        </div>
+    </div>
+</form>
+</body>
+<script>
+    // You can also require other files to run in this process
+    require('./homeassistant.js')
+</script>
+</html>

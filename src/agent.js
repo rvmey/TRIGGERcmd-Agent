@@ -32,8 +32,13 @@ module.exports = {
   },
   fetchexamples: function () {
     fetchexamples();
+  },
+  restartHomeAssistant: function () {
+    restartHomeAssistant();
+  },
+  startHomeAssistant: function (ground) {
+    startHomeAssistant(ground);
   }
-
 };
 
 var socketIOClient = require('socket.io-client');
@@ -45,6 +50,7 @@ var path = require('path');
 // var argv = require('minimist')(process.argv.slice(2));
 var prompt = require('prompt');
 var os = require('os');
+const HomeAssistantWebSocket = require('./ha');
 
 // Set the headers
 var headers = {
@@ -70,6 +76,15 @@ exports.computeridfile = computeridfile;
 var tokenFromFile;
 var computeridFromFile;
 var useridFromFile;
+var loggedNoInternet=false;
+var haWebSocket;
+
+function startHomeAssistant(ground) {
+  // Start Home Assistant listener if it's enabled.
+  const HomeAssistantWebSocket = require('./ha');
+  haWebSocket = new HomeAssistantWebSocket(ground);
+  haWebSocket.start();
+}
 
 function initFiles(backgrounddpath, callback) {
   // var installpath = path.resolve(process.env.LOCALAPPDATA, 'TRIGGERcmdAgent');
@@ -98,6 +113,12 @@ function initFiles(backgrounddpath, callback) {
   datafile = path.resolve(datapath, cmdfile);
   if (!fs.existsSync(datafile)) {
     fs.createReadStream(examplefile).pipe(fs.createWriteStream(datafile));
+  }
+
+  haconfig = "home_assistant_config.json"
+  hadatafile = path.resolve(datapath, haconfig);
+  if (!fs.existsSync(hadatafile)) {
+    fs.createReadStream(haconfig).pipe(fs.createWriteStream(hadatafile));
   }
 
   // Copy a script to the data folder to help users send the results of their commands.
@@ -220,8 +241,9 @@ function fetchexamples() {
 function computerExists(token,computerid,cb) {
   // http://localhost:1337/api/computer/list?computer_id=587a2f04c8f501607e8f9164
   // Configure the request
-  console.log('Checking if the ' + computerid + ' computer exists.');
-
+  if(!loggedNoInternet) {
+    console.log('Checking if the ' + computerid + ' computer exists.');
+  }
   headers.Authorization = 'Bearer ' + token;
   options.headers = headers;
   options.url = urlprefix + '/api/computer/list?computer_id=' + computerid;
@@ -241,13 +263,16 @@ function computerExists(token,computerid,cb) {
           cb(false);
       }
     } else {
-      console.log('Error while checking whether computer exists in your account.');
-      console.log(error);
+      if(!loggedNoInternet) {
+        console.log('Error while checking whether computer exists in your account.');
+        console.log(error);
+        console.log('No Internet.  Trying again every 10 seconds.')
+        loggedNoInternet = true;
+      }
       if(error && error.syscall == 'getaddrinfo') {
         setTimeout(function() {
-          console.log('No Internet.  Trying again in 3 seconds.')
           computerExists(token,computerid,cb);
-        }, 3000)
+        }, 10000)
       }
     }
   })
@@ -255,6 +280,7 @@ function computerExists(token,computerid,cb) {
 
 function background(datapath) {
   ground = 'background';
+
   initFiles(datapath, function (tfile, cidfile, dfile, dpath) {
     console.log('Tokenfile: ' + tfile);
     console.log('ComputerIDfile: ' + cidfile);
@@ -266,10 +292,13 @@ function background(datapath) {
   } else {
     console.log('No token.  Exiting background service.');
   }
+
+  startHomeAssistant(ground);
 }
 
 function foreground(token,userid,computerid) {
   ground = 'foreground';
+
   initFiles(false, function (tfile, cidfile, dfile, dpath) {
     console.log('Tokenfile: ' + tfile);
     console.log('ComputerIDfile: ' + cidfile);
@@ -624,45 +653,48 @@ function startSocket(token,computerid) {
         var trigger = event.trigger;
         var cmdid = event.id;
         var params = event.params;
+        var sender = event.sender;
         var envVars = process.env;
         
-        //console.log(event);
+        console.log("triggercmd.com data:");
         console.log(event);
         var commands = JSON.parse(fs.readFileSync(datafile));
         var cmdobj = triggerToCmdObj(commands,trigger);
         if (cmdobj.ground == ground) {
-          // This wasn't compatible with Raspberry Pi2's:
-          // Object.assign(envVars, { TCMD_COMPUTER_ID: computerid }, { TCMD_COMMAND_ID: cmdid });
-          // But this works:
-          envVars.TCMD_COMPUTER_ID=computerid;
-          envVars.TCMD_COMMAND_ID=cmdid;
-
-          if (cmdobj.allowParams && params) {
-            if (cmdobj.offCommand && (params.trim() == 'off')) {
-              var theCommand = cmdobj.offCommand;
-            } else if (cmdobj.offCommand && (params.trim() == 'on')) {
-              var theCommand = cmdobj.command;
-            } else {
-              var theCommand = cmdobj.command + ' ' + params;
-            }
+          if(haWebSocket.isConnected && sender == "Home Assistant") {
+            console.log("Ignored duplicate trigger", trigger, "sent from Home Assistant via triggercmd.com because this agent is connected to Home Assistant directly.");
           } else {
-            var theCommand = cmdobj.command;
-          }
-          console.log('Running trigger: ' + trigger + '  Command: ' + theCommand);
-          var ChildProcess = cp.exec(theCommand, {env: envVars}, (error, stdout, stderr) => {
-              console.log('stdout:', stdout);
-              console.log('stderr:', stderr);
-
-              if (error) {
-                // Log any errors
-                console.error('error:', error.message);
-                console.error('error code:', error.code);
-                reportBack(token,computerid,cmdid,"Command ran with error code " + error.code);
-                // return;
+            envVars.TCMD_COMPUTER_ID=computerid;
+            envVars.TCMD_COMMAND_ID=cmdid;
+  
+            if (cmdobj.allowParams && params) {
+              if (cmdobj.offCommand && (params.trim() == 'off')) {
+                var theCommand = cmdobj.offCommand;
+              } else if (cmdobj.offCommand && (params.trim() == 'on')) {
+                var theCommand = cmdobj.command;
               } else {
-                reportBack(token,computerid,cmdid,"Command ran");
+                var theCommand = cmdobj.command + ' ' + params;
               }
-          });
+            } else {
+              var theCommand = cmdobj.command;
+            }
+  
+            console.log('Running trigger: ' + trigger + '  Command: ' + theCommand);
+            var ChildProcess = cp.exec(theCommand, {env: envVars}, (error, stdout, stderr) => {
+                console.log('stdout:', stdout);
+                console.log('stderr:', stderr);
+  
+                if (error) {
+                  // Log any errors
+                  console.error('error:', error.message);
+                  console.error('error code:', error.code);
+                  reportBack(token,computerid,cmdid,"Command ran with error code " + error.code);
+                  // return;
+                } else {
+                  reportBack(token,computerid,cmdid,"Command ran");
+                }
+            });
+          }
 
         }
   })
@@ -777,4 +809,10 @@ function readMyFile(file) {
   catch (e) {
     return null;
   }
+}
+
+function restartHomeAssistant() {
+  haWebSocket.stop();
+  haWebSocket = new HomeAssistantWebSocket(ground);
+  haWebSocket.start();
 }

@@ -74,6 +74,8 @@ var datafile;
 var datapath;
 var languagefile;
 
+agent.startHomeAssistant("foreground");
+
 agent.initFiles(null, function (tfile, cidfile, dfile, dpath) {
   tokenfile = tfile;
   computeridfile = cidfile;
@@ -485,15 +487,16 @@ function createWindow() {
     });
 }
 
-function submissionFunction() {
-  console.log('Submitted...');
-  tokenFromFile = readMyFile(tokenfile);
-  if (tokenFromFile) {
-    console.log('Token file exists now.  Closing login window and starting tray icon.');
-    startTrayIcon();
-    mainWindow.hide();
-  }
-}
+// // unused old function
+// function submissionFunction() {
+//   console.log('Submitted...');
+//   tokenFromFile = readMyFile(tokenfile);
+//   if (tokenFromFile) {
+//     console.log('Token file exists now.  Closing login window and starting tray icon.');
+//     startTrayIcon();
+//     mainWindow.hide();
+//   }
+// }
 
 function handleSubmission() {
     ipcMain.on('did-submit-form', (event, argument) => {
@@ -521,6 +524,69 @@ function handleSubmission() {
     });
 }
 
+function openhaconfig() {
+  haWindow = new BrowserWindow({ title: i18n.t('Home Assistant Config'), 
+    width: 700, 
+    height: 470, 
+    icon: __dirname + '/icon.png',
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
+    }
+  });
+  
+  myAppMenu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(myAppMenu);
+
+  remoteMain.enable(haWindow.webContents);
+
+  haWindow.loadURL(`file://${__dirname}/homeassistant.html`);
+  
+  haWindow.on('closed', () => {
+      haWindow = null;
+  });
+}
+
+ipcMain.handle('homeAssistantSave', async (event, formData) => {
+  // console.log("Saving HA config form")
+  // console.log(formData)
+
+  filePath = path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/home_assistant_config.json')
+
+  try {
+    // Prepare configuration data
+    const updatedConfig = {
+      HA_URL: formData.ha_url,
+      HA_TOKEN: formData.ha_token,
+      HA_ENABLED: formData.ha_enabled,
+    };
+
+    // Write configuration to JSON file
+    fs.writeFileSync(filePath, JSON.stringify(updatedConfig, null, 2), 'utf-8');
+    console.log('Configuration saved:', updatedConfig);
+
+    agent.restartHomeAssistant();
+
+  } catch (error) {
+    console.error('Error saving configuration:', error);
+  }
+
+  haWindow.hide(); // Close the window after saving
+});
+
+ipcMain.handle('load-ha-config', async () => {
+  const filePath = path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/home_assistant_config.json')
+
+  try {
+    const data = fs.readFileSync(filePath, 'utf-8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading configuration file:', error);
+    return { ha_url: '', ha_token: '', ha_enabled: false }; // Default values
+  }
+});
+
 function startTrayIcon () {
   if (process.platform === 'linux') {
     var contextMenu = Menu.buildFromTemplate([
@@ -537,6 +603,13 @@ function startTrayIcon () {
           console.log('Launching online computer list.');
           shell.openExternal('https://www.triggercmd.com/user/computer/list');
           // launchComputerList();  <- don't use this because it closes the app when the window closes.
+        }
+      },
+      {
+        label: 'Home Assistant Config',
+        click: function() {
+          console.log('Opening Home Assisant Config');
+          openhaconfig();
         }
       },
       {
@@ -653,6 +726,13 @@ function startTrayIcon () {
         }
       },    
       {
+        label: 'Home Assistant Config',
+        click: function() {
+          console.log('Opening Home Assisant Config');
+          openhaconfig();
+        }
+      },
+      {
         label: i18n.t('Background Service'),
         submenu: [
           {
@@ -756,6 +836,13 @@ function startTrayIcon () {
         click: function() {
           console.log('Launching online computer list.');
           shell.openExternal('https://www.triggercmd.com/user/computer/list');
+        }
+      },
+      {
+        label: 'Home Assistant Config',
+        click: function() {
+          console.log('Opening Home Assisant Config');
+          openhaconfig();
         }
       },
       {

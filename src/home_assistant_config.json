@@ -1,0 +1,7 @@
+{
+    "HA_URL": "ws://homeassistant.local:8123/api/websocket",
+
+    "HA_TOKEN": "Put your home assistant token here",
+
+    "HA_ENABLED": false
+}
