@@ -208,11 +208,14 @@ class HomeAssistantWebSocket {
     this.socket.onclose = () => {
       console.log("Local Home Assistant WebSocket connection closed");
       this.isConnected = false;
-      this.reconnect(); // Attempt to reconnect
+      if(this.enabled == true) {
+        this.reconnect(); // Attempt to reconnect
+      }
     };
   }
 
   stop() {
+    this.enabled = false;
     if (this.socket && this.isConnected) {
       this.socket.close();
       this.isConnected = false;
