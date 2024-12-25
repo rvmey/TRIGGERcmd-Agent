@@ -17,3 +17,6 @@ sudo apt install rpm
 
 ## Latest Tested Working Node Version
 v20.13.1
+
+## Windows Build Command
+`winbuild.bat [version number]`
