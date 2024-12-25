@@ -34,10 +34,17 @@ pipeline {
             }
         }
 
-        stage('copy artifacts') {
+        stage('copy rpm and deb artifacts') {
             steps {
                 sh 'cp -r ./out/make/* /mnt/nas/TriggerCMD/'
             }
         }
+
+        stage('copy rpi deb artifact') {
+            steps {
+                sh 'cp -r ./triggercmdagent_1.0.1_all.deb /mnt/nas/TriggerCMD/'
+            }
+        }
+
     }
 }
