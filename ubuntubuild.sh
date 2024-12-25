@@ -9,4 +9,4 @@ apt update -y
 apt install jq fakeroot dpkg -y
 npm i -g node-deb
 cp rpipackage.json package.json
-node-deb -- src/ --install-strategy npm-install
+node-deb --install-strategy npm-install -- src/
