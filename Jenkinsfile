@@ -23,7 +23,7 @@ pipeline {
         stage('build ubuntu') {
             agent {
                 docker {
-                    image 'node:20.9.0-alpine'
+                    image 'node:23.5-bullseye'
                     args '-u root'
                     reuseNode true
                 }
