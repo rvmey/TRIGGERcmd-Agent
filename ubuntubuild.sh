@@ -6,7 +6,7 @@ rm -rf out/make/*
 
 # Raspberry Pi:
 apt update -y
-apt install jq fakeroot -y
+apt install jq fakeroot dpkg -y
 npm i -g node-deb
 cp rpipackage.json package.json
-node-deb -- package.json src/ node_modules LICENSE
+node-deb -- src/ --install-strategy npm-install
