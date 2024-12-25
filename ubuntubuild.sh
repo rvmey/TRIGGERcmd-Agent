@@ -1,8 +1,9 @@
+# Linux deb and rpm
 cp ubuntupackage.json package.json
 apk add git dpkg fakeroot rpm
 npm install
 rm -rf out/make/*
-# npm run make
+npm run make
 
 # Raspberry Pi:
 apt update -y
