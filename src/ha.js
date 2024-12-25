@@ -86,7 +86,14 @@ class HomeAssistantWebSocket {
       console.log(`Local Home Assistant Configuration file not found at ${this.configPath}`);
     }
 
-    const config = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
+    const haconfig = "home_assistant_config.json"
+    const hadatafile = path.resolve(this.configPath);
+    var config
+    if (!fs.existsSync(hadatafile)) {
+      fs.copyFileSync(haconfig, hadatafile);
+    }
+
+    config = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
 
     this.url = config.HA_URL;
     this.token = config.HA_TOKEN;

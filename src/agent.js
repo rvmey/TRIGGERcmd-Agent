@@ -115,11 +115,11 @@ function initFiles(backgrounddpath, callback) {
     fs.createReadStream(examplefile).pipe(fs.createWriteStream(datafile));
   }
 
-  haconfig = "home_assistant_config.json"
-  hadatafile = path.resolve(datapath, haconfig);
-  if (!fs.existsSync(hadatafile)) {
-    fs.createReadStream(haconfig).pipe(fs.createWriteStream(hadatafile));
-  }
+  // haconfig = "home_assistant_config.json"
+  // hadatafile = path.resolve(datapath, haconfig);
+  // if (!fs.existsSync(hadatafile)) {
+  //   fs.createReadStream(haconfig).pipe(fs.createWriteStream(hadatafile));
+  // }
 
   // Copy a script to the data folder to help users send the results of their commands.
   var resultscript = 'sendresult.sh';
