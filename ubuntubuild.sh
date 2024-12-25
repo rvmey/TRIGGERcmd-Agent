@@ -8,4 +8,5 @@ rm -rf out/make/*
 apt update -y
 apt install jq -y
 npm i -g node-deb
-node-deb -- rpipackage.json src/ node_modules LICENSE
+cp rpipackage.json package.json
+node-deb -- package.json src/ node_modules LICENSE
