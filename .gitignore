@@ -11,3 +11,4 @@ package-lock.json
 package.json
 app/js/*
 CodeSigningCert.pfx
+build/*

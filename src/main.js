@@ -74,8 +74,6 @@ var datafile;
 var datapath;
 var languagefile;
 
-agent.startHomeAssistant("foreground");
-
 agent.initFiles(null, function (tfile, cidfile, dfile, dpath) {
   tokenfile = tfile;
   computeridfile = cidfile;

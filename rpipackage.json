@@ -56,9 +56,9 @@
       "path": "^0.12.7",
       "posix-argv-parser": "^2.0.0",
       "prompt": "^1.0.0",
-      "request": "2.79.0",
+      "request": "^2.79.0",
       "sails.io.js": "^1.1.4",
-      "socket.io-client": "^1.7.2"
+      "socket.io-client": "^2.0.2"
     }
   }
   
