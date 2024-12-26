@@ -305,6 +305,8 @@ function foreground(token,userid,computerid) {
     console.log('Logging in with saved token to run foreground tasks.');
     updateCmds(token,userid,computerid,true);
   });
+
+  startHomeAssistant(ground);
 }
 
 function tokenLogin(token,callback) {
