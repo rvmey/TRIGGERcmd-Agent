@@ -89,6 +89,11 @@ class HomeAssistantWebSocket {
     const haconfig = "home_assistant_config.json"
     const hadatafile = path.resolve(this.configPath);
     var config
+
+    var datapath = path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData')
+    if (!fs.existsSync(datapath)){
+      fs.mkdirSync(datapath);
+    }
     if (!fs.existsSync(hadatafile)) {
       fs.copyFileSync(haconfig, hadatafile);
     }
