@@ -473,7 +473,7 @@ function updateCmds(token,userid,computerid,startsocket) {
 
       // fs.createReadStream(backupdatafile).pipe(fs.createWriteStream(datafile));  // restore the last known good file
       console.log(e); // error in the above string
-      console.log('Restoring the last known good file');
+      console.log('Restoring the last known good commands.json file');
   } finally {    
     if (localcmds) {
       if (readsuccess) {                
