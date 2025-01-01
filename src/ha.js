@@ -162,7 +162,7 @@ class HomeAssistantWebSocket {
         // console.log("HA Event data:");
         // console.log(data);
         // Make sure entity_id is a string, not an array of strings
-        if (typeof data.service_data.entity_id === "string") {
+        if (data.domain == "switch" && typeof data.service_data.entity_id === "string") {
           console.log("entity_id is a string")
         } else {
           data = {
