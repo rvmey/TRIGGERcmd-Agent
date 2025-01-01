@@ -6,11 +6,8 @@ blueprint:
   author: TRIGGERcmd
   input:
     trigger_entity:
-      name: Trigger Entity
-      description: >
-        `target`
-
-        Select entities with on/off state.
+      name: Trigger Entities
+      description: Select entities with on/off state.
       selector:
         entity:
           multiple: true
