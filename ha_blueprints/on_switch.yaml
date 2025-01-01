@@ -11,7 +11,9 @@ blueprint:
         entity:
           multiple: false
           filter:
-            - supported_features: 384
+            - supported_features: 
+              - 128
+              - 256
     switch_target:
       name: switch
       selector:
