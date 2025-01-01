@@ -13,6 +13,7 @@ blueprint:
           multiple: true
     switch_target:
       name: switch
+      description: Select your TRIGGERcmd switch entity.
       selector:
         target:
           entity:
