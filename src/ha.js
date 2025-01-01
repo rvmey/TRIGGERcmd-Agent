@@ -161,6 +161,18 @@ class HomeAssistantWebSocket {
         var data = message.event.data;
         // console.log("HA Event data:");
         // console.log(data);
+        // Make sure entity_id is a string, not an array of strings
+        if (typeof data.service_data.entity_id === "string") {
+          console.log("entity_id is a string")
+        } else {
+          data = {
+            ...data,
+            service_data: {
+              ...data.service_data,
+              entity_id: data.service_data.entity_id[0]
+            }
+          };
+        }
         var prefix = "switch." + this.computer_name.toLowerCase().replace(/[-\s]/g, "_") + "_";
         // console.log("prefix: " + prefix);
         if(data.domain == "switch" && data.service_data.entity_id.startsWith(prefix) ) {
