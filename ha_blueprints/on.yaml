@@ -1,0 +1,30 @@
+blueprint:
+  name: Entity activated on switch
+  description: Turn on a switch when entity turns on.
+  domain: automation
+  source_url: https://github.com/rvmey/TRIGGERcmd-Agent/blob/master/ha_blueprints/on_switch.yaml
+  author: TRIGGERcmd
+  input:
+    trigger_entity:
+      name: Trigger Entity
+      selector:
+        entity:
+          multiple: false
+    switch_target:
+      name: switch
+      selector:
+        target:
+          entity:
+          - domain:
+            - switch
+mode: restart
+max_exceeded: silent
+triggers:
+  trigger: state
+  entity_id: !input trigger_entity
+  from: 'off'
+  to: 'on'
+actions:
+- alias: Turn on the switch
+  action: switch.turn_on
+  target: !input switch_target

@@ -2,7 +2,7 @@ blueprint:
   name: Motion-activated switch
   description: Turn on a switch when motion is detected.
   domain: automation
-  source_url: https://github.com/rvmey/TRIGGERcmd-Agent/blob/master/motion_switch.yaml
+  source_url: https://github.com/rvmey/TRIGGERcmd-Agent/blob/master/ha_blueprints/motion_switch.yaml
   author: TRIGGERcmd
   input:
     motion_entity:
