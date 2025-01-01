@@ -1,6 +1,6 @@
 blueprint:
-  name: Entity activated off switch
-  description: Turn off a switch when entity turns off.
+  name: TRIGGERcmd switch off
+  description: Trigger off command when entity turns off.
   domain: automation
   source_url: https://github.com/rvmey/TRIGGERcmd-Agent/blob/master/ha_blueprints/off_switch.yaml
   author: TRIGGERcmd
@@ -10,6 +10,8 @@ blueprint:
       selector:
         entity:
           multiple: false
+          filter:
+            - supported_features: 384
     switch_target:
       name: switch
       selector:
@@ -28,3 +30,4 @@ actions:
 - alias: Turn on the switch
   action: switch.turn_off
   target: !input switch_target
+  
