@@ -1053,7 +1053,7 @@ function handleSquirrelEvent() {
 
       // Russ:      
       var cmd = path.resolve(__dirname, 'cleanup.bat');      
-      ChildProcess.spawn(cmd, [], {detached: true});
+      ChildProcess.spawn(cmd, [], {detached: true, shell: true});
 
       // Remove desktop and start menu shortcuts
       spawnUpdate(['--removeShortcut', exeName, '--shortcut-locations=Desktop,Startup,StartMenu']);
@@ -1066,7 +1066,7 @@ function handleSquirrelEvent() {
       // we update to the new version - it's the opposite of
       // --squirrel-updated
       var cmd = path.resolve(__dirname, 'cleanup.bat');      
-      ChildProcess.spawn(cmd, [], {detached: true});
+      ChildProcess.spawn(cmd, [], {detached: true, shell: true});
 
       setTimeout(app.quit, squirreltimeout);
       return true;
@@ -1076,10 +1076,10 @@ function handleSquirrelEvent() {
 function updateAgent() {
     // Remove current background service.
     var cmd = path.resolve(__dirname, 'cleanup.bat');
-    ChildProcess.spawn(cmd, [], {detached: true});    
+    ChildProcess.spawn(cmd, [], {detached: true, shell: true});    
 
     var messagecmd = path.resolve(__dirname, 'winupgrademessage.bat');
-    ChildProcess.spawn(messagecmd, [], {detached: true}); 
+    ChildProcess.spawn(messagecmd, [], {detached: true, shell: true}); 
 
     var file = path.join(datapath, 'TRIGGERcmdAgentSetup.exe')
     download('http://s3.amazonaws.com/triggercmdagents/TRIGGERcmdAgentSetup.exe', file, function (err) {
