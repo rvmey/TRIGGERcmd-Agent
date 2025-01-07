@@ -1,0 +1,312 @@
+blueprint:
+  name: "21 button IR remote"
+  description: >
+    Trigger an action for each button on your 21 button remote.
+    Uses Tasmota firmware on an esp32.
+  domain: automation
+  input:
+    ir_receiver:
+      name: IR Remote Receivers(s)
+      description: "Tasmota IRrecv device(s)"
+      selector:
+        entity:
+          multiple: true
+    irbutton_ch_minus:
+      name: "CH-"
+      description: "Action(s) to run when CH- button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_ch:
+      name: "CH"
+      description: "Action(s) to run when CH button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_ch_plus:
+      name: "CH+"
+      description: "Action(s) to run when CH+ button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_prev:
+      name: "PREV"
+      description: "Action(s) to run when PREV button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_next:
+      name: "NEXT"
+      description: "Action(s) to run when NEXT button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_play_pause:
+      name: "PLAY/PAUSE"
+      description: "Action(s) to run when PLAY/PAUSE button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_vol_minus:
+      name: "VOL-"
+      description: "Action(s) to run when VOL- button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_vol_plus:
+      name: "VOL+"
+      description: "Action(s) to run when VOL+ button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_eq:
+      name: "EQ"
+      description: "Action(s) to run when EQ button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_0:
+      name: "0"
+      description: "Action(s) to run when 0 button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_100_plus:
+      name: "100+"
+      description: "Action(s) to run when 100+ button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_200_plus:
+      name: "200+"
+      description: "Action(s) to run when 200+ button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_1:
+      name: "1"
+      description: "Action(s) to run when 1 button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_2:
+      name: "2"
+      description: "Action(s) to run when 2 button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_3:
+      name: "3"
+      description: "Action(s) to run when 3 button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_4:
+      name: "4"
+      description: "Action(s) to run when 4 button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_5:
+      name: "5"
+      description: "Action(s) to run when 5 button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_6:
+      name: "6"
+      description: "Action(s) to run when 6 button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_7:
+      name: "7"
+      description: "Action(s) to run when 7 button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_8:
+      name: "8"
+      description: "Action(s) to run when 8 button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+    irbutton_9:
+      name: "9"
+      description: "Action(s) to run when 9 button on IR remote is pressed."
+      default: []
+      selector:
+        action:
+
+trigger:
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FFA25D" # CH-
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF629D" # CH
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FFE21D" # CH +
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF22DD" # prev
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF02FD" # next
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FFC23D" # play/pause
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FFE01F" # -
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FFA857" # +
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF906F" # eq
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF6897" # 0
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF9867" # 100+
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FFB04F" # 200+
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF30CF" # 1
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF18E7" # 2
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF7A85" # 3
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF10EF" # 4
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF38C7" # 5
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF5AA5" # 6
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF42BD" # 7
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF4AB5" # 1
+  - platform: state
+    entity_id: !input ir_receiver
+    from: null
+    to: "0x00FF52AD" # 1
+
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: "0"
+        sequence: !input irbutton_ch_minus
+      - conditions:
+          - condition: trigger
+            id: "1"
+        sequence: !input irbutton_ch
+      - conditions:
+          - condition: trigger
+            id: "2"
+        sequence: !input irbutton_ch_plus
+      - conditions:
+          - condition: trigger
+            id: "3"
+        sequence: !input irbutton_prev
+      - conditions:
+          - condition: trigger
+            id: "4"
+        sequence: !input irbutton_next
+      - conditions:
+          - condition: trigger
+            id: "5"
+        sequence: !input irbutton_play_pause
+      - conditions:
+          - condition: trigger
+            id: "6"
+        sequence: !input irbutton_vol_minus
+      - conditions:
+          - condition: trigger
+            id: "7"
+        sequence: !input irbutton_vol_plus
+      - conditions:
+          - condition: trigger
+            id: "8"
+        sequence: !input irbutton_eq
+      - conditions:
+          - condition: trigger
+            id: "9"
+        sequence: !input irbutton_0
+      - conditions:
+          - condition: trigger
+            id: "10"
+        sequence: !input irbutton_100_plus
+      - conditions:
+          - condition: trigger
+            id: "11"
+        sequence: !input irbutton_200_plus
+      - conditions:
+          - condition: trigger
+            id: "12"
+        sequence: !input irbutton_1
+      - conditions:
+          - condition: trigger
+            id: "13"
+        sequence: !input irbutton_2
+      - conditions:
+          - condition: trigger
+            id: "14"
+        sequence: !input irbutton_3
+      - conditions:
+          - condition: trigger
+            id: "5"
+        sequence: !input irbutton_4
+      - conditions:
+          - condition: trigger
+            id: "6"
+        sequence: !input irbutton_5
+      - conditions:
+          - condition: trigger
+            id: "7"
+        sequence: !input irbutton_6
+      - conditions:
+          - condition: trigger
+            id: "8"
+        sequence: !input irbutton_7
+      - conditions:
+          - condition: trigger
+            id: "9"
+        sequence: !input irbutton_8
+      - conditions:
+          - condition: trigger
+            id: "9"
+        sequence: !input irbutton_9
