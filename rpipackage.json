@@ -9,7 +9,11 @@
       "lint": "eslint src"
     },
     "node_deb": {
-      "init": "none"
+      "init": "none",
+      "dependencies": "npm, nodejs",
+      "entrypoints": {
+        "cli": "agent.js --console"
+      }
     },
     "author": "TRIGGERcmd",
     "license": "LicenseRef-LICENSE",
