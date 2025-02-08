@@ -12,7 +12,7 @@
       "init": "none",
       "dependencies": "npm, nodejs",
       "entrypoints": {
-        "cli": "src/agent.js --console"
+        "cli": "src/piagent.sh"
       }
     },
     "author": "TRIGGERcmd",
