@@ -501,45 +501,6 @@ function updateCmds(token,userid,computerid,startsocket) {
         if (!error && response.statusCode == 200) {
           onlinecmds = JSON.parse(body);
 
-          syncLoop(localcmds.length, function(loop){
-            setTimeout(function(){
-              var l = loop.iteration();
-              // console.log(l);
-              var foundonline = false;
-              for(var o = 0; o < onlinecmds.records.length; o++)
-              {
-                // console.log(onlinecmds.records[o].name);
-                // console.log(l.toString() + localcmds[l].trigger);
-                var localallowParams = false;
-
-                var _arr = [1, "1", true, "true"];
-                for (var _i = 0; _i < _arr.length; _i++) {
-                  var value = _arr[_i];
-                  if (localcmds[l].allowParams == value) {
-                    localallowParams = true;
-                  }
-                }
-
-                if (onlinecmds.records[o].name == localcmds[l].trigger &&
-                    onlinecmds.records[o].voice == localcmds[l].voice &&
-                    onlinecmds.records[o].voiceReply == localcmds[l].voiceReply &&
-                    Boolean(onlinecmds.records[o].allowParams) == localallowParams
-                ) { foundonline = true }
-                if (onlinecmds.records[o].name == localcmds[l].trigger) {
-                  foundonline = true
-                }
-              }
-              if (!foundonline) {
-                if (localcmds[l].ground == ground) {
-                  addCmd(localcmds[l].trigger,localcmds[l].voice,localcmds[l].voiceReply,localcmds[l].allowParams,token,userid,computerid);
-                }
-              }
-              loop.next();
-            }, 10);
-          }, function(){
-              console.log('Initiated command adds');
-          });
-
           // Remove any command triggers found online that don't exist in local file anymore.
           // for(var o = 0; o < onlinecmds.records.length; o++)  <- this was too fast
           syncLoop(onlinecmds.records.length, function(loop){
@@ -572,6 +533,43 @@ function updateCmds(token,userid,computerid,startsocket) {
             }, 10);
           }, function(){
               console.log('Initiated command removals');
+          });
+
+          // Add any command triggers found locally that don't exist online anymore.
+          syncLoop(localcmds.length, function(loop){
+            setTimeout(function(){
+              var l = loop.iteration();
+              // console.log(l);
+              var foundonline = false;
+              for(var o = 0; o < onlinecmds.records.length; o++)
+              {
+                // console.log(onlinecmds.records[o].name);
+                // console.log(l.toString() + localcmds[l].trigger);
+                var localallowParams = false;
+
+                var _arr = [1, "1", true, "true"];
+                for (var _i = 0; _i < _arr.length; _i++) {
+                  var value = _arr[_i];
+                  if (localcmds[l].allowParams == value) {
+                    localallowParams = true;
+                  }
+                }
+
+                if (onlinecmds.records[o].name == localcmds[l].trigger &&
+                    onlinecmds.records[o].voice == localcmds[l].voice &&
+                    onlinecmds.records[o].voiceReply == localcmds[l].voiceReply &&
+                    Boolean(onlinecmds.records[o].allowParams) == localallowParams
+                ) { foundonline = true }
+              }
+              if (!foundonline) {
+                if (localcmds[l].ground == ground) {
+                  addCmd(localcmds[l].trigger,localcmds[l].voice,localcmds[l].voiceReply,localcmds[l].allowParams,token,userid,computerid);
+                }
+              }
+              loop.next();
+            }, 10);
+          }, function(){
+              console.log('Initiated command adds');
           });
 
         } else {
