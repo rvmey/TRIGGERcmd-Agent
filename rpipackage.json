@@ -12,7 +12,7 @@
       "init": "none",
       "dependencies": "npm, nodejs",
       "entrypoints": {
-        "cli": "agent.js --console"
+        "cli": "node /usr/share/triggercmdagent/app/src/agent.js --console"
       }
     },
     "author": "TRIGGERcmd",
