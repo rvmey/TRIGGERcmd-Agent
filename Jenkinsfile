@@ -42,9 +42,23 @@ pipeline {
 
         stage('copy rpi deb artifact') {
             steps {
-                sh 'cp -r ./triggercmdagent_1.0.1_all.deb /mnt/nas/TriggerCMD/'
+                sh 'cp ./triggercmdagent_1.0.1_all.deb /mnt/nas/TriggerCMD/'
             }
         }
 
+        stage('cleanup') {
+            agent {
+                docker {
+                    image 'node:23.5-bullseye'
+                    args '-u root'
+                    reuseNode true
+                }
+            }
+
+            steps {
+                sh 'rm -rf ./out && rm -rf ./node_modules'
+            }
+        }
+        
     }
 }
