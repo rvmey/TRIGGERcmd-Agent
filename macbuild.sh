@@ -1,5 +1,7 @@
 #!/bin/bash -v
 
+export NODE_ENV=production
+
 # apple_creds.sh sets these environment variables first:
 #      APPLE_ID
 #      APPLE_PASSWORD   <- app specific password

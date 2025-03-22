@@ -1,5 +1,7 @@
 echo Run 'gulp' to update the GUI editor before running this.
 
+set NODE_ENV=production
+
 @REM sc stop triggercmdagent.exe
 @REM sc delete triggercmdagent.exe
 timeout /t 5

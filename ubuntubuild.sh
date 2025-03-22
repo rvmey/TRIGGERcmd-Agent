@@ -1,3 +1,5 @@
+export NODE_ENV=production
+
 apt update -y
 apt install jq fakeroot dpkg rpm git -y
 
