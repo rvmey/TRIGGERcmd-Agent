@@ -116,13 +116,15 @@ class HomeAssistantWebSocket {
     fetchComputerData(computeridFromFile, tokenFromFile)
     .then(data => {
       this.computer_name = getComputerNameById(data,computeridFromFile)
-      console.log('Computer name for Local Home Assistant listener: ' + this.computer_name);
-      fs.writeFile(computerNameFile, this.computer_name, 'utf8', function(err) {
-        if (err) {
-          console.log('Error writing computer name to file:');
-          console.log(err);
-        }
-      });
+      if(this.computer_name) {
+        console.log('Computer name for Local Home Assistant listener: ' + this.computer_name);
+        fs.writeFile(computerNameFile, this.computer_name, 'utf8', function(err) {
+          if (err) {
+            console.log('Error writing computer name to file:');
+            console.log(err);
+          }
+        });
+      }
     })
     .catch(error => {
       console.error('Error fetching computer name:', error);
