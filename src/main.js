@@ -242,6 +242,7 @@ app.on('ready', function(){
             console.log('No token exists.  Login to request one.');
             createWindow();
           } else {
+            startNoInternetTrayIcon();
             agent.computerExists(tokenFromFile, computeridFromFile, function(exists) {
               if (exists) {
                 agent.foreground(tokenFromFile,null,computeridFromFile);
@@ -585,7 +586,27 @@ ipcMain.handle('load-ha-config', async () => {
   }
 });
 
+var noInternetAppIcon; // make this var global so it can be referenced in startTrayIcon
+function startNoInternetTrayIcon () {
+  var contextMenu = Menu.buildFromTemplate([
+    {
+      label: i18n.t('Waiting for internet.')
+    },
+    { label: i18n.t('Quit'),
+      selector: 'terminate:',
+      click: function() {
+        doQuit = true;
+        app.exit(0);
+      }
+    }
+  ]);
+  noInternetAppIcon = new Tray(iconPath);
+  noInternetAppIcon.setToolTip('TRIGGERcmd');
+  noInternetAppIcon.setContextMenu(contextMenu);
+}
+
 function startTrayIcon () {
+  noInternetAppIcon.destroy();
   if (process.platform === 'linux') {
     var contextMenu = Menu.buildFromTemplate([
       {
@@ -915,7 +936,6 @@ function startTrayIcon () {
       }
     ]);
   }
-
   appIcon = new Tray(iconPath);
   appIcon.setToolTip('TRIGGERcmd');
   appIcon.setContextMenu(contextMenu);

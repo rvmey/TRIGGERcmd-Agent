@@ -25,6 +25,7 @@ module.exports = {
         "Text Command Editor": "Text Command Editor",
         "GUI Command Editor": "GUI Command Editor",
         "Version": "Version",
+        "Waiting for internet.": "Waiting for internet.",
         "Language": "Language"
       }
     },
@@ -52,6 +53,7 @@ module.exports = {
         "Text Command Editor": "Editor de comandos de texto",
         "GUI Command Editor": "Editor de Comandos GUI",
         "Version": "Versão",
+        "Waiting for internet.": "Aguardando internet.",
         "Language": "Língua"
       }
     },
@@ -79,6 +81,7 @@ module.exports = {
         "Text Command Editor": "Editor de comandos de texto",
         "GUI Command Editor": "Editor de comandos GUI",
         "Version": "Versión",
+        "Waiting for internet.": "Esperando internet.",
         "Language": "Idioma"
       }
     },
@@ -106,6 +109,7 @@ module.exports = {
         "Text Command Editor": "Textbefehls-Editor",
         "GUI Command Editor": "GUI-Befehls-Editor",
         "Version": "Ausführung",
+        "Waiting for internet.": "Warte auf Internet.",
         "Language": "Sprache"
       }
     },
@@ -133,6 +137,7 @@ module.exports = {
         "Text Command Editor": "Éditeur de commandes de texte",
         "GUI Command Editor": "Éditeur de commandes GUI",
         "Version": "Version",
+        "Waiting for internet.": "En attente d'Internet.",
         "Language": "Langue"
       }
     },
@@ -160,6 +165,7 @@ module.exports = {
         "Text Command Editor": "Editor di comandi di testo",
         "GUI Command Editor": "Editor dei comandi della GUI",
         "Version": "Versione",
+        "Waiting for internet.": "In attesa di Internet.",
         "Language": "Linguaggio"
       }
     },
@@ -187,6 +193,7 @@ module.exports = {
         "Text Command Editor": "テキスト コマンド エディタ",
         "GUI Command Editor": "GUI コマンド エディタ",
         "Version": "バージョン",
+        "Waiting for internet.": "インターネットを待っています。",
         "Language": "言語"
       }
     }
