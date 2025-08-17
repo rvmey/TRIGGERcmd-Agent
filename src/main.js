@@ -285,18 +285,18 @@ app.on('ready', function(){
 
 app.on('window-all-closed', app.quit);
 
-app.on("before-quit", (event) => {
-  if (doQuit) {    
-    console.log("Quitting")    
-  } else {
-    if(process.platform === 'darwin') {
-      console.log("Quitting.");
-    } else {
-      console.log("Don't quit yet");
-      event.preventDefault();
-    }
-  }
-});
+// app.on("before-quit", (event) => {  // Remarked to avoid 0x80000003 "a breakpoint has been reached" error
+//   if (doQuit) {    
+//     console.log("Quitting")    
+//   } else {
+//     if(process.platform === 'darwin') {
+//       console.log("Quitting.");
+//     } else {
+//       console.log("Don't quit yet");
+//       event.preventDefault();
+//     }
+//   }
+// });
 
 function writeLangFile(lang) {
   fs.writeFileSync(languagefile, lang, function(err) {
