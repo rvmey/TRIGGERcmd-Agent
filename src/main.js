@@ -606,7 +606,9 @@ function startNoInternetTrayIcon () {
 }
 
 function startTrayIcon () {
-  noInternetAppIcon.destroy();
+  if (noInternetAppIcon) {
+    noInternetAppIcon.destroy();
+  }
   if (process.platform === 'linux') {
     var contextMenu = Menu.buildFromTemplate([
       {
