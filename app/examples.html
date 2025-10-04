@@ -16,19 +16,19 @@
     </div><!-- Pet Ratings -->
   </div><!-- Main -->
   <script type="text/javascript">
-    var eRequire = require;
-    var dirName = __dirname;
+    window.eRequire = require;
+    window.dirName = __dirname;
 
     var homedir = (process.platform === 'win32') ? process.env.HOMEPATH : process.env.HOME;
     if (!homedir) {homedir = process.env.HOME};
     var datapath = require('path').resolve(homedir, ".TRIGGERcmdData");           
     examplefile = "onlineexamples.json"
-    var dataLocation = require('path').resolve(datapath, examplefile);
+    window.dataLocation = require('path').resolve(datapath, examplefile);
     languagefile = "language.cfg"
-    var languageLocation = require('path').resolve(datapath, languagefile);
+    window.languageLocation = require('path').resolve(datapath, languagefile);
 
     cmdfile = "commands.json"
-    var cmdLocation = require('path').resolve(datapath, cmdfile);
+    window.cmdLocation = require('path').resolve(datapath, cmdfile);
 
   </script>
   <script src="js/examples.js"></script>

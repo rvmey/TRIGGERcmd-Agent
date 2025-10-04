@@ -13,6 +13,7 @@ class AddAppointment extends React.Component {
     this.handleVoiceChange = this.handleVoiceChange.bind(this);
     this.handleVoiceReplyChange = this.handleVoiceReplyChange.bind(this);
     this.handleAllowParamsChange = this.handleAllowParamsChange.bind(this);
+    this.handleMcpToolDescriptionChange = this.handleMcpToolDescriptionChange.bind(this);
     this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
     this.groundInstructions = this.groundInstructions.bind(this);
     this.offCommandInstructions = this.offCommandInstructions.bind(this);
@@ -42,6 +43,7 @@ class AddAppointment extends React.Component {
       voice: this.inputAptNotes.value,
       voiceReply: this.inputVoiceReply.value,
       allowParams: this.inputAllowParams.value,
+      mcpToolDescription: this.inputMcpToolDescription.value,
     } //tempitems
 
     this.props.addApt(tempItem);
@@ -53,6 +55,7 @@ class AddAppointment extends React.Component {
     this.inputAptNotes.value = '';
     this.inputVoiceReply.value = '';
     this.inputAllowParams.value = 'false';
+    this.inputMcpToolDescription.value = '';
   } //handleAdd
 
   handleTriggerChange(e) {
@@ -83,6 +86,10 @@ class AddAppointment extends React.Component {
     this.props.onAllowParamsChange(e.target.value);
   }
 
+  handleMcpToolDescriptionChange(e) {
+    this.props.onMcpToolDescriptionChange(e.target.value);
+  }
+
   render() {
     const { t } = this.props;
     
@@ -94,11 +101,11 @@ class AddAppointment extends React.Component {
 
     let groundOptions;        
     if (this.props.operatingSystem == 'darwin') {
-      groundOptions = <select id="mySelect" className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} >
+      groundOptions = <select className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} >
           <option>foreground</option>          
         </select>;
     } else {
-      groundOptions = <select id="mySelect" className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} >
+      groundOptions = <select className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} >
           <option>foreground</option>
           <option>background</option>
         </select>;
@@ -159,10 +166,17 @@ class AddAppointment extends React.Component {
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="allowParams">{t('Allow Parameters')}</label>
                 <div className="col-sm-9">
-                  <select id="mySelect" className="form-control" id="allowParams"  ref={(ref) => this.inputAllowParams = ref } onChange={this.handleAllowParamsChange} >
+                  <select className="form-control" id="allowParams"  ref={(ref) => this.inputAllowParams = ref } onChange={this.handleAllowParamsChange} >
                     <option>false</option>
                     <option>true</option>
                   </select>
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-3 control-label" htmlFor="mcpToolDescription">{t('MCP Tool Description')}</label>
+                <div className="col-sm-9">
+                  <input type="text" className="form-control"
+                    id="mcpToolDescription"  ref={(ref) => this.inputMcpToolDescription = ref } placeholder={t('How AI should use this command and parameters (optional)')} onChange={this.handleMcpToolDescriptionChange} />
                 </div>
               </div>
               <div className="form-group">

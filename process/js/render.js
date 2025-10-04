@@ -1,14 +1,14 @@
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
-var fs = eRequire('fs');
+const fs = window.require ? window.require('fs') : require('fs');
 // import LanguageDetector from 'i18next-browser-languagedetector';
 
 var lang;
 try {
-  lang = fs.readFileSync(languageLocation).toString();;
-  console.log("Found " + lang + " in " + languageLocation);
+  lang = fs.readFileSync(window.languageLocation).toString();;
+  console.log("Found " + lang + " in " + window.languageLocation);
 } catch (err) {
-  console.log("No language found in " + languageLocation + " using en.");
+  console.log("No language found in " + window.languageLocation + " using en.");
   lang = 'en';
 }
 
@@ -174,14 +174,14 @@ var $ = require('jquery');
 global.jQuery = require("jquery");
 var _ = require('lodash');
 var bootstrap = require('bootstrap');
-var loadApts = JSON.parse(fs.readFileSync(dataLocation));
+var loadApts = JSON.parse(fs.readFileSync(window.dataLocation));
 
-var electron = eRequire('electron');
+var electron = window.require ? window.require('electron') : require('electron');
 var ipc = electron.ipcRenderer;
 
 var React = require('react');
-var ReactDOM = require('react-dom');
-var cp = eRequire('child_process');
+var ReactDOM = require('react-dom/client');
+var cp = window.require ? window.require('child_process') : require('child_process');
 var os = require('os');
 var AptList = require('./AptList');
 var Toolbar = require('./Toolbar');
@@ -205,6 +205,7 @@ class MainInterface extends React.Component {
     this.onVoiceChange = this.onVoiceChange.bind(this);
     this.onVoiceReplyChange = this.onVoiceReplyChange.bind(this);
     this.onAllowParamsChange = this.onAllowParamsChange.bind(this);
+    this.onMcpToolDescriptionChange = this.onMcpToolDescriptionChange.bind(this);
     this.changeItem = this.changeItem.bind(this);
     this.browseExamples = this.browseExamples.bind(this);
     this.openComputerList = this.openComputerList.bind(this);
@@ -228,6 +229,8 @@ class MainInterface extends React.Component {
       editGround: '',
       editVoice: '',
       editVoiceReply: '',
+      editAllowParams: false,
+      editMcpToolDescription: '',
       editKey: null,
       myAppointments: loadApts
     };
@@ -285,7 +288,7 @@ class MainInterface extends React.Component {
         }
         return value;
       }
-      writeFileTransactional (dataLocation, JSON.stringify(this.state.myAppointments, replacer, 1), function(err) {
+      writeFileTransactional (window.dataLocation, JSON.stringify(this.state.myAppointments, replacer, 1), function(err) {
         if (err) {
           console.log(err);
         }
@@ -312,6 +315,7 @@ class MainInterface extends React.Component {
       editVoice: item.voice,
       editVoiceReply: item.voiceReply,
       editAllowParams: item.allowParams,
+      editMcpToolDescription: item.mcpToolDescription,
       editKey: item.mykey
     }); //setState
   } //toggleAptDisplay
@@ -352,6 +356,12 @@ class MainInterface extends React.Component {
     }); //setState
   }
 
+  onMcpToolDescriptionChange(value) {
+    this.setState({
+      editMcpToolDescription: value
+    }); //setState
+  }
+
   changeItem(item) {
     var allApts = this.state.myAppointments;
     var newApts = _.without(allApts, this.state.myAppointments[item.mykey]);
@@ -364,6 +374,7 @@ class MainInterface extends React.Component {
       voice: this.state.editVoice,
       voiceReply: this.state.editVoiceReply,
       allowParams: this.state.editAllowParams,
+      mcpToolDescription: this.state.editMcpToolDescription,
       mykey: item.mykey
     } //tempitems
 
@@ -512,6 +523,7 @@ class MainInterface extends React.Component {
             onVoiceChange = {this.onVoiceChange}
             onVoiceReplyChange = {this.onVoiceReplyChange}
             onAllowParamsChange = {this.onAllowParamsChange}
+            onMcpToolDescriptionChange = {this.onMcpToolDescriptionChange}
           />
           <EditAppointment
             operatingSystem = {this.state.operatingSystem}
@@ -526,6 +538,7 @@ class MainInterface extends React.Component {
             editVoice = {this.state.editVoice}
             editVoiceReply = {this.state.editVoiceReply}
             editAllowParams = {this.state.editAllowParams}
+            editMcpToolDescription = {this.state.editMcpToolDescription}
             editKey = {this.state.editKey}
             onTriggerChange = {this.onTriggerChange}
             onCommandChange = {this.onCommandChange}
@@ -534,6 +547,7 @@ class MainInterface extends React.Component {
             onVoiceChange = {this.onVoiceChange}
             onVoiceReplyChange = {this.onVoiceReplyChange}
             onAllowParamsChange = {this.onAllowParamsChange}
+            onMcpToolDescriptionChange = {this.onMcpToolDescriptionChange}
           />
           <div className="container">
            <div className="row">
@@ -549,10 +563,8 @@ class MainInterface extends React.Component {
   } //render
 };//MainInterface
 
-ReactDOM.render(
-  <MainInterface />,
-  document.getElementById('petAppointments')
-); //render
+const root = ReactDOM.createRoot(document.getElementById('petAppointments'));
+root.render(<MainInterface />); //render
 
 // Russ added this to fix a bug where the commands.json would get emptied sometimes.
 function writeFileTransactional (path, content, cb) {

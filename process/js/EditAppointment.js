@@ -13,6 +13,7 @@ class EditAppointment extends React.Component {
     this.handleVoiceChange = this.handleVoiceChange.bind(this);
     this.handleVoiceReplyChange = this.handleVoiceReplyChange.bind(this);
     this.handleAllowParamsChange = this.handleAllowParamsChange.bind(this);
+    this.handleMcpToolDescriptionChange = this.handleMcpToolDescriptionChange.bind(this);
     this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
     this.groundInstructions = this.groundInstructions.bind(this);
     this.offCommandInstructions = this.offCommandInstructions.bind(this);
@@ -41,6 +42,7 @@ class EditAppointment extends React.Component {
       voice: this.inputAptNotes.value,
       voiceReply: this.inputVoiceReply.value,
       allowParams: this.inputAllowParams.value,
+      mcpToolDescription: this.inputMcpToolDescription.value,
       mykey: this.props.editKey
     } //tempitems
 
@@ -76,6 +78,10 @@ class EditAppointment extends React.Component {
     this.props.onAllowParamsChange(e.target.value);
   }
 
+  handleMcpToolDescriptionChange(e) {
+    this.props.onMcpToolDescriptionChange(e.target.value);
+  }
+
   render() {
     const { t } = this.props;
 
@@ -86,6 +92,7 @@ class EditAppointment extends React.Component {
     const voicevalue = this.props.editVoice || '';
     const voiceReplyvalue = this.props.editVoiceReply || '';
     const allowParamsvalue = this.props.editAllowParams || false;
+    const mcpToolDescriptionvalue = this.props.editMcpToolDescription || '';
     
     var disableOffCommandField = true;
     if (allowParamsvalue == "true") {
@@ -94,11 +101,11 @@ class EditAppointment extends React.Component {
 
     let groundOptions;
     if (this.props.operatingSystem == 'darwin') {
-      groundOptions = <select id="mySelect" className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} value={groundvalue} >
+      groundOptions = <select className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} value={groundvalue} >
          <option>foreground</option>
       </select>   ;
     } else {
-      groundOptions = <select id="mySelect" className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} value={groundvalue} >
+      groundOptions = <select className="form-control" id="aptDate"  ref={(ref) => this.inputAptDate = ref } onChange={this.handleGroundChange} value={groundvalue} >
          <option>foreground</option>
          <option>background</option>
       </select>   ;
@@ -160,10 +167,17 @@ class EditAppointment extends React.Component {
               <div className="form-group">
                 <label className="col-sm-3 control-label" htmlFor="allowParams">{t('Allow Parameters')}</label>
                 <div className="col-sm-9">
-                  <select id="mySelect" className="form-control" id="allowParams"  ref={(ref) => this.inputAllowParams = ref } onChange={this.handleAllowParamsChange} value={allowParamsvalue} >
+                  <select className="form-control" id="allowParams"  ref={(ref) => this.inputAllowParams = ref } onChange={this.handleAllowParamsChange} value={allowParamsvalue} >
                     <option>false</option>
                     <option>true</option>
                   </select>
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-3 control-label" htmlFor="mcpToolDescription">{t('MCP Tool Description')}</label>
+                <div className="col-sm-9">
+                  <input type="text" className="form-control"
+                    id="mcpToolDescription"  ref={(ref) => this.inputMcpToolDescription = ref } placeholder={t('How AI should use this command and parameters (optional)')} onChange={this.handleMcpToolDescriptionChange} value={mcpToolDescriptionvalue} />
                 </div>
               </div>
               <div className="form-group">

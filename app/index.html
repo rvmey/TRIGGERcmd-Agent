@@ -16,22 +16,23 @@
     </div><!-- Pet Ratings -->
   </div><!-- Main -->
   <script type="text/javascript">
-    var eRequire = require;
-    var dirName = __dirname;
+    window.eRequire = require;
+    window.dirName = __dirname;
 
     var homedir = (process.platform === 'win32') ? process.env.HOMEPATH : process.env.HOME;
     if (!homedir) {homedir = process.env.HOME};
     var datapath = require('path').resolve(homedir, ".TRIGGERcmdData");           
     cmdfile = "commands.json"
-    var dataLocation = require('path').resolve(datapath, cmdfile);
+    window.dataLocation = require('path').resolve(datapath, cmdfile);
     languagefile = "language.cfg"
-    var languageLocation = require('path').resolve(datapath, languagefile);
-    var operatingSystem = process.platform;
+    window.languageLocation = require('path').resolve(datapath, languagefile);
+    window.operatingSystem = process.platform;
 
     // var dataLocation = require('path').resolve(__dirname, '..', 'data', 'data.json');
   </script>
     <script>
-    require('electron').ipcRenderer.on('reloadCommands', (event, message) => {
+    window.electronRequire = require;
+    window.electronRequire('electron').ipcRenderer.on('reloadCommands', (event, message) => {
       console.log(message);
       location.reload();
     })

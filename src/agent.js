@@ -532,6 +532,7 @@ function updateCmds(token,userid,computerid,startsocket) {
                   if (onlinecmds.records[o].name == localcmds[l].trigger &&
                       onlinecmds.records[o].voice == localcmds[l].voice &&
                       onlinecmds.records[o].voiceReply == localcmds[l].voiceReply &&
+                      onlinecmds.records[o].mcpToolDescription == localcmds[l].mcpToolDescription &&
                       Boolean(onlinecmds.records[o].allowParams) == localallowParams
                   ) { foundlocal = true }
                 }
@@ -567,12 +568,13 @@ function updateCmds(token,userid,computerid,startsocket) {
                   if (onlinecmds.records[o].name == localcmds[l].trigger &&
                       onlinecmds.records[o].voice == localcmds[l].voice &&
                       onlinecmds.records[o].voiceReply == localcmds[l].voiceReply &&
+                      onlinecmds.records[o].mcpToolDescription == localcmds[l].mcpToolDescription &&
                       Boolean(onlinecmds.records[o].allowParams) == localallowParams
                   ) { foundonline = true }
                 }
                 if (!foundonline) {
                   if (localcmds[l].ground == ground) {
-                    addCmd(localcmds[l].trigger,localcmds[l].voice,localcmds[l].voiceReply,localcmds[l].allowParams,token,userid,computerid);
+                    addCmd(localcmds[l].trigger,localcmds[l].voice,localcmds[l].voiceReply,localcmds[l].allowParams,localcmds[l].mcpToolDescription,token,userid,computerid);
                   }
                 }
                 loop.next();
@@ -617,14 +619,14 @@ function removeCmd(trigger,token,userid,computerid) {
   })
 }
 
-function addCmd(trigger,voice,voiceReply,allowParams,token,userid,computerid) {
+function addCmd(trigger,voice,voiceReply,allowParams,mcpToolDescription,token,userid,computerid) {
   // Configure the request
 
   headers.Authorization = 'Bearer ' + token;
   options.headers = headers;
   options.url = urlprefix + '/api/command/save';
   options.method = 'POST';
-  options.form = {'name': trigger, 'computer': computerid, 'voice': voice, 'voiceReply': voiceReply, 'allowParams': allowParams };
+  options.form = {'name': trigger, 'computer': computerid, 'voice': voice, 'voiceReply': voiceReply, 'allowParams': allowParams, 'mcpToolDescription': mcpToolDescription };
 
   // Start the request
   request(options, function (error, response, body) {

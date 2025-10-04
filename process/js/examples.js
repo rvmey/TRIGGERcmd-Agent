@@ -1,15 +1,15 @@
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
-var fs = eRequire('fs');
+const fs = window.require ? window.require('fs') : require('fs');
 // import LanguageDetector from 'i18next-browser-languagedetector';
 
 var lang;
 try {
-  lang = fs.readFileSync(languageLocation).toString();;
-  console.log("Found " + lang + " in " + languageLocation);
+  lang = fs.readFileSync(window.languageLocation).toString();;
+  console.log("Found " + lang + " in " + window.languageLocation);
 } catch (err) {
   console.log(err);
-  console.log("No language found in " + languageLocation + " using en.");
+  console.log("No language found in " + window.languageLocation + " using en.");
   lang = 'en';
 }
 
@@ -87,14 +87,14 @@ global.jQuery = require("jquery");
 // var $ = jQuery = require('jquery');
 var _ = require('lodash');
 var bootstrap = require('bootstrap');
-var loadApts = JSON.parse(fs.readFileSync(dataLocation));
+var loadApts = JSON.parse(fs.readFileSync(window.dataLocation));
 // var loadCmds = JSON.parse(fs.readFileSync(cmdLocation));
 
-var electron = eRequire('electron');
+var electron = window.require ? window.require('electron') : require('electron');
 var ipc = electron.ipcRenderer;
 
 var React = require('react');
-var ReactDOM = require('react-dom');
+var ReactDOM = require('react-dom/client');
 var AptList = require('./exampleAptList');
 var Toolbar = require('./exampleToolbar');
 var HeaderNav = require('./exampleHeaderNav');
@@ -149,7 +149,7 @@ class MainInterface extends React.Component {
 
   componentDidUpdate() {
     if (!this.state.aptBodyVisible) {
-      fs.writeFileSync(dataLocation, JSON.stringify(this.state.myAppointments, undefined, 1), 'utf8', function(err) {
+      fs.writeFileSync(window.dataLocation, JSON.stringify(this.state.myAppointments, undefined, 1), 'utf8', function(err) {
         if (err) {
           console.log(err);
         }
@@ -178,7 +178,7 @@ class MainInterface extends React.Component {
   }
 
   addItem(item) {
-    var loadCmds = JSON.parse(fs.readFileSync(cmdLocation));
+    var loadCmds = JSON.parse(fs.readFileSync(window.cmdLocation));
 
     // console.log(item);
     // var tempCmds = this.state.myCmds;
@@ -202,7 +202,7 @@ class MainInterface extends React.Component {
       }
     });//writeFile  */
 
-    writeFileTransactional (cmdLocation, JSON.stringify(tempCmds, undefined, 1), function(err) {
+    writeFileTransactional (window.cmdLocation, JSON.stringify(tempCmds, undefined, 1), function(err) {
       if (err) {
         console.log(err);
       }
@@ -309,10 +309,8 @@ class MainInterface extends React.Component {
   } //render
 };//MainInterface
 
-ReactDOM.render(
-  <MainInterface />,
-  document.getElementById('petAppointments')
-); //render
+const root = ReactDOM.createRoot(document.getElementById('petAppointments'));
+root.render(<MainInterface />); //render
 
 // Russ added this to fix a bug where the commands.json would get emptied sometimes.
 function writeFileTransactional (path, content, cb) {    

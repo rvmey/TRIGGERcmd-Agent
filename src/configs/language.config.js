@@ -26,7 +26,9 @@ module.exports = {
         "GUI Command Editor": "GUI Command Editor",
         "Version": "Version",
         "Waiting for internet.": "Waiting for internet.",
-        "Language": "Language"
+        "Language": "Language",
+        "How AI should use this command and parameters (optional)": "How AI should use this command and parameters (optional)",
+        "MCP Tool Description": "MCP Tool Description"
       }
     },
     pt: {
@@ -54,7 +56,9 @@ module.exports = {
         "GUI Command Editor": "Editor de Comandos GUI",
         "Version": "Versão",
         "Waiting for internet.": "Aguardando internet.",
-        "Language": "Língua"
+        "Language": "Língua",
+        "How AI should use this command and parameters (optional)": "Como a IA deve usar este comando e parâmetros (opcional)",
+        "MCP Tool Description": "Descrição da Ferramenta MCP"
       }
     },
     es: {
@@ -82,7 +86,9 @@ module.exports = {
         "GUI Command Editor": "Editor de comandos GUI",
         "Version": "Versión",
         "Waiting for internet.": "Esperando internet.",
-        "Language": "Idioma"
+        "Language": "Idioma",
+        "How AI should use this command and parameters (optional)": "ómo la IA debería usar este comando y parámetros (opcional)",
+        "MCP Tool Description": "Descripción de la Herramienta MCP"
       }
     },
     de: {
@@ -110,7 +116,9 @@ module.exports = {
         "GUI Command Editor": "GUI-Befehls-Editor",
         "Version": "Ausführung",
         "Waiting for internet.": "Warte auf Internet.",
-        "Language": "Sprache"
+        "Language": "Sprache",
+        "How AI should use this command and parameters (optional)": "Wie die KI diesen Befehl und Parameter verwenden sollte (optional)",
+        "MCP Tool Description": "MCP Werkzeugbeschreibung"
       }
     },
     fr: {
@@ -138,7 +146,9 @@ module.exports = {
         "GUI Command Editor": "Éditeur de commandes GUI",
         "Version": "Version",
         "Waiting for internet.": "En attente d'Internet.",
-        "Language": "Langue"
+        "Language": "Langue",
+        "How AI should use this command and parameters (optional)": "Comment l'IA doit utiliser cette commande et ces paramètres (facultatif)",
+        "MCP Tool Description": "Description de l'outil MCP"
       }
     },
     it: {
@@ -166,7 +176,9 @@ module.exports = {
         "GUI Command Editor": "Editor dei comandi della GUI",
         "Version": "Versione",
         "Waiting for internet.": "In attesa di Internet.",
-        "Language": "Linguaggio"
+        "Language": "Linguaggio",
+        "How AI should use this command and parameters (optional)": "Come l'IA dovrebbe usare questo comando e i parametri (opzionale)",
+        "MCP Tool Description": "Descrizione dello strumento MCP"
       }
     },
     jp: {
@@ -194,7 +206,9 @@ module.exports = {
         "GUI Command Editor": "GUI コマンド エディタ",
         "Version": "バージョン",
         "Waiting for internet.": "インターネットを待っています。",
-        "Language": "言語"
+        "Language": "言語",
+        "How AI should use this command and parameters (optional)": "AIがこのコマンドとパラメータを使用する方法 (オプション)",
+        "MCP Tool Description": "MCP ツールの説明"
       }
     }
   },
