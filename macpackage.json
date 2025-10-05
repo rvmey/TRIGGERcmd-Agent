@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make --arch=arm64,x64",
+    "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
@@ -15,21 +15,23 @@
   "author": "TRIGGERcmd",
   "license": "LicenseRef-LICENSE",
   "devDependencies": {
-    "@electron-forge/cli": "^7.6.0",
-    "@electron-forge/maker-deb": "^7.6.0",
-    "@electron-forge/maker-rpm": "^7.6.0",
+    "@electron-forge/cli": "^7.9.0",
+    "@electron-forge/maker-deb": "^7.9.0",
     "@electron-forge/maker-dmg": "^7.6.0",
-    "@electron-forge/maker-squirrel": "^7.6.0",
-    "@electron-forge/maker-zip": "^7.6.0",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.6.0",
+    "@electron-forge/maker-rpm": "^7.9.0",
+    "@electron-forge/maker-squirrel": "^7.9.0",
+    "@electron-forge/maker-zip": "^7.9.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.9.0",
+    "@electron-forge/plugin-fuses": "^7.9.0",
+    "@electron/fuses": "^1.8.0",
+    "@electron/notarize": "^2.2.0",
+    "@mapbox/node-pre-gyp": "^1.0.11",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
     "css-loader": "^6.8.1",
-    "electron": "33.2.1",
+    "electron": "^38.2.1",
+    "electron-prebuilt-compile": "8.2.0",
     "node-loader": "^2.0.0",
-    "style-loader": "^3.3.3",
-    "@electron/osx-sign": "^1.0.5",
-    "@electron/notarize": "^2.2.0",
-    "@mapbox/node-pre-gyp": "^1.0.11"
+    "style-loader": "^3.3.3"
   },
   "dependencies": {
     "@electron/remote": "^2.1.0",

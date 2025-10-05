@@ -9,7 +9,7 @@ export NODE_ENV=production
 source ~/apple_creds.sh
 
 cp macpackage.json package.json
-npm install
+# npm install
 rm -rf out/make/*
 
 npx electron-forge make --arch=x64
