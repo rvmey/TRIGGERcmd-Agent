@@ -1,3 +1,6 @@
+const WebSocket = require('ws');
+globalThis.WebSocket = WebSocket;
+
 process.chdir(__dirname);
 
 var ground;
