@@ -177,57 +177,58 @@ class HomeAssistantWebSocket {
             };
           }
         } 
-        var prefix = "switch." + this.computer_name.toLowerCase().replace(/[-\s]/g, "_") + "_";
-        // console.log("prefix: " + prefix);
-        if(data.domain == "switch" && data.service_data.entity_id && data.service_data.entity_id.startsWith(prefix) ) {
-            console.log("Home Assistant data:");
-            console.log(data);
-            var trigger = data.service_data.entity_id.substring(prefix.length);
+        if(this.computer_name) {
+          var prefix = "switch." + this.computer_name.toLowerCase().replace(/[-\s]/g, "_") + "_";
+          // console.log("prefix: " + prefix);
+          if(data.domain == "switch" && data.service_data.entity_id && data.service_data.entity_id.startsWith(prefix) ) {
+              console.log("Home Assistant data:");
+              console.log(data);
+              var trigger = data.service_data.entity_id.substring(prefix.length);
 
-            var commands = JSON.parse(fs.readFileSync(this.datafile));
-            var cmdobj = triggerToCmdObj(commands,trigger);
-            if (cmdobj.ground == this.ground) {
-              var envVars = process.env;
-              envVars.TCMD_HA=true;
+              var commands = JSON.parse(fs.readFileSync(this.datafile));
+              var cmdobj = triggerToCmdObj(commands,trigger);
+              if (cmdobj.ground == this.ground) {
+                var envVars = process.env;
+                envVars.TCMD_HA=true;
 
-              var params;
-              if(data.service == "turn_on") {
-                  params = "on"
+                var params;
+                if(data.service == "turn_on") {
+                    params = "on"
+                }
+                if(data.service == "turn_off") {
+                    params = "off"
+                }
+
+                if (cmdobj.allowParams && params) {
+                    if (cmdobj.offCommand && (params.trim() == 'off')) {
+                    var theCommand = cmdobj.offCommand;
+                    } else if (cmdobj.offCommand && (params.trim() == 'on')) {
+                    var theCommand = cmdobj.command;
+                    } else {
+                    var theCommand = cmdobj.command + ' ' + params;
+                    }
+                } else {
+                    var theCommand = cmdobj.command;
+                }
+                console.log('Local Home Assistant Running trigger: ' + trigger + '  Command: ' + theCommand);
+                var ChildProcess = cp.exec(theCommand, {env: envVars}, (error, stdout, stderr) => {
+                    console.log('stdout:', stdout);
+                    console.log('stderr:', stderr);
+
+                    if (error) {
+                        // Log any errors
+                        console.error('error:', error.message);
+                        console.error('error code:', error.code);
+                        console.log("Command ran over Home Assistant with error code " + error.code);
+                        // return;
+                    } else {
+                        console.log("Command triggered over local LAN from Home Assistant.");
+                    }
+                });
               }
-              if(data.service == "turn_off") {
-                  params = "off"
-              }
-
-              if (cmdobj.allowParams && params) {
-                  if (cmdobj.offCommand && (params.trim() == 'off')) {
-                  var theCommand = cmdobj.offCommand;
-                  } else if (cmdobj.offCommand && (params.trim() == 'on')) {
-                  var theCommand = cmdobj.command;
-                  } else {
-                  var theCommand = cmdobj.command + ' ' + params;
-                  }
-              } else {
-                  var theCommand = cmdobj.command;
-              }
-              console.log('Local Home Assistant Running trigger: ' + trigger + '  Command: ' + theCommand);
-              var ChildProcess = cp.exec(theCommand, {env: envVars}, (error, stdout, stderr) => {
-                  console.log('stdout:', stdout);
-                  console.log('stderr:', stderr);
-
-                  if (error) {
-                      // Log any errors
-                      console.error('error:', error.message);
-                      console.error('error code:', error.code);
-                      console.log("Command ran over Home Assistant with error code " + error.code);
-                      // return;
-                  } else {
-                      console.log("Command triggered over local LAN from Home Assistant.");
-                  }
-              });
-            }
+          }
         }
-
-
+        
       } else if (message.type === "auth_invalid") {
         console.error("Local Home Assistant Authentication failed:", message.message);
         this.enabled = false;
