@@ -11,6 +11,7 @@ npm i -g @electron-forge/maker-deb
 npm i -g @electron-forge/maker-rpm
 npm i -g @electron-forge/maker-zip
 npm i -g @electron-forge/maker-dmg
+npm i @electron-forge/cli
 npm install
 rm -rf out/make/*
 npm run make
