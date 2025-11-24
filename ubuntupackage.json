@@ -1,7 +1,7 @@
 {
   "name": "triggercmdagent",
   "productName": "triggercmdagent",
-  "version": "1.0.52",
+  "version": "1.0.53",
   "description": "TRIGGERcmd Agent",
   "main": "src/main.js",
   "scripts": {
@@ -51,6 +51,7 @@
     "prompt": "^1.0.0",
     "react-i18next": "^11.18.6",
     "request": "^2.79.0",
+    "robotjs": "^0.6.0",
     "sails.io.js": "^1.1.4",
     "socket.io-client": "^2.0.2",
     "sudo-prompt": "^6.2.1",
