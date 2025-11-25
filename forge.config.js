@@ -40,7 +40,8 @@ module.exports = {
         iconUrl: 'http://www.triggercmd.com/iconico.ico',
         // The ICO file to use as the icon for the generated Setup.exe
         setupIcon: winIcon
-      }
+      },
+      platforms: ['win32']
     },
     {
       name: '@electron-forge/maker-zip',
@@ -64,6 +65,7 @@ module.exports = {
           icon: linuxIcon
         }
       },
+      platforms: ['linux']
     },
     {
       name: '@electron-forge/maker-rpm',
@@ -72,6 +74,7 @@ module.exports = {
           icon: linuxIcon
         }
       },
+      platforms: ['linux']
     },
   ],
   plugins: [
