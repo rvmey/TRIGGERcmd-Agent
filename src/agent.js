@@ -683,9 +683,9 @@ function startSocket(token,computerid) {
             envVars.TCMD_COMMAND_ID=cmdid;
   
             if (cmdobj.allowParams && params) {
-              if (cmdobj.offCommand && (params.trim() == 'off')) {
+              if (cmdobj.offCommand && (params.trim().toLowerCase() == 'off')) {
                 var theCommand = cmdobj.offCommand;
-              } else if (cmdobj.offCommand && (params.trim() == 'on')) {
+              } else if (cmdobj.offCommand && (params.trim().toLowerCase() == 'on')) {
                 var theCommand = cmdobj.command;
               } else {
                 var theCommand = cmdobj.command + ' ' + params;
