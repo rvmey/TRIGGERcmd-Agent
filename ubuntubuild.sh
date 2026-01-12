@@ -1,4 +1,5 @@
 export NODE_ENV=production
+export PATH="./node_modules/.bin:$PATH"
 
 apt update -y
 apt install jq fakeroot dpkg rpm git -y
