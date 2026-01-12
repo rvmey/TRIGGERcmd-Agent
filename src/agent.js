@@ -676,7 +676,11 @@ function startSocket(token,computerid) {
         var commands = JSON.parse(fs.readFileSync(datafile));
         var cmdobj = triggerToCmdObj(commands,trigger);
         if (cmdobj.ground == ground) {
-          if(haWebSocket.isConnected && sender == "Home Assistant") {
+          // Check if actually connected to HA (not just the flag, but actual socket state)
+          const WebSocket = require('ws');
+          const actuallyConnected = haWebSocket && haWebSocket.isConnected && haWebSocket.socket && haWebSocket.socket.readyState === WebSocket.OPEN;
+          
+          if(actuallyConnected && sender == "Home Assistant") {
             console.log("Ignored duplicate trigger", trigger, "sent from Home Assistant via triggercmd.com because this agent is connected to Home Assistant directly.");
           } else {
             envVars.TCMD_COMPUTER_ID=computerid;
@@ -725,9 +729,14 @@ function startSocket(token,computerid) {
           console.log(data);
         })
         // Ensure Home Assistant connection is active when triggercmd.com reconnects (e.g., after laptop wakes from sleep)
-        if (haWebSocket && haWebSocket.enabled && !haWebSocket.isConnected) {
-          console.log('Reconnected to triggercmd.com - reconnecting to Home Assistant...');
-          haWebSocket.reconnectNow();
+        if (haWebSocket && haWebSocket.enabled) {
+          const socketState = haWebSocket.socket ? haWebSocket.socket.readyState : null;
+          const WebSocket = require('ws');
+          // Reconnect if not connected OR if socket is in a bad state
+          if (!haWebSocket.isConnected || !haWebSocket.socket || socketState !== WebSocket.OPEN) {
+            console.log('Reconnected to triggercmd.com - reconnecting to Home Assistant...');
+            haWebSocket.reconnectNow();
+          }
         }
   });
 }
