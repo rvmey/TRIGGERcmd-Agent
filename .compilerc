@@ -1,0 +1,19 @@
+{
+  "env": {
+    "development": {
+      "application/javascript": {
+        "presets": [],
+        "sourceMaps": "inline"
+      },
+      "text/less": {
+        "dumpLineNumbers": "comments"
+      }
+    },
+    "production": {
+      "application/javascript": {
+        "presets": [],
+        "sourceMaps": "none"
+      }
+    }
+  }
+}

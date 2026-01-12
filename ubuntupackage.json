@@ -38,6 +38,7 @@
     "bootstrap": "^3.3.7",
     "child_process": "^1.0.2",
     "chokidar": "^4.0.3",
+    "electron-compile": "^6.4.4",
     "electron-reload": "^2.0.0-alpha.1",
     "electron-squirrel-startup": "^1.0.1",
     "fs": "0.0.1-security",
