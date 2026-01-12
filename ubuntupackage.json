@@ -5,10 +5,10 @@
   "description": "TRIGGERcmd Agent",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
+    "start": "./node_modules/.bin/electron-forge start",
+    "package": "./node_modules/.bin/electron-forge package",
+    "make": "./node_modules/.bin/electron-forge make",
+    "publish": "./node_modules/.bin/electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
   "keywords": [],
