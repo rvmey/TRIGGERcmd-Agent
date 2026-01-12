@@ -28,7 +28,6 @@
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
     "css-loader": "^6.8.1",
     "electron": "^38.2.1",
-    "electron-prebuilt-compile": "8.2.0",
     "node-loader": "^2.0.0",
     "style-loader": "^3.3.3"
   },
@@ -38,7 +37,6 @@
     "bootstrap": "^3.3.7",
     "child_process": "^1.0.2",
     "chokidar": "^4.0.3",
-    "electron-compile": "^6.4.4",
     "electron-reload": "^2.0.0-alpha.1",
     "electron-squirrel-startup": "^1.0.1",
     "fs": "0.0.1-security",
