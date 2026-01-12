@@ -724,10 +724,10 @@ function startSocket(token,computerid) {
         io.socket.get('/api/computer/subscribeToFunRoom?roomName=' + computerid,{Authorization : 'Bearer ' + token},function(data){
           console.log(data);
         })
-        // Restart Home Assistant connection when triggercmd.com reconnects (e.g., after laptop wakes from sleep)
-        if (haWebSocket && haWebSocket.enabled) {
-          console.log('Reconnected to triggercmd.com - restarting Home Assistant connection...');
-          restartHomeAssistant();
+        // Ensure Home Assistant connection is active when triggercmd.com reconnects (e.g., after laptop wakes from sleep)
+        if (haWebSocket && haWebSocket.enabled && !haWebSocket.isConnected) {
+          console.log('Reconnected to triggercmd.com - reconnecting to Home Assistant...');
+          haWebSocket.reconnectNow();
         }
   });
 }

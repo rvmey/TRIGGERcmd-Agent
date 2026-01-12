@@ -77,6 +77,7 @@ class HomeAssistantWebSocket {
     this.maxReconnectDelay = 30000; // Maximum delay in milliseconds
     this.maxReconnectAttempts = 100; // Maximum number of reconnection attempts
     this.reconnectAttempts = 0; // Counter for reconnection attempts
+    this.reconnectTimer = null; // Track pending reconnection timer
 
     this.loadConfig();
   }
@@ -144,13 +145,26 @@ class HomeAssistantWebSocket {
       return;
     }
 
+    // Check if a connection is already in progress
+    if (this.socket && (this.socket.readyState === WebSocket.CONNECTING || this.socket.readyState === WebSocket.OPEN)) {
+      console.warn("Local Home Assistant WebSocket connection already in progress or open.");
+      return;
+    }
+
+    // Clear any pending reconnection timer
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+
     this.socket = new WebSocket(this.url);
 
     this.socket.onopen = () => {
       console.log("Connected to Local Home Assistant WebSocket API");
       this.isConnected = true;
       this.reconnectAttempts = 0; // Reset reconnect attempts
-      this.authenticate();
+      // Small delay to ensure socket is fully ready before sending
+      setTimeout(() => this.authenticate(), 100);
     };
 
     this.socket.onmessage = (event) => {
@@ -252,13 +266,32 @@ class HomeAssistantWebSocket {
 
   stop() {
     this.enabled = false;
-    if (this.socket && this.isConnected) {
+    // Clear any pending reconnection timer
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+    if (this.socket) {
       this.socket.close();
       this.isConnected = false;
       console.log("Local Home Assistant WebSocket connection stopped");
     } else {
       console.warn("Local Home Assistant WebSocket is not connected.");
     }
+  }
+
+  reconnectNow() {
+    // Clear any pending reconnection timer
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+    if (this.socket && this.socket.readyState !== WebSocket.CLOSED) {
+      this.socket.close();
+    }
+    this.isConnected = false;
+    this.reconnectAttempts = 0;
+    this.start();
   }
 
   reconnect() {
@@ -274,12 +307,17 @@ class HomeAssistantWebSocket {
       `Local Home Assistant Attempting to reconnect in ${delay / 1000} seconds... (${this.reconnectAttempts + 1}/${this.maxReconnectAttempts})`
     );
 
-    setTimeout(() => {
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
       this.start();
     }, delay);
   }
 
   authenticate() {
+    if (this.socket.readyState !== WebSocket.OPEN) {
+      console.warn("Cannot authenticate: WebSocket is not open");
+      return;
+    }
     const authMessage = {
       type: "auth",
       access_token: this.token,
@@ -288,6 +326,10 @@ class HomeAssistantWebSocket {
   }
 
   subscribeToAllEvents() {
+    if (this.socket.readyState !== WebSocket.OPEN) {
+      console.warn("Cannot subscribe: WebSocket is not open");
+      return;
+    }
     const subscribeMessage = {
       id: 1,
       type: "subscribe_events",
