@@ -728,15 +728,17 @@ function startSocket(token,computerid) {
         io.socket.get('/api/computer/subscribeToFunRoom?roomName=' + computerid,{Authorization : 'Bearer ' + token},function(data){
           console.log(data);
         })
-        // Ensure Home Assistant connection is active when triggercmd.com reconnects (e.g., after laptop wakes from sleep)
-        if (haWebSocket && haWebSocket.enabled) {
-          const socketState = haWebSocket.socket ? haWebSocket.socket.readyState : null;
-          const WebSocket = require('ws');
-          // Reconnect if not connected OR if socket is in a bad state
-          if (!haWebSocket.isConnected || !haWebSocket.socket || socketState !== WebSocket.OPEN) {
+        // Always reconnect Home Assistant when triggercmd.com reconnects
+        // If triggercmd had to reconnect, there was a network disruption and HA connection is likely stale
+        if (haWebSocket) {
+          if (haWebSocket.enabled) {
             console.log('Reconnected to triggercmd.com - reconnecting to Home Assistant...');
             haWebSocket.reconnectNow();
+          } else {
+            console.log('Reconnected to triggercmd.com - Home Assistant is disabled');
           }
+        } else {
+          console.log('Reconnected to triggercmd.com - haWebSocket not initialized');
         }
   });
 }
