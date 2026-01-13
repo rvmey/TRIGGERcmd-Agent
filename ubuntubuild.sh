@@ -13,7 +13,7 @@ export NODE_ENV=production
 rm -rf out/make/*
 npm run make
 
-# # Raspberry Pi:
-# npm i -g node-deb
-# cp rpipackage.json package.json
-# node-deb --install-strategy npm-install -- src/
+# Raspberry Pi:
+npm i -g node-deb
+cp rpipackage.json package.json
+node-deb --install-strategy npm-install -- src/
