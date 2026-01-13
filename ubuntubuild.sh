@@ -6,6 +6,7 @@ apt install jq fakeroot dpkg rpm git -y
 
 # Linux deb and rpm
 cp ubuntupackage.json package.json
+npm install -g @electron-forge/cli
 npm install
 rm -rf out/make/*
 npm run make
