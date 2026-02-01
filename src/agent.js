@@ -576,7 +576,7 @@ function updateCmds(token,userid,computerid,startsocket) {
                   ) { foundonline = true }
                 }
                 if (!foundonline) {
-                  if (localcmds[l].ground == ground) {
+                  if (localcmds[l] && localcmds[l].ground == ground) {
                     addCmd(localcmds[l].trigger,localcmds[l].voice,localcmds[l].voiceReply,localcmds[l].allowParams,localcmds[l].mcpToolDescription,token,userid,computerid);
                   }
                 }
@@ -675,7 +675,7 @@ function startSocket(token,computerid) {
         console.log(event);
         var commands = JSON.parse(fs.readFileSync(datafile));
         var cmdobj = triggerToCmdObj(commands,trigger);
-        if (cmdobj.ground == ground) {
+        if (cmdobj && cmdobj.ground == ground) {
           // Check if actually connected to HA (not just the flag, but actual socket state)
           const WebSocket = require('ws');
           const actuallyConnected = haWebSocket && haWebSocket.isConnected && haWebSocket.socket && haWebSocket.socket.readyState === WebSocket.OPEN;
