@@ -13,6 +13,7 @@ class EditAppointment extends React.Component {
     this.handleVoiceChange = this.handleVoiceChange.bind(this);
     this.handleVoiceReplyChange = this.handleVoiceReplyChange.bind(this);
     this.handleAllowParamsChange = this.handleAllowParamsChange.bind(this);
+    this.handleQuoteParamsChange = this.handleQuoteParamsChange.bind(this);
     this.handleMcpToolDescriptionChange = this.handleMcpToolDescriptionChange.bind(this);
     this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
     this.groundInstructions = this.groundInstructions.bind(this);
@@ -42,6 +43,7 @@ class EditAppointment extends React.Component {
       voice: this.inputAptNotes.value,
       voiceReply: this.inputVoiceReply.value,
       allowParams: this.inputAllowParams.value,
+      quoteParams: this.inputQuoteParams.value,
       mcpToolDescription: this.inputMcpToolDescription.value,
       mykey: this.props.editKey
     } //tempitems
@@ -78,6 +80,10 @@ class EditAppointment extends React.Component {
     this.props.onAllowParamsChange(e.target.value);
   }
 
+  handleQuoteParamsChange(e) {
+    this.props.onQuoteParamsChange(e.target.value);
+  }
+
   handleMcpToolDescriptionChange(e) {
     this.props.onMcpToolDescriptionChange(e.target.value);
   }
@@ -92,8 +98,9 @@ class EditAppointment extends React.Component {
     const voicevalue = this.props.editVoice || '';
     const voiceReplyvalue = this.props.editVoiceReply || '';
     const allowParamsvalue = this.props.editAllowParams || false;
-    const mcpToolDescriptionvalue = this.props.editMcpToolDescription || '';
-    
+    const quoteParamsvalue = this.props.editQuoteParams || false;
+    const mcpToolDescriptionvalue = this.props.editMcpToolDescription || '';    
+    console.log('EditAppointment render - editQuoteParams:', this.props.editQuoteParams, 'quoteParamsvalue:', quoteParamsvalue);    
     var disableOffCommandField = true;
     if (allowParamsvalue == "true") {
       disableOffCommandField = false;
@@ -158,7 +165,7 @@ class EditAppointment extends React.Component {
                 </div>
               </div>
               <div className="form-group">
-                <label className="col-sm-3 control-label" htmlFor="voiceReply">{t('Voice Reply')}</label>
+                <label className="col-sm-3 control-label" htmlFor="voiceReply">{t('Voice/MCP Reply')}</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
                     id="voiceReply"  ref={(ref) => this.inputVoiceReply = ref } placeholder={t('In the conversational skills, Alexa will say this back (optional)')} onChange={this.handleVoiceReplyChange} value={voiceReplyvalue} />
@@ -168,6 +175,15 @@ class EditAppointment extends React.Component {
                 <label className="col-sm-3 control-label" htmlFor="allowParams">{t('Allow Parameters')}</label>
                 <div className="col-sm-9">
                   <select className="form-control" id="allowParams"  ref={(ref) => this.inputAllowParams = ref } onChange={this.handleAllowParamsChange} value={allowParamsvalue} >
+                    <option>false</option>
+                    <option>true</option>
+                  </select>
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-3 control-label" htmlFor="quoteParams">{t('Quote Parameters')}</label>
+                <div className="col-sm-9">
+                  <select className="form-control" id="quoteParams"  ref={(ref) => this.inputQuoteParams = ref } onChange={this.handleQuoteParamsChange} value={quoteParamsvalue} >
                     <option>false</option>
                     <option>true</option>
                   </select>

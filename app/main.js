@@ -24,7 +24,8 @@ app.on('ready', function() {
     width: 900,
     height: 700,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false
     }
   }); //appWindow
 
@@ -38,7 +39,8 @@ app.on('ready', function() {
     show: false, 
     parent: appWindow,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false
     }
   }); //exampleWindow
 

@@ -13,6 +13,7 @@ class AddAppointment extends React.Component {
     this.handleVoiceChange = this.handleVoiceChange.bind(this);
     this.handleVoiceReplyChange = this.handleVoiceReplyChange.bind(this);
     this.handleAllowParamsChange = this.handleAllowParamsChange.bind(this);
+    this.handleQuoteParamsChange = this.handleQuoteParamsChange.bind(this);
     this.handleMcpToolDescriptionChange = this.handleMcpToolDescriptionChange.bind(this);
     this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
     this.groundInstructions = this.groundInstructions.bind(this);
@@ -43,6 +44,7 @@ class AddAppointment extends React.Component {
       voice: this.inputAptNotes.value,
       voiceReply: this.inputVoiceReply.value,
       allowParams: this.inputAllowParams.value,
+      quoteParams: this.inputQuoteParams.value,
       mcpToolDescription: this.inputMcpToolDescription.value,
     } //tempitems
 
@@ -55,6 +57,7 @@ class AddAppointment extends React.Component {
     this.inputAptNotes.value = '';
     this.inputVoiceReply.value = '';
     this.inputAllowParams.value = 'false';
+    this.inputQuoteParams.value = 'false';
     this.inputMcpToolDescription.value = '';
   } //handleAdd
 
@@ -84,6 +87,10 @@ class AddAppointment extends React.Component {
 
   handleAllowParamsChange(e) {
     this.props.onAllowParamsChange(e.target.value);
+  }
+
+  handleQuoteParamsChange(e) {
+    this.props.onQuoteParamsChange(e.target.value);
   }
 
   handleMcpToolDescriptionChange(e) {
@@ -157,7 +164,7 @@ class AddAppointment extends React.Component {
                 </div>
               </div>
               <div className="form-group">
-                <label className="col-sm-3 control-label" htmlFor="voiceReply">{t('Voice Reply')}</label>
+                <label className="col-sm-3 control-label" htmlFor="voiceReply">{t('Voice/MCP Reply')}</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
                     id="voiceReply"  ref={(ref) => this.inputVoiceReply = ref } placeholder={t('In the conversational skills, Alexa will say this back (optional)')} onChange={this.handleVoiceReplyChange} />
@@ -167,6 +174,15 @@ class AddAppointment extends React.Component {
                 <label className="col-sm-3 control-label" htmlFor="allowParams">{t('Allow Parameters')}</label>
                 <div className="col-sm-9">
                   <select className="form-control" id="allowParams"  ref={(ref) => this.inputAllowParams = ref } onChange={this.handleAllowParamsChange} >
+                    <option>false</option>
+                    <option>true</option>
+                  </select>
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-3 control-label" htmlFor="quoteParams">{t('Quote Parameters')}</label>
+                <div className="col-sm-9">
+                  <select className="form-control" id="quoteParams"  ref={(ref) => this.inputQuoteParams = ref } onChange={this.handleQuoteParamsChange} >
                     <option>false</option>
                     <option>true</option>
                   </select>

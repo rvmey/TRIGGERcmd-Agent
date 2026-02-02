@@ -28,7 +28,8 @@ module.exports = {
         "Waiting for internet.": "Waiting for internet.",
         "Language": "Language",
         "How AI should use this command and parameters (optional)": "How AI should use this command and parameters (optional)",
-        "MCP Tool Description": "MCP Tool Description"
+        "MCP Tool Description": "MCP Tool Description",
+        "Voice/MCP Reply": "Voice/MCP Reply"
       }
     },
     pt: {
@@ -58,7 +59,8 @@ module.exports = {
         "Waiting for internet.": "Aguardando internet.",
         "Language": "Língua",
         "How AI should use this command and parameters (optional)": "Como a IA deve usar este comando e parâmetros (opcional)",
-        "MCP Tool Description": "Descrição da Ferramenta MCP"
+        "MCP Tool Description": "Descrição da Ferramenta MCP",
+        "Voice/MCP Reply": "Resposta de Voz/MCP"
       }
     },
     es: {
@@ -88,7 +90,8 @@ module.exports = {
         "Waiting for internet.": "Esperando internet.",
         "Language": "Idioma",
         "How AI should use this command and parameters (optional)": "ómo la IA debería usar este comando y parámetros (opcional)",
-        "MCP Tool Description": "Descripción de la Herramienta MCP"
+        "MCP Tool Description": "Descripción de la Herramienta MCP",
+        "Voice/MCP Reply": "Respuesta de Voz/MCP"
       }
     },
     de: {
@@ -118,7 +121,8 @@ module.exports = {
         "Waiting for internet.": "Warte auf Internet.",
         "Language": "Sprache",
         "How AI should use this command and parameters (optional)": "Wie die KI diesen Befehl und Parameter verwenden sollte (optional)",
-        "MCP Tool Description": "MCP Werkzeugbeschreibung"
+        "MCP Tool Description": "MCP Werkzeugbeschreibung",
+        "Voice/MCP Reply": "Sprach-/MCP-Antwort"
       }
     },
     fr: {
@@ -148,7 +152,8 @@ module.exports = {
         "Waiting for internet.": "En attente d'Internet.",
         "Language": "Langue",
         "How AI should use this command and parameters (optional)": "Comment l'IA doit utiliser cette commande et ces paramètres (facultatif)",
-        "MCP Tool Description": "Description de l'outil MCP"
+        "MCP Tool Description": "Description de l'outil MCP",
+        "Voice/MCP Reply": "Réponse Vocale/MCP"
       }
     },
     it: {
@@ -178,7 +183,8 @@ module.exports = {
         "Waiting for internet.": "In attesa di Internet.",
         "Language": "Linguaggio",
         "How AI should use this command and parameters (optional)": "Come l'IA dovrebbe usare questo comando e i parametri (opzionale)",
-        "MCP Tool Description": "Descrizione dello strumento MCP"
+        "MCP Tool Description": "Descrizione dello strumento MCP",
+        "Voice/MCP Reply": "Risposta Vocale/MCP"
       }
     },
     jp: {
@@ -208,7 +214,8 @@ module.exports = {
         "Waiting for internet.": "インターネットを待っています。",
         "Language": "言語",
         "How AI should use this command and parameters (optional)": "AIがこのコマンドとパラメータを使用する方法 (オプション)",
-        "MCP Tool Description": "MCP ツールの説明"
+        "MCP Tool Description": "MCP ツールの説明",
+        "Voice/MCP Reply": "音声/MCP応答"
       }
     }
   },

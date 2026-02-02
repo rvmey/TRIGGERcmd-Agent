@@ -205,6 +205,7 @@ class MainInterface extends React.Component {
     this.onVoiceChange = this.onVoiceChange.bind(this);
     this.onVoiceReplyChange = this.onVoiceReplyChange.bind(this);
     this.onAllowParamsChange = this.onAllowParamsChange.bind(this);
+    this.onQuoteParamsChange = this.onQuoteParamsChange.bind(this);
     this.onMcpToolDescriptionChange = this.onMcpToolDescriptionChange.bind(this);
     this.changeItem = this.changeItem.bind(this);
     this.browseExamples = this.browseExamples.bind(this);
@@ -230,6 +231,7 @@ class MainInterface extends React.Component {
       editVoice: '',
       editVoiceReply: '',
       editAllowParams: false,
+      editQuoteParams: false,
       editMcpToolDescription: '',
       editKey: null,
       myAppointments: loadApts
@@ -315,6 +317,7 @@ class MainInterface extends React.Component {
       editVoice: item.voice,
       editVoiceReply: item.voiceReply,
       editAllowParams: item.allowParams,
+      editQuoteParams: item.quoteParams,
       editMcpToolDescription: item.mcpToolDescription,
       editKey: item.mykey
     }); //setState
@@ -356,6 +359,12 @@ class MainInterface extends React.Component {
     }); //setState
   }
 
+  onQuoteParamsChange(value) {
+    this.setState({
+      editQuoteParams: value
+    }); //setState
+  }
+
   onMcpToolDescriptionChange(value) {
     this.setState({
       editMcpToolDescription: value
@@ -374,6 +383,7 @@ class MainInterface extends React.Component {
       voice: this.state.editVoice,
       voiceReply: this.state.editVoiceReply,
       allowParams: this.state.editAllowParams,
+      quoteParams: this.state.editQuoteParams,
       mcpToolDescription: this.state.editMcpToolDescription,
       mykey: item.mykey
     } //tempitems
@@ -538,6 +548,7 @@ class MainInterface extends React.Component {
             editVoice = {this.state.editVoice}
             editVoiceReply = {this.state.editVoiceReply}
             editAllowParams = {this.state.editAllowParams}
+            editQuoteParams = {this.state.editQuoteParams}
             editMcpToolDescription = {this.state.editMcpToolDescription}
             editKey = {this.state.editKey}
             onTriggerChange = {this.onTriggerChange}
@@ -547,6 +558,7 @@ class MainInterface extends React.Component {
             onVoiceChange = {this.onVoiceChange}
             onVoiceReplyChange = {this.onVoiceReplyChange}
             onAllowParamsChange = {this.onAllowParamsChange}
+            onQuoteParamsChange = {this.onQuoteParamsChange}
             onMcpToolDescriptionChange = {this.onMcpToolDescriptionChange}
           />
           <div className="container">

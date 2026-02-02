@@ -692,7 +692,10 @@ function startSocket(token,computerid) {
               } else if (cmdobj.offCommand && (params.trim().toLowerCase() == 'on')) {
                 var theCommand = cmdobj.command;
               } else {
-                var theCommand = cmdobj.command + ' ' + params;
+                // Check if params should be quoted
+                var shouldQuote = (cmdobj.quoteParams === true || cmdobj.quoteParams === 'true');
+                var paramValue = shouldQuote ? '"' + params + '"' : params;
+                var theCommand = cmdobj.command + ' ' + paramValue;
               }
             } else {
               var theCommand = cmdobj.command;
