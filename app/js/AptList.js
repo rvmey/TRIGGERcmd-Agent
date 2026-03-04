@@ -3050,7 +3050,7 @@ var AptList = /*#__PURE__*/function (_React$Component) {
         className: "pet-head"
       }, /*#__PURE__*/React.createElement("span", {
         className: "pet-name"
-      }, this.props.singleItem.trigger), /*#__PURE__*/React.createElement("span", {
+      }, this.props.singleItem.icon ? "".concat(this.props.singleItem.icon, " ") : '', this.props.singleItem.trigger), /*#__PURE__*/React.createElement("span", {
         className: "apt-date pull-right"
       }, this.props.singleItem.voice), /*#__PURE__*/React.createElement("p", null), /*#__PURE__*/React.createElement("span", {
         className: "apt-date pull-right"

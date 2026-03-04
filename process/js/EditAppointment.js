@@ -1,5 +1,6 @@
 import { withTranslation } from 'react-i18next';
 var React = require('react');
+var EmojiPicker = require('./EmojiPicker');
 
 // var EditAppointment = React.createClass({
 
@@ -15,6 +16,7 @@ class EditAppointment extends React.Component {
     this.handleAllowParamsChange = this.handleAllowParamsChange.bind(this);
     this.handleQuoteParamsChange = this.handleQuoteParamsChange.bind(this);
     this.handleMcpToolDescriptionChange = this.handleMcpToolDescriptionChange.bind(this);
+    this.handleIconChange = this.handleIconChange.bind(this);
     this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
     this.groundInstructions = this.groundInstructions.bind(this);
     this.offCommandInstructions = this.offCommandInstructions.bind(this);
@@ -45,6 +47,7 @@ class EditAppointment extends React.Component {
       allowParams: this.inputAllowParams.value,
       quoteParams: this.inputQuoteParams.value,
       mcpToolDescription: this.inputMcpToolDescription.value,
+      icon: this.props.editIcon || '',
       mykey: this.props.editKey
     } //tempitems
 
@@ -88,6 +91,10 @@ class EditAppointment extends React.Component {
     this.props.onMcpToolDescriptionChange(e.target.value);
   }
 
+  handleIconChange(value) {
+    this.props.onIconChange(value);
+  }
+
   render() {
     const { t } = this.props;
 
@@ -99,7 +106,8 @@ class EditAppointment extends React.Component {
     const voiceReplyvalue = this.props.editVoiceReply || '';
     const allowParamsvalue = this.props.editAllowParams || false;
     const quoteParamsvalue = this.props.editQuoteParams || false;
-    const mcpToolDescriptionvalue = this.props.editMcpToolDescription || '';    
+    const mcpToolDescriptionvalue = this.props.editMcpToolDescription || '';
+    const iconvalue = this.props.editIcon || '';
     console.log('EditAppointment render - editQuoteParams:', this.props.editQuoteParams, 'quoteParamsvalue:', quoteParamsvalue);    
     var disableOffCommandField = true;
     if (allowParamsvalue == "true") {
@@ -194,6 +202,14 @@ class EditAppointment extends React.Component {
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
                     id="mcpToolDescription"  ref={(ref) => this.inputMcpToolDescription = ref } placeholder={t('How AI should use this command and parameters (optional)')} onChange={this.handleMcpToolDescriptionChange} value={mcpToolDescriptionvalue} />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-3 control-label">{t('Icon')}</label>
+                <div className="col-sm-9">
+                  <EmojiPicker value={iconvalue} onSelect={this.handleIconChange} />
+                  <br />
+                  <small className="text-muted">{t('Optional. Pick an emoji to identify this command.')}</small>
                 </div>
               </div>
               <div className="form-group">

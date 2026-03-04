@@ -39,7 +39,9 @@ i18next
           "If filled, runs instead of Command when off is the parameter": "If filled, runs instead of Command when off is the parameter",
           "Your command": "Your command",
           "Trigger name": "Trigger name",
-          "Current Commands": "Current Commands"
+          "Current Commands": "Current Commands",
+          "Icon": "Icon",
+          "Optional. Pick an emoji to identify this command.": "Optional. Pick an emoji to identify this command."
         }
       },
       pt: {
@@ -59,7 +61,9 @@ i18next
           "If filled, runs instead of Command when off is the parameter": "Se preenchido, executa em vez de Command quando desligado é o parâmetro",
           "Your command": "Seu comando",
           "Trigger name": "Nome do gatilho",
-          "Current Commands": "Comandos Atuais"
+          "Current Commands": "Comandos Atuais",
+          "Icon": "Ícone",
+          "Optional. Pick an emoji to identify this command.": "Opcional. Escolha um emoji para identificar este comando."
         }
       },
       es: {
@@ -79,7 +83,9 @@ i18next
           "If filled, runs instead of Command when off is the parameter": "Si está lleno, se ejecuta en lugar de Comando cuando el parámetro está desactivado.",
           "Your command": "Tu comando",
           "Trigger name": "Nombre del disparador",
-          "Current Commands": "Comandos actuales"
+          "Current Commands": "Comandos actuales",
+          "Icon": "Ícono",
+          "Optional. Pick an emoji to identify this command.": "Opcional. Elige un emoji para identificar este comando."
         }
       },
       de: {
@@ -99,7 +105,9 @@ i18next
           "If filled, runs instead of Command when off is the parameter": "Wenn gefüllt, wird anstelle von Command ausgeführt, wenn off der Parameter ist",
           "Your command": "Ihr Befehl",
           "Trigger name": "Auslösername",
-          "Current Commands": "Aktuelle Befehle"
+          "Current Commands": "Aktuelle Befehle",
+          "Icon": "Symbol",
+          "Optional. Pick an emoji to identify this command.": "Optional. Wählen Sie ein Emoji, um diesen Befehl zu identifizieren."
         }
       },
       fr: {
@@ -119,7 +127,9 @@ i18next
           "If filled, runs instead of Command when off is the parameter": "S'il est rempli, s'exécute à la place de Command lorsque off est le paramètre",
           "Your command": "Votre commande",
           "Trigger name": "Nom du déclencheur",
-          "Current Commands": "Commandes actuelles"
+          "Current Commands": "Commandes actuelles",
+          "Icon": "Icône",
+          "Optional. Pick an emoji to identify this command.": "Optionnel. Choisissez un emoji pour identifier cette commande."
         }
       },
       it: {
@@ -139,7 +149,9 @@ i18next
           "If filled, runs instead of Command when off is the parameter": "Se riempito, viene eseguito al posto di Command quando off è il parametro",
           "Your command": "Il tuo comando",
           "Trigger name": "Nome del trigger",
-          "Current Commands": "Comandi attuali"
+          "Current Commands": "Comandi attuali",
+          "Icon": "Icona",
+          "Optional. Pick an emoji to identify this command.": "Opzionale. Scegli un emoji per identificare questo comando."
         }
       },
       jp: {
@@ -159,7 +171,9 @@ i18next
           "If filled, runs instead of Command when off is the parameter": "入力すると、パラメータが off の場合に Command の代わりに実行されます",
           "Your command": "あなたの命令",
           "Trigger name": "トリガー名",
-          "Current Commands": "現在のコマンド"
+          "Current Commands": "現在のコマンド",
+          "Icon": "アイコン",
+          "Optional. Pick an emoji to identify this command.": "オプション。このコマンドを識別する絵文字を選択してください。"
         }
       }
     }
@@ -207,6 +221,7 @@ class MainInterface extends React.Component {
     this.onAllowParamsChange = this.onAllowParamsChange.bind(this);
     this.onQuoteParamsChange = this.onQuoteParamsChange.bind(this);
     this.onMcpToolDescriptionChange = this.onMcpToolDescriptionChange.bind(this);
+    this.onIconChange = this.onIconChange.bind(this);
     this.changeItem = this.changeItem.bind(this);
     this.browseExamples = this.browseExamples.bind(this);
     this.openComputerList = this.openComputerList.bind(this);
@@ -233,6 +248,7 @@ class MainInterface extends React.Component {
       editAllowParams: false,
       editQuoteParams: false,
       editMcpToolDescription: '',
+      editIcon: '',
       editKey: null,
       myAppointments: loadApts
     };
@@ -319,6 +335,7 @@ class MainInterface extends React.Component {
       editAllowParams: item.allowParams,
       editQuoteParams: item.quoteParams,
       editMcpToolDescription: item.mcpToolDescription,
+      editIcon: item.icon || '',
       editKey: item.mykey
     }); //setState
   } //toggleAptDisplay
@@ -371,6 +388,12 @@ class MainInterface extends React.Component {
     }); //setState
   }
 
+  onIconChange(value) {
+    this.setState({
+      editIcon: value
+    }); //setState
+  }
+
   changeItem(item) {
     var allApts = this.state.myAppointments;
     var newApts = _.without(allApts, this.state.myAppointments[item.mykey]);
@@ -385,6 +408,7 @@ class MainInterface extends React.Component {
       allowParams: this.state.editAllowParams,
       quoteParams: this.state.editQuoteParams,
       mcpToolDescription: this.state.editMcpToolDescription,
+      icon: this.state.editIcon,
       mykey: item.mykey
     } //tempitems
 
@@ -534,6 +558,7 @@ class MainInterface extends React.Component {
             onVoiceReplyChange = {this.onVoiceReplyChange}
             onAllowParamsChange = {this.onAllowParamsChange}
             onMcpToolDescriptionChange = {this.onMcpToolDescriptionChange}
+            onIconChange = {this.onIconChange}
           />
           <EditAppointment
             operatingSystem = {this.state.operatingSystem}
@@ -550,6 +575,7 @@ class MainInterface extends React.Component {
             editAllowParams = {this.state.editAllowParams}
             editQuoteParams = {this.state.editQuoteParams}
             editMcpToolDescription = {this.state.editMcpToolDescription}
+            editIcon = {this.state.editIcon}
             editKey = {this.state.editKey}
             onTriggerChange = {this.onTriggerChange}
             onCommandChange = {this.onCommandChange}
@@ -560,6 +586,7 @@ class MainInterface extends React.Component {
             onAllowParamsChange = {this.onAllowParamsChange}
             onQuoteParamsChange = {this.onQuoteParamsChange}
             onMcpToolDescriptionChange = {this.onMcpToolDescriptionChange}
+            onIconChange = {this.onIconChange}
           />
           <div className="container">
            <div className="row">

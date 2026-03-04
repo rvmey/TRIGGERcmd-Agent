@@ -1,5 +1,6 @@
 import { withTranslation } from 'react-i18next';
 var React = require('react');
+var EmojiPicker = require('./EmojiPicker');
 
 // var AddAppointment = React.createClass({
 
@@ -15,10 +16,12 @@ class AddAppointment extends React.Component {
     this.handleAllowParamsChange = this.handleAllowParamsChange.bind(this);
     this.handleQuoteParamsChange = this.handleQuoteParamsChange.bind(this);
     this.handleMcpToolDescriptionChange = this.handleMcpToolDescriptionChange.bind(this);
+    this.handleIconChange = this.handleIconChange.bind(this);
     this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
     this.groundInstructions = this.groundInstructions.bind(this);
     this.offCommandInstructions = this.offCommandInstructions.bind(this);
     this.handleAdd = this.handleAdd.bind(this);
+    this.state = { icon: '' };
   }
 
   toggleAptDisplay(e) {
@@ -46,6 +49,7 @@ class AddAppointment extends React.Component {
       allowParams: this.inputAllowParams.value,
       quoteParams: this.inputQuoteParams.value,
       mcpToolDescription: this.inputMcpToolDescription.value,
+      icon: this.state.icon || '',
     } //tempitems
 
     this.props.addApt(tempItem);
@@ -59,6 +63,7 @@ class AddAppointment extends React.Component {
     this.inputAllowParams.value = 'false';
     this.inputQuoteParams.value = 'false';
     this.inputMcpToolDescription.value = '';
+    this.setState({ icon: '' });
   } //handleAdd
 
   handleTriggerChange(e) {
@@ -95,6 +100,11 @@ class AddAppointment extends React.Component {
 
   handleMcpToolDescriptionChange(e) {
     this.props.onMcpToolDescriptionChange(e.target.value);
+  }
+
+  handleIconChange(value) {
+    this.setState({ icon: value });
+    this.props.onIconChange(value);
   }
 
   render() {
@@ -193,6 +203,14 @@ class AddAppointment extends React.Component {
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
                     id="mcpToolDescription"  ref={(ref) => this.inputMcpToolDescription = ref } placeholder={t('How AI should use this command and parameters (optional)')} onChange={this.handleMcpToolDescriptionChange} />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-3 control-label">{t('Icon')}</label>
+                <div className="col-sm-9">
+                  <EmojiPicker value={this.state.icon} onSelect={this.handleIconChange} />
+                  <br />
+                  <small className="text-muted">{t('Optional. Pick an emoji to identify this command.')}</small>
                 </div>
               </div>
               <div className="form-group">

@@ -29,7 +29,9 @@ module.exports = {
         "Language": "Language",
         "How AI should use this command and parameters (optional)": "How AI should use this command and parameters (optional)",
         "MCP Tool Description": "MCP Tool Description",
-        "Voice/MCP Reply": "Voice/MCP Reply"
+        "Voice/MCP Reply": "Voice/MCP Reply",
+        "Icon": "Icon",
+        "Optional. Pick an emoji to identify this command.": "Optional. Pick an emoji to identify this command."
       }
     },
     pt: {
@@ -60,7 +62,9 @@ module.exports = {
         "Language": "Língua",
         "How AI should use this command and parameters (optional)": "Como a IA deve usar este comando e parâmetros (opcional)",
         "MCP Tool Description": "Descrição da Ferramenta MCP",
-        "Voice/MCP Reply": "Resposta de Voz/MCP"
+        "Voice/MCP Reply": "Resposta de Voz/MCP",
+        "Icon": "Ícone",
+        "Optional. Pick an emoji to identify this command.": "Opcional. Escolha um emoji para identificar este comando."
       }
     },
     es: {
@@ -91,7 +95,9 @@ module.exports = {
         "Language": "Idioma",
         "How AI should use this command and parameters (optional)": "ómo la IA debería usar este comando y parámetros (opcional)",
         "MCP Tool Description": "Descripción de la Herramienta MCP",
-        "Voice/MCP Reply": "Respuesta de Voz/MCP"
+        "Voice/MCP Reply": "Respuesta de Voz/MCP",
+        "Icon": "Ícono",
+        "Optional. Pick an emoji to identify this command.": "Opcional. Elige un emoji para identificar este comando."
       }
     },
     de: {
@@ -122,7 +128,9 @@ module.exports = {
         "Language": "Sprache",
         "How AI should use this command and parameters (optional)": "Wie die KI diesen Befehl und Parameter verwenden sollte (optional)",
         "MCP Tool Description": "MCP Werkzeugbeschreibung",
-        "Voice/MCP Reply": "Sprach-/MCP-Antwort"
+        "Voice/MCP Reply": "Sprach-/MCP-Antwort",
+        "Icon": "Symbol",
+        "Optional. Pick an emoji to identify this command.": "Optional. Wählen Sie ein Emoji, um diesen Befehl zu identifizieren."
       }
     },
     fr: {
@@ -153,7 +161,9 @@ module.exports = {
         "Language": "Langue",
         "How AI should use this command and parameters (optional)": "Comment l'IA doit utiliser cette commande et ces paramètres (facultatif)",
         "MCP Tool Description": "Description de l'outil MCP",
-        "Voice/MCP Reply": "Réponse Vocale/MCP"
+        "Voice/MCP Reply": "Réponse Vocale/MCP",
+        "Icon": "Icône",
+        "Optional. Pick an emoji to identify this command.": "Optionnel. Choisissez un emoji pour identifier cette commande."
       }
     },
     it: {
@@ -184,7 +194,9 @@ module.exports = {
         "Language": "Linguaggio",
         "How AI should use this command and parameters (optional)": "Come l'IA dovrebbe usare questo comando e i parametri (opzionale)",
         "MCP Tool Description": "Descrizione dello strumento MCP",
-        "Voice/MCP Reply": "Risposta Vocale/MCP"
+        "Voice/MCP Reply": "Risposta Vocale/MCP",
+        "Icon": "Icona",
+        "Optional. Pick an emoji to identify this command.": "Opzionale. Scegli un emoji per identificare questo comando."
       }
     },
     jp: {
@@ -215,7 +227,9 @@ module.exports = {
         "Language": "言語",
         "How AI should use this command and parameters (optional)": "AIがこのコマンドとパラメータを使用する方法 (オプション)",
         "MCP Tool Description": "MCP ツールの説明",
-        "Voice/MCP Reply": "音声/MCP応答"
+        "Voice/MCP Reply": "音声/MCP応答",
+        "Icon": "アイコン",
+        "Optional. Pick an emoji to identify this command.": "オプション。このコマンドを識別する絵文字を選択してください。"
       }
     }
   },

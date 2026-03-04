@@ -45,7 +45,7 @@ class AptList extends React.Component {
         </div>
         <div className="pet-info media-body">
           <div className="pet-head">
-            <span className="pet-name">{this.props.singleItem.trigger}</span>
+            <span className="pet-name">{this.props.singleItem.icon ? `${this.props.singleItem.icon} ` : ''}{this.props.singleItem.trigger}</span>
             <span className="apt-date pull-right">{this.props.singleItem.voice}</span>
             <p></p>
             <span className="apt-date pull-right">{this.props.singleItem.ground}</span>
