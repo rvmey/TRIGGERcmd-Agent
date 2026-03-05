@@ -536,7 +536,8 @@ function updateCmds(token,userid,computerid,startsocket) {
                       onlinecmds.records[o].voice == localcmds[l].voice &&
                       onlinecmds.records[o].voiceReply == localcmds[l].voiceReply &&
                       onlinecmds.records[o].mcpToolDescription == localcmds[l].mcpToolDescription &&
-                      Boolean(onlinecmds.records[o].allowParams) == localallowParams
+                      Boolean(onlinecmds.records[o].allowParams) == localallowParams &&
+                      (onlinecmds.records[o].icon || '') == (localcmds[l].icon || '')
                   ) { foundlocal = true }
                 }
                 if (!foundlocal) {
@@ -572,7 +573,8 @@ function updateCmds(token,userid,computerid,startsocket) {
                       onlinecmds.records[o].voice == localcmds[l].voice &&
                       onlinecmds.records[o].voiceReply == localcmds[l].voiceReply &&
                       onlinecmds.records[o].mcpToolDescription == localcmds[l].mcpToolDescription &&
-                      Boolean(onlinecmds.records[o].allowParams) == localallowParams
+                      Boolean(onlinecmds.records[o].allowParams) == localallowParams &&
+                      (onlinecmds.records[o].icon || '') == (localcmds[l].icon || '')
                   ) { foundonline = true }
                 }
                 if (!foundonline) {
