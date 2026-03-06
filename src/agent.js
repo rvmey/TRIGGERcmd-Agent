@@ -108,6 +108,14 @@ function initFiles(backgrounddpath, callback) {
   }
   if (process.platform === 'linux') {
     examplefile = 'linuxcommands.json';
+    try {
+      var osRelease = fs.readFileSync('/etc/os-release', 'utf8');
+      if (osRelease.toLowerCase().includes('raspbian')) {
+        examplefile = 'rpicommands.json';
+      }
+    } catch (e) {
+      // /etc/os-release not readable, keep linuxcommands.json
+    }
   }
   if (process.platform === 'darwin') {
     examplefile = 'maccommands.json';

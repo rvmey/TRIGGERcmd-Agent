@@ -1,0 +1,6 @@
+[
+  {"trigger":"Reboot","command":"shutdown -r","ground":"background","voice":"reboot","allowParams": "false"},
+  {"trigger":"Notepad","command":"mousepad","ground":"foreground","voice":"notepad","allowParams": "false"},
+  {"trigger":"Calculator","command":"galculator","ground":"foreground","voice":"calculator","allowParams": "false"},
+  {"trigger":"apt update","command":"apt-get -y update","ground":"background","voice":"update","allowParams": "false"}
+]
