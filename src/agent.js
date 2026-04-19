@@ -712,18 +712,21 @@ function startSocket(token,computerid) {
             }
   
             console.log('Running trigger: ' + trigger + '  Command: ' + theCommand);
+            
+            // Report that command started immediately
+            reportBack(token,computerid,cmdid,"Command ran");
+            
             var ChildProcess = cp.exec(theCommand, {env: envVars}, (error, stdout, stderr) => {
                 console.log('stdout:', stdout);
                 console.log('stderr:', stderr);
   
+                // Report error code asynchronously after command completes
                 if (error) {
                   // Log any errors
                   console.error('error:', error.message);
                   console.error('error code:', error.code);
-                  reportBack(token,computerid,cmdid,"Command ran with error code " + error.code);
-                  // return;
-                } else {
-                  reportBack(token,computerid,cmdid,"Command ran");
+                  var resultMessage = "Command exited with error code " + error.code;
+                  reportBack(token,computerid,cmdid,resultMessage);
                 }
             });
           }
