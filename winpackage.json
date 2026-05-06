@@ -1,13 +1,14 @@
 {
   "name": "triggercmdagent",
   "productName": "TRIGGERcmdAgent",
-  "version": "1.0.57",
+  "version": "1.0.58",
   "description": "TRIGGERcmd Windows Agent",
   "main": "src/main.js",
   "scripts": {
     "start": "npx electron-forge start",
     "package": "npx electron-forge package",
     "make": "npx electron-forge make",
+    "make:win-store": "set TRIGGERCMD_BUILD_MSIX=1&& npx electron-forge make",
     "publish": "npx electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
@@ -23,6 +24,7 @@
     "@electron-forge/cli": "^7.10.2",
     "@electron-forge/maker-deb": "^7.10.2",
     "@electron-forge/maker-dmg": "^7.10.2",
+    "@electron-forge/maker-msix": "^7.11.1",
     "@electron-forge/maker-rpm": "^7.10.2",
     "@electron-forge/maker-squirrel": "^7.10.2",
     "@electron-forge/maker-zip": "^7.10.2",
