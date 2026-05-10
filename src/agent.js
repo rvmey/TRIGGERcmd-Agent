@@ -41,6 +41,12 @@ module.exports = {
   },
   startHomeAssistant: function (ground) {
     startHomeAssistant(ground);
+  },
+  restartHomeKit: function () {
+    restartHomeKit();
+  },
+  startHomeKit: function (ground) {
+    startHomeKit(ground);
   }
 };
 
@@ -54,6 +60,7 @@ var path = require('path');
 var prompt = require('prompt');
 var os = require('os');
 const HomeAssistantWebSocket = require('./ha');
+const HomeKitBridge = require('./homekitbridge');
 
 // Set the headers
 var headers = {
@@ -81,12 +88,18 @@ var computeridFromFile;
 var useridFromFile;
 var loggedNoInternet=false;
 var haWebSocket;
+var homeKitBridge;
 
 function startHomeAssistant(ground) {
   // Start Home Assistant listener if it's enabled.
   const HomeAssistantWebSocket = require('./ha');
   haWebSocket = new HomeAssistantWebSocket(ground);
   haWebSocket.start();
+}
+
+function startHomeKit(ground) {
+  homeKitBridge = new HomeKitBridge(ground, datafile);
+  homeKitBridge.start();
 }
 
 function initFiles(backgrounddpath, callback) {
@@ -311,6 +324,7 @@ function background(datapath) {
   }
 
   startHomeAssistant(ground);
+  startHomeKit(ground);
 }
 
 function foreground(token,userid,computerid) {
@@ -324,6 +338,7 @@ function foreground(token,userid,computerid) {
   });
 
   startHomeAssistant(ground);
+  startHomeKit(ground);
 }
 
 function tokenLogin(token,callback) {
@@ -859,7 +874,17 @@ function readMyFile(file) {
 }
 
 function restartHomeAssistant() {
-  haWebSocket.stop();
+  if (haWebSocket) {
+    haWebSocket.stop();
+  }
   haWebSocket = new HomeAssistantWebSocket(ground);
   haWebSocket.start();
+}
+
+function restartHomeKit() {
+  if (homeKitBridge) {
+    homeKitBridge.stop();
+  }
+  homeKitBridge = new HomeKitBridge(ground, datafile);
+  homeKitBridge.start();
 }

@@ -18,6 +18,7 @@ var util = require('util');
 
 var fs = require('fs');
 var http = require('http');
+var os = require('os');
 var path = require('path');
 const ChildProcess = require('child_process');
 // import 'intl-pluralrules';
@@ -100,6 +101,7 @@ let appIcon = null;
 let mainWindow;
 let editorWindow;
 var appWindow, exampleWindow;
+var haWindow, homeKitWindow;
 
 // New method of closing any second instance of the agent: 
 // for some reason this is not working?
@@ -547,6 +549,30 @@ function openhaconfig() {
   });
 }
 
+function openhomekitconfig() {
+  homeKitWindow = new BrowserWindow({ title: i18n.t('HomeKit Config'),
+    width: 700,
+    height: 470,
+    icon: __dirname + '/icon.png',
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
+    }
+  });
+
+  myAppMenu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(myAppMenu);
+
+  remoteMain.enable(homeKitWindow.webContents);
+
+  homeKitWindow.loadURL(`file://${__dirname}/homekit.html`);
+
+  homeKitWindow.on('closed', () => {
+    homeKitWindow = null;
+  });
+}
+
 ipcMain.handle('homeAssistantSave', async (event, formData) => {
   // console.log("Saving HA config form")
   // console.log(formData)
@@ -583,6 +609,151 @@ ipcMain.handle('load-ha-config', async () => {
   } catch (error) {
     console.error('Error reading configuration file:', error);
     return { ha_url: '', ha_token: '', ha_enabled: false }; // Default values
+  }
+});
+
+ipcMain.handle('homeKitSave', async (event, formData) => {
+  const filePath = path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/homekit_config.json');
+
+  function createDefaultHomeKitBridgeName() {
+    const computerNameFile = path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/computername.cfg');
+    let computerName = '';
+
+    try {
+      computerName = (fs.readFileSync(computerNameFile, 'utf8') || '').trim();
+    } catch (error) {
+      computerName = '';
+    }
+
+    if (!computerName) {
+      computerName = os.hostname();
+    }
+
+    return 'TRIGGERcmd ' + computerName;
+  }
+
+  function createRandomHomeKitUsername() {
+    return Array.from(require('crypto').randomBytes(6)).map((byte) => {
+      return byte.toString(16).padStart(2, '0').toUpperCase();
+    }).join(':');
+  }
+
+  function createRandomHomeKitPin() {
+    const digits = String(require('crypto').randomInt(0, 100000000)).padStart(8, '0');
+    return digits.slice(0, 3) + '-' + digits.slice(3, 5) + '-' + digits.slice(5, 8);
+  }
+
+  function createDefaultHomeKitConfig() {
+    return {
+      HK_ENABLED: false,
+      HK_BRIDGE_NAME: createDefaultHomeKitBridgeName(),
+      HK_PIN: createRandomHomeKitPin(),
+      HK_USERNAME: createRandomHomeKitUsername(),
+      HK_DEBUG_LOGGING: false
+    };
+  }
+
+  function normalizeHomeKitConfig(config) {
+    const normalizedConfig = Object.assign(createDefaultHomeKitConfig(), config || {});
+
+    if (!normalizedConfig.HK_BRIDGE_NAME || normalizedConfig.HK_BRIDGE_NAME === 'TRIGGERcmd HomeKit Bridge') {
+      normalizedConfig.HK_BRIDGE_NAME = createDefaultHomeKitBridgeName();
+    }
+
+    delete normalizedConfig.HK_PORT;
+    return normalizedConfig;
+  }
+
+  try {
+    const existingConfig = fs.existsSync(filePath)
+      ? normalizeHomeKitConfig(JSON.parse(fs.readFileSync(filePath, 'utf-8')))
+      : createDefaultHomeKitConfig();
+
+    const updatedConfig = Object.assign({}, existingConfig, {
+      HK_ENABLED: formData.hk_enabled,
+      HK_BRIDGE_NAME: formData.hk_bridge_name,
+      HK_PIN: formData.hk_pin,
+      HK_USERNAME: formData.hk_username,
+      HK_DEBUG_LOGGING: formData.hk_debug_logging,
+    });
+    delete updatedConfig.HK_PORT;
+
+    fs.writeFileSync(filePath, JSON.stringify(updatedConfig, null, 2), 'utf-8');
+    console.log('HomeKit configuration saved:', updatedConfig);
+
+    agent.restartHomeKit();
+
+  } catch (error) {
+    console.error('Error saving HomeKit configuration:', error);
+  }
+
+  if (homeKitWindow) {
+    homeKitWindow.hide();
+  }
+});
+
+ipcMain.handle('load-homekit-config', async () => {
+  const filePath = path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/homekit_config.json');
+
+  function createDefaultHomeKitBridgeName() {
+    const computerNameFile = path.join(process.env.HOME || process.env.USERPROFILE, '.TRIGGERcmdData/computername.cfg');
+    let computerName = '';
+
+    try {
+      computerName = (fs.readFileSync(computerNameFile, 'utf8') || '').trim();
+    } catch (error) {
+      computerName = '';
+    }
+
+    if (!computerName) {
+      computerName = os.hostname();
+    }
+
+    return 'TRIGGERcmd ' + computerName;
+  }
+
+  function createRandomHomeKitUsername() {
+    return Array.from(require('crypto').randomBytes(6)).map((byte) => {
+      return byte.toString(16).padStart(2, '0').toUpperCase();
+    }).join(':');
+  }
+
+  function createRandomHomeKitPin() {
+    const digits = String(require('crypto').randomInt(0, 100000000)).padStart(8, '0');
+    return digits.slice(0, 3) + '-' + digits.slice(3, 5) + '-' + digits.slice(5, 8);
+  }
+
+  function createDefaultHomeKitConfig() {
+    return {
+      HK_ENABLED: false,
+      HK_BRIDGE_NAME: createDefaultHomeKitBridgeName(),
+      HK_PIN: createRandomHomeKitPin(),
+      HK_USERNAME: createRandomHomeKitUsername(),
+      HK_DEBUG_LOGGING: false
+    };
+  }
+
+  function normalizeHomeKitConfig(config) {
+    const normalizedConfig = Object.assign(createDefaultHomeKitConfig(), config || {});
+
+    if (!normalizedConfig.HK_BRIDGE_NAME || normalizedConfig.HK_BRIDGE_NAME === 'TRIGGERcmd HomeKit Bridge') {
+      normalizedConfig.HK_BRIDGE_NAME = createDefaultHomeKitBridgeName();
+    }
+
+    delete normalizedConfig.HK_PORT;
+    return normalizedConfig;
+  }
+
+  try {
+    const data = fs.readFileSync(filePath, 'utf-8');
+    const config = normalizeHomeKitConfig(JSON.parse(data));
+    fs.writeFileSync(filePath, JSON.stringify(config, null, 2), 'utf-8');
+    return config;
+  } catch (error) {
+    console.error('Error reading HomeKit configuration file:', error);
+    const config = createDefaultHomeKitConfig();
+    fs.writeFileSync(filePath, JSON.stringify(config, null, 2), 'utf-8');
+    return config;
   }
 });
 
@@ -631,6 +802,13 @@ function startTrayIcon () {
         click: function() {
           console.log('Opening Home Assisant Config');
           openhaconfig();
+        }
+      },
+      {
+        label: 'HomeKit Config',
+        click: function() {
+          console.log('Opening HomeKit Config');
+          openhomekitconfig();
         }
       },
       {
@@ -754,6 +932,13 @@ function startTrayIcon () {
         }
       },
       {
+        label: 'HomeKit Config',
+        click: function() {
+          console.log('Opening HomeKit Config');
+          openhomekitconfig();
+        }
+      },
+      {
         label: i18n.t('Background Service'),
         submenu: [
           {
@@ -864,6 +1049,13 @@ function startTrayIcon () {
         click: function() {
           console.log('Opening Home Assisant Config');
           openhaconfig();
+        }
+      },
+      {
+        label: 'HomeKit Config',
+        click: function() {
+          console.log('Opening HomeKit Config');
+          openhomekitconfig();
         }
       },
       {
