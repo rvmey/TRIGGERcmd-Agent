@@ -36,7 +36,21 @@ pipeline {
 
         stage('copy rpm and deb artifacts') {
             steps {
-                sh 'cp -r ./out/make/* /mnt/nas/TriggerCMD/'
+                sh '''
+                    set -eu
+                    version=$(node -p "require('./package.json').version")
+                    rpm_src=$(find ./out/make -type f -name "triggercmdagent-${version}-1.x86_64.rpm" | head -n 1)
+                    deb_src=$(find ./out/make -type f -name "triggercmdagent_${version}_amd64.deb" | head -n 1)
+
+                    [ -n "$rpm_src" ] || { echo "RPM artifact not found"; exit 1; }
+                    [ -n "$deb_src" ] || { echo "DEB artifact not found"; exit 1; }
+
+                    cp "$rpm_src" /mnt/nas/TriggerCMD/
+                    cp "$deb_src" /mnt/nas/TriggerCMD/
+
+                    cp "$rpm_src" /mnt/nas/TriggerCMD/triggercmdagent-1.0.1.x86_64.rpm
+                    cp "$deb_src" /mnt/nas/TriggerCMD/triggercmdagent_1.0.1_amd64.deb
+                '''
             }
         }
 
