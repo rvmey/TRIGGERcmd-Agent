@@ -34,7 +34,7 @@ i18next
           "How to use background commands": "How to use background commands",
           "How to use Off Command": "How to use Off Command",
           "Voice Reply": "Voice Reply",
-          "In the conversational skills, Alexa will say this back (optional)": "In the conversational skills, Alexa will say this back (optional)",
+          "The old Alexa skills and MCP will say this back (optional)": "The old Alexa skills and MCP will say this back (optional)",
           "Word you\'ll say to Alexa or Google (optional)": "Word you\'ll say to Alexa or Google (optional)",
           "If filled, runs instead of Command when off is the parameter": "If filled, runs instead of Command when off is the parameter",
           "Your command": "Your command",
@@ -56,7 +56,7 @@ i18next
           "How to use background commands": "Como usar comandos em segundo plano",
           "How to use Off Command": "Como usar o comando Off",
           "Voice Reply": "Resposta de voz",
-          "In the conversational skills, Alexa will say this back (optional)": "Nas skills de conversação, Alexa dirá isso de volta (opcional)",
+          "The old Alexa skills and MCP will say this back (optional)": "Nas skills de conversação, Alexa dirá isso de volta (opcional)",
           "Word you\'ll say to Alexa or Google (optional)": "Palavra que você dirá para Alexa ou Google (opcional)",
           "If filled, runs instead of Command when off is the parameter": "Se preenchido, executa em vez de Command quando desligado é o parâmetro",
           "Your command": "Seu comando",
@@ -78,7 +78,7 @@ i18next
           "How to use background commands": "Cómo usar comandos en segundo plano",
           "How to use Off Command": "Cómo usar el comando desactivado",
           "Voice Reply": "Respuesta de voz",
-          "In the conversational skills, Alexa will say this back (optional)": "En las skills de conversación, Alexa responderá esto (opcional)",
+          "The old Alexa skills and MCP will say this back (optional)": "En las skills de conversación, Alexa responderá esto (opcional)",
           "Word you\'ll say to Alexa or Google (optional)": "Palabra que le dirás a Alexa o Google",
           "If filled, runs instead of Command when off is the parameter": "Si está lleno, se ejecuta en lugar de Comando cuando el parámetro está desactivado.",
           "Your command": "Tu comando",
@@ -100,7 +100,7 @@ i18next
           "How to use background commands": "So verwenden Sie Hintergrundbefehle",
           "How to use Off Command": "So verwenden Sie den Off-Befehl",
           "Voice Reply": "Sprachantwort",
-          "In the conversational skills, Alexa will say this back (optional)": "In den Konversation skills wird Alexa dies erwidern (optional)",
+          "The old Alexa skills and MCP will say this back (optional)": "In den Konversation skills wird Alexa dies erwidern (optional)",
           "Word you\'ll say to Alexa or Google (optional)": "Wort, das Sie Alexa oder Google sagen (optional)",
           "If filled, runs instead of Command when off is the parameter": "Wenn gefüllt, wird anstelle von Command ausgeführt, wenn off der Parameter ist",
           "Your command": "Ihr Befehl",
@@ -122,7 +122,7 @@ i18next
           "How to use background commands": "Comment utiliser les commandes d'arrière-plan",
           "How to use Off Command": "Comment utiliser la commande Off",
           "Voice Reply": "Réponse vocale",
-          "In the conversational skills, Alexa will say this back (optional)": "Dans les skills conversationnelles, Alexa vous répondra ceci (facultatif)",
+          "The old Alexa skills and MCP will say this back (optional)": "Dans les skills conversationnelles, Alexa vous répondra ceci (facultatif)",
           "Word you\'ll say to Alexa or Google (optional)": "Mot que vous direz à Alexa ou Google (facultatif)",
           "If filled, runs instead of Command when off is the parameter": "S'il est rempli, s'exécute à la place de Command lorsque off est le paramètre",
           "Your command": "Votre commande",
@@ -144,7 +144,7 @@ i18next
           "How to use background commands": "Come usare i comandi in background",
           "How to use Off Command": "Come usare il comando Off",
           "Voice Reply": "Risposta vocale",
-          "In the conversational skills, Alexa will say this back (optional)": "Nelle skills di conversazione, Alexa lo dirà (facoltativo)",
+          "The old Alexa skills and MCP will say this back (optional)": "Nelle skills di conversazione, Alexa lo dirà (facoltativo)",
           "Word you\'ll say to Alexa or Google (optional)": "Parola che dirai ad Alexa o Google (opzionale)",
           "If filled, runs instead of Command when off is the parameter": "Se riempito, viene eseguito al posto di Command quando off è il parametro",
           "Your command": "Il tuo comando",
@@ -166,7 +166,7 @@ i18next
           "How to use background commands": "バックグラウンド コマンドの使用方法",
           "How to use Off Command": "オフコマンドの使い方",
           "Voice Reply": "音声応答",
-          "In the conversational skills, Alexa will say this back (optional)": "会話型 skills では、Alexa がこれを言い返します (オプション)",
+          "The old Alexa skills and MCP will say this back (optional)": "会話型 skills では、Alexa がこれを言い返します (オプション)",
           "Word you\'ll say to Alexa or Google (optional)": "Alexa または Google に話しかける言葉 (オプション)",
           "If filled, runs instead of Command when off is the parameter": "入力すると、パラメータが off の場合に Command の代わりに実行されます",
           "Your command": "あなたの命令",
@@ -227,6 +227,7 @@ class MainInterface extends React.Component {
     this.openComputerList = this.openComputerList.bind(this);
     this.openGroundInstructions = this.openGroundInstructions.bind(this);
     this.openOffCommandInstructions = this.openOffCommandInstructions.bind(this);
+    this.openVoiceReplyInstructions = this.openVoiceReplyInstructions.bind(this);
     this.addItem = this.addItem.bind(this);
     this.deleteMessage = this.deleteMessage.bind(this);
     this.runCommand = this.runCommand.bind(this);
@@ -438,6 +439,10 @@ class MainInterface extends React.Component {
     electron.shell.openExternal('https://www.triggercmd.com/forum/topic/853/how-to-use-off-command');
   } 
 
+  openVoiceReplyInstructions(e) {
+    electron.shell.openExternal('https://www.triggercmd.com/forum/topic/422/have-alexa-or-google-assistant-say-the-result-of-a-command');
+  }
+
   addItem(tempItem) {
     var tempApts = this.state.myAppointments;
     tempApts.push(tempItem);
@@ -541,6 +546,7 @@ class MainInterface extends React.Component {
             handleToggle = {this.toggleAptDisplay}
             handleGroundInstructions = {this.openGroundInstructions}
             handleOffCommandInstructions = {this.openOffCommandInstructions}
+            handleVoiceReplyInstructions = {this.openVoiceReplyInstructions}
             addApt = {this.addItem}
             operatingSystem = {this.state.operatingSystem}
             editTrigger = {this.state.editTrigger}
@@ -565,6 +571,7 @@ class MainInterface extends React.Component {
             handleToggle = {this.toggleEditDisplay}
             handleGroundInstructions = {this.openGroundInstructions}
             handleOffCommandInstructions = {this.openOffCommandInstructions}
+            handleVoiceReplyInstructions = {this.openVoiceReplyInstructions}
             editApt = {this.changeItem}
             editTrigger = {this.state.editTrigger}
             editCommand = {this.state.editCommand}

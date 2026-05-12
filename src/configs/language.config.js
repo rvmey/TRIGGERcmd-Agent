@@ -30,6 +30,7 @@ module.exports = {
         "How AI should use this command and parameters (optional)": "How AI should use this command and parameters (optional)",
         "MCP Tool Description": "MCP Tool Description",
         "Voice/MCP Reply": "Voice/MCP Reply",
+        "The old Alexa skills and MCP will say this back (optional)": "The old Alexa skills and MCP will say this back (optional)",
         "Icon": "Icon",
         "Optional. Pick an emoji to identify this command.": "Optional. Pick an emoji to identify this command."
       }
@@ -63,6 +64,7 @@ module.exports = {
         "How AI should use this command and parameters (optional)": "Como a IA deve usar este comando e parâmetros (opcional)",
         "MCP Tool Description": "Descrição da Ferramenta MCP",
         "Voice/MCP Reply": "Resposta de Voz/MCP",
+        "The old Alexa skills and MCP will say this back (optional)": "Nas skills de conversação, Alexa dirá isso de volta (opcional)",
         "Icon": "Ícone",
         "Optional. Pick an emoji to identify this command.": "Opcional. Escolha um emoji para identificar este comando."
       }
@@ -96,6 +98,7 @@ module.exports = {
         "How AI should use this command and parameters (optional)": "ómo la IA debería usar este comando y parámetros (opcional)",
         "MCP Tool Description": "Descripción de la Herramienta MCP",
         "Voice/MCP Reply": "Respuesta de Voz/MCP",
+        "The old Alexa skills and MCP will say this back (optional)": "En las skills de conversación, Alexa responderá esto (opcional)",
         "Icon": "Ícono",
         "Optional. Pick an emoji to identify this command.": "Opcional. Elige un emoji para identificar este comando."
       }
@@ -129,6 +132,7 @@ module.exports = {
         "How AI should use this command and parameters (optional)": "Wie die KI diesen Befehl und Parameter verwenden sollte (optional)",
         "MCP Tool Description": "MCP Werkzeugbeschreibung",
         "Voice/MCP Reply": "Sprach-/MCP-Antwort",
+        "The old Alexa skills and MCP will say this back (optional)": "In den Konversation skills wird Alexa dies erwidern (optional)",
         "Icon": "Symbol",
         "Optional. Pick an emoji to identify this command.": "Optional. Wählen Sie ein Emoji, um diesen Befehl zu identifizieren."
       }
@@ -162,6 +166,7 @@ module.exports = {
         "How AI should use this command and parameters (optional)": "Comment l'IA doit utiliser cette commande et ces paramètres (facultatif)",
         "MCP Tool Description": "Description de l'outil MCP",
         "Voice/MCP Reply": "Réponse Vocale/MCP",
+        "The old Alexa skills and MCP will say this back (optional)": "Dans les skills conversationnelles, Alexa vous répondra ceci (facultatif)",
         "Icon": "Icône",
         "Optional. Pick an emoji to identify this command.": "Optionnel. Choisissez un emoji pour identifier cette commande."
       }
@@ -195,6 +200,7 @@ module.exports = {
         "How AI should use this command and parameters (optional)": "Come l'IA dovrebbe usare questo comando e i parametri (opzionale)",
         "MCP Tool Description": "Descrizione dello strumento MCP",
         "Voice/MCP Reply": "Risposta Vocale/MCP",
+        "The old Alexa skills and MCP will say this back (optional)": "Nelle skills di conversazione, Alexa lo dirà (facoltativo)",
         "Icon": "Icona",
         "Optional. Pick an emoji to identify this command.": "Opzionale. Scegli un emoji per identificare questo comando."
       }
@@ -228,6 +234,7 @@ module.exports = {
         "How AI should use this command and parameters (optional)": "AIがこのコマンドとパラメータを使用する方法 (オプション)",
         "MCP Tool Description": "MCP ツールの説明",
         "Voice/MCP Reply": "音声/MCP応答",
+        "The old Alexa skills and MCP will say this back (optional)": "会話型 skills では、Alexa がこれを言い返します (オプション)",
         "Icon": "アイコン",
         "Optional. Pick an emoji to identify this command.": "オプション。このコマンドを識別する絵文字を選択してください。"
       }

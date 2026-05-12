@@ -188,6 +188,10 @@ class MainInterface extends React.Component {
       command: item.command,
       ground: item.ground,
       voice: item.voice,
+      voiceReply: item.voiceReply || '',
+      allowParams: item.allowParams || false,
+      mcpToolDescription: item.mcpToolDescription || '',
+      icon: item.icon || '',
     }
     tempCmds.push(tempItem);
     
@@ -251,7 +255,7 @@ class MainInterface extends React.Component {
       if (        
         (myAppointments[i].name.toLowerCase().indexOf(queryText)!=-1) ||
         (myAppointments[i].command.toLowerCase().indexOf(queryText)!=-1) ||        
-        (myAppointments[i].voice.toLowerCase().indexOf(queryText)!=-1)
+        ((myAppointments[i].voice || '').toLowerCase().indexOf(queryText)!=-1)
 
       ) {
         filteredApts.push(myAppointments[i]);

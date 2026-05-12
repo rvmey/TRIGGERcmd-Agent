@@ -25,16 +25,20 @@ class AptList extends React.Component {
         </div>
         <div className="pet-info media-body">
           <div className="pet-head">
-            <span className="pet-name">{this.props.singleItem.name}</span>                        
+            {this.props.singleItem.icon ? <span className="pet-icon">{this.props.singleItem.icon} </span> : null}
+            <span className="pet-name">{this.props.singleItem.name}</span>
             <span className="apt-date pull-right">{this.props.singleItem.voice}</span>
-            <p></p>            
+            <p></p>
             <span className="apt-date pull-right">{this.props.singleItem.ground}</span>
           </div>
           <div className="owner-name"><span className="label-item">Command:</span>
-          {this.props.singleItem.command}</div>          
+          {this.props.singleItem.command}</div>
+          {this.props.singleItem.voiceReply ? <div className="owner-name"><span className="label-item">Voice Reply:</span>{this.props.singleItem.voiceReply}</div> : null}
+          {this.props.singleItem.mcpToolDescription ? <div className="owner-name"><span className="label-item">MCP:</span>{this.props.singleItem.mcpToolDescription}</div> : null}
           <div>
             <button className="apt-date btn btn-xs btn-info pull-left" onClick={this.handleInstructions}>Instructions</button>
             <span className="apt-date pull-right">{this.props.singleItem.os}</span>
+            {this.props.singleItem.allowParams ? <span className="apt-date pull-right label label-info">Params</span> : null}
           </div>
         </div>
       </li>

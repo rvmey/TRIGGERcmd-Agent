@@ -20,6 +20,7 @@ class AddAppointment extends React.Component {
     this.toggleAptDisplay = this.toggleAptDisplay.bind(this);
     this.groundInstructions = this.groundInstructions.bind(this);
     this.offCommandInstructions = this.offCommandInstructions.bind(this);
+    this.voiceReplyInstructions = this.voiceReplyInstructions.bind(this);
     this.handleAdd = this.handleAdd.bind(this);
     this.state = { icon: '' };
   }
@@ -34,6 +35,10 @@ class AddAppointment extends React.Component {
 
   offCommandInstructions(e) {
     this.props.handleOffCommandInstructions(e);
+  }
+
+  voiceReplyInstructions(e) {
+    this.props.handleVoiceReplyInstructions(e);
   }
 
   // handleAdd: function(e) {
@@ -177,7 +182,15 @@ class AddAppointment extends React.Component {
                 <label className="col-sm-3 control-label" htmlFor="voiceReply">{t('Voice/MCP Reply')}</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control"
-                    id="voiceReply"  ref={(ref) => this.inputVoiceReply = ref } placeholder={t('In the conversational skills, Alexa will say this back (optional)')} onChange={this.handleVoiceReplyChange} />
+                    id="voiceReply"  ref={(ref) => this.inputVoiceReply = ref } placeholder={t('The old Alexa skills and MCP will say this back (optional)')} onChange={this.handleVoiceReplyChange} />
+                  <button type="button" className="btn btn-link" onClick={this.voiceReplyInstructions} >{t('How to use Voice/MCP Reply field')}</button>
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-3 control-label" htmlFor="mcpToolDescription">{t('MCP Tool Description')}</label>
+                <div className="col-sm-9">
+                  <input type="text" className="form-control"
+                    id="mcpToolDescription"  ref={(ref) => this.inputMcpToolDescription = ref } placeholder={t('How AI should use this command and parameters (optional)')} onChange={this.handleMcpToolDescriptionChange} />
                 </div>
               </div>
               <div className="form-group">
@@ -196,13 +209,6 @@ class AddAppointment extends React.Component {
                     <option>false</option>
                     <option>true</option>
                   </select>
-                </div>
-              </div>
-              <div className="form-group">
-                <label className="col-sm-3 control-label" htmlFor="mcpToolDescription">{t('MCP Tool Description')}</label>
-                <div className="col-sm-9">
-                  <input type="text" className="form-control"
-                    id="mcpToolDescription"  ref={(ref) => this.inputMcpToolDescription = ref } placeholder={t('How AI should use this command and parameters (optional)')} onChange={this.handleMcpToolDescriptionChange} />
                 </div>
               </div>
               <div className="form-group">
