@@ -38,7 +38,7 @@ pipeline {
             steps {
                 sh '''
                     set -eu
-                    version=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' package.json | head -n 1)
+                    version=$(awk -F '"' '/"version"/ { print $4; exit }' package.json)
                     rpm_src=$(find ./out/make -type f -name "triggercmdagent-${version}-1.x86_64.rpm" | head -n 1)
                     deb_src=$(find ./out/make -type f -name "triggercmdagent_${version}_amd64.deb" | head -n 1)
 
