@@ -38,9 +38,8 @@ pipeline {
             steps {
                 sh '''
                     set -eu
-                    version=$(awk -F '"' '/"version"/ { print $4; exit }' package.json)
-                    rpm_src=$(find ./out/make -type f -name "triggercmdagent-${version}-1.x86_64.rpm" | head -n 1)
-                    deb_src=$(find ./out/make -type f -name "triggercmdagent_${version}_amd64.deb" | head -n 1)
+                    rpm_src=$(find ./out/make -type f -name 'triggercmdagent-*-1.x86_64.rpm' | head -n 1)
+                    deb_src=$(find ./out/make -type f -name 'triggercmdagent_*_amd64.deb' | head -n 1)
 
                     [ -n "$rpm_src" ] || { echo "RPM artifact not found"; exit 1; }
                     [ -n "$deb_src" ] || { echo "DEB artifact not found"; exit 1; }
