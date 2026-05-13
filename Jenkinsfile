@@ -23,7 +23,7 @@ pipeline {
         stage('build ubuntu') {
             agent {
                 docker {
-                    image 'node:23.5-bullseye'
+                    image 'node:22-bullseye'
                     args '-u root'
                     reuseNode true
                 }
@@ -63,7 +63,7 @@ pipeline {
         stage('cleanup') {
             agent {
                 docker {
-                    image 'node:23.5-bullseye'
+                    image 'node:22-bullseye'
                     args '-u root'
                     reuseNode true
                 }
