@@ -6,10 +6,10 @@ case "$1" in
     if [ -f $file ] ; then
       rm $file
     fi
-    cp ${THISDIR}/triggercmdagent.service.top ~/.TRIGGERcmdData/triggercmdagent.service
-    echo "ExecStart=/usr/bin/env node ${THISDIR}/daemon.js --run $2" >> ~/.TRIGGERcmdData/triggercmdagent.service
-    cat ${THISDIR}/triggercmdagent.service.bottom >> ~/.TRIGGERcmdData/triggercmdagent.service
-    cp ~/.TRIGGERcmdData/triggercmdagent.service /etc/systemd/system/
+    cp ${THISDIR}/triggercmdagent.service.top $2/triggercmdagent.service
+    echo "ExecStart=/usr/bin/env node ${THISDIR}/daemon.js --run $2" >> $2/triggercmdagent.service
+    cat ${THISDIR}/triggercmdagent.service.bottom >> $2/triggercmdagent.service
+    cp $2/triggercmdagent.service /etc/systemd/system/
     systemctl daemon-reload
     systemctl start triggercmdagent
     ;;
