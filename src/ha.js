@@ -128,7 +128,11 @@ class HomeAssistantWebSocket {
       }
     })
     .catch(error => {
-      console.error('Error fetching computer name:', error);
+      if (error && error.message && error.message.includes('401')) {
+        console.log('Home Assistant returned 401 (disabled or token invalid), skipping computer name fetch.');
+      } else {
+        console.error('Error fetching computer name:', error);
+      }
       this.computer_name = readMyFile(computerNameFile);
     });
 
