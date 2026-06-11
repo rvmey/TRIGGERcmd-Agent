@@ -1,7 +1,7 @@
 [
   
-   {"trigger":"Reboot in 10 seconds","command":"shutdown /r /t 10","ground":"background","voice":"reboot"},
-  
-   {"trigger":"Calculator","command":"calc","ground":"foreground","voice":"calculator"}, 
-   {"trigger":"Notepad","command":"notepad","ground":"foreground","voice":"notepad"}
+   {"trigger":"Reboot in 10 seconds","command":"shutdown /r /t 10","ground":"background","voice":"reboot","icon":"🔄"},
+
+   {"trigger":"Calculator","command":"calc","ground":"foreground","voice":"calculator","icon":"🧮"},
+   {"trigger":"Notepad","command":"notepad","ground":"foreground","voice":"notepad","icon":"📝"}
 ]
