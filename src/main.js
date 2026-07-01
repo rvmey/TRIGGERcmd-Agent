@@ -236,7 +236,21 @@ app.on('ready', function(){
                   name: 'TRIGGERcmd Agent',
                   path: macappPath,
               });
-              AutoLauncher.enable();   
+              AutoLauncher.enable();
+            }
+          }
+
+          // Add a login autostart entry on Linux, mirroring the mac behavior above.
+          if (process.platform === 'linux') {
+            var linuxAppPath = '/usr/bin/triggercmdagent';
+
+            if (fs.existsSync(linuxAppPath)) {
+              var AutoLaunch = require('auto-launch');
+              var AutoLauncher = new AutoLaunch({
+                  name: 'TRIGGERcmd Agent',
+                  path: linuxAppPath,
+              });
+              AutoLauncher.enable();
             }
           }
 
