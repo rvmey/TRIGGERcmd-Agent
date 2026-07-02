@@ -771,7 +771,6 @@ ipcMain.handle('load-homekit-config', async () => {
   }
 });
 
-var noInternetAppIcon; // make this var global so it can be referenced in startTrayIcon
 function startNoInternetTrayIcon () {
   var contextMenu = Menu.buildFromTemplate([
     {
@@ -785,15 +784,20 @@ function startNoInternetTrayIcon () {
       }
     }
   ]);
-  noInternetAppIcon = new Tray(iconPath);
-  noInternetAppIcon.setToolTip('TRIGGERcmd');
-  noInternetAppIcon.setContextMenu(contextMenu);
+  if (appIcon) {
+    // Reuse the existing tray icon rather than destroying and recreating it.
+    // On Linux/Wayland, Tray teardown is exported over D-Bus asynchronously,
+    // so destroy() immediately followed by `new Tray()` races the unexport
+    // and can leave a zombie status icon that never responds to clicks.
+    appIcon.setContextMenu(contextMenu);
+  } else {
+    appIcon = new Tray(iconPath);
+    appIcon.setToolTip('TRIGGERcmd');
+    appIcon.setContextMenu(contextMenu);
+  }
 }
 
 function startTrayIcon () {
-  if (noInternetAppIcon) {
-    noInternetAppIcon.destroy();
-  }
   if (process.platform === 'linux') {
     var contextMenu = Menu.buildFromTemplate([
       {
@@ -1144,9 +1148,13 @@ function startTrayIcon () {
       }
     ]);
   }
-  appIcon = new Tray(iconPath);
-  appIcon.setToolTip('TRIGGERcmd');
-  appIcon.setContextMenu(contextMenu);
+  if (appIcon) {
+    appIcon.setContextMenu(contextMenu);
+  } else {
+    appIcon = new Tray(iconPath);
+    appIcon.setToolTip('TRIGGERcmd');
+    appIcon.setContextMenu(contextMenu);
+  }
 }
 
 function installService () {
