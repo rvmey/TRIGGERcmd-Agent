@@ -11,6 +11,17 @@ var ipc = ipcMain;
 const remoteMain = require('@electron/remote/main');
 remoteMain.initialize();
 
+if (process.platform === 'linux') {
+  // In VMs without a real GPU/DRM render node, Chromium's GPU process
+  // crash-loops on startup ("drmGetDevices2() has not found any devices" /
+  // "Exiting GPU process due to errors during initialization"). Windows
+  // created hidden during that crash loop (appWindow/exampleWindow) can end
+  // up with a compositor frame sink that never recovers, so they stay blank
+  // even after being shown later. This app is UI-only utility windows, so
+  // forcing software rendering has no meaningful downside.
+  app.disableHardwareAcceleration();
+}
+
 var cp = require('child_process');
 // var spawn = require('child_process').spawn;
 
