@@ -112,7 +112,7 @@ let appIcon = null;
 let mainWindow;
 let editorWindow;
 var appWindow, exampleWindow;
-var haWindow, homeKitWindow;
+var haWindow, homeKitWindow, wolWindow;
 
 // New method of closing any second instance of the agent: 
 // for some reason this is not working?
@@ -598,6 +598,30 @@ function openhomekitconfig() {
   });
 }
 
+function openwolconfig() {
+  wolWindow = new BrowserWindow({ title: i18n.t('Alexa Wake-on-LAN'),
+    width: 700,
+    height: 400,
+    icon: __dirname + '/icon.png',
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
+    }
+  });
+
+  myAppMenu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(myAppMenu);
+
+  remoteMain.enable(wolWindow.webContents);
+
+  wolWindow.loadURL(`file://${__dirname}/wakeonlan.html`);
+
+  wolWindow.on('closed', () => {
+      wolWindow = null;
+  });
+}
+
 ipcMain.handle('homeAssistantSave', async (event, formData) => {
   // console.log("Saving HA config form")
   // console.log(formData)
@@ -635,6 +659,42 @@ ipcMain.handle('load-ha-config', async () => {
     console.error('Error reading configuration file:', error);
     return { ha_url: '', ha_token: '', ha_enabled: false }; // Default values
   }
+});
+
+ipcMain.handle('load-wol-config', async () => {
+  const filePath = path.join(process.env.HOME || process.env.USERPROFILE,
+    '.TRIGGERcmdData/wake_on_lan_config.json')
+
+  var config = { WOL_ENABLED: false };
+  try {
+    config = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+  } catch (error) {
+    console.error('Error reading Wake-on-LAN configuration file:', error);
+  }
+
+  config.macAddresses = agent.getMacAddresses();
+  return config;
+});
+
+ipcMain.handle('wakeOnLanSave', async (event, formData) => {
+  const filePath = path.join(process.env.HOME || process.env.USERPROFILE,
+    '.TRIGGERcmdData/wake_on_lan_config.json')
+
+  try {
+    const updatedConfig = {
+      WOL_ENABLED: formData.wol_enabled,
+    };
+
+    fs.writeFileSync(filePath, JSON.stringify(updatedConfig, null, 2), 'utf-8');
+    console.log('Wake-on-LAN configuration saved:', updatedConfig);
+
+    agent.updateWakeOnLan();
+
+  } catch (error) {
+    console.error('Error saving Wake-on-LAN configuration:', error);
+  }
+
+  wolWindow.hide();
 });
 
 ipcMain.handle('homeKitSave', async (event, formData) => {
@@ -841,6 +901,13 @@ function startTrayIcon () {
         }
       },
       {
+        label: 'Alexa Wake-on-LAN Config',
+        click: function() {
+          console.log('Opening Alexa Wake-on-LAN Config');
+          openwolconfig();
+        }
+      },
+      {
         label: i18n.t('Background Service'),
         submenu: [
           {
@@ -968,6 +1035,13 @@ function startTrayIcon () {
         }
       },
       {
+        label: 'Alexa Wake-on-LAN Config',
+        click: function() {
+          console.log('Opening Alexa Wake-on-LAN Config');
+          openwolconfig();
+        }
+      },
+      {
         label: i18n.t('Background Service'),
         submenu: [
           {
@@ -1085,6 +1159,13 @@ function startTrayIcon () {
         click: function() {
           console.log('Opening HomeKit Config');
           openhomekitconfig();
+        }
+      },
+      {
+        label: 'Alexa Wake-on-LAN Config',
+        click: function() {
+          console.log('Opening Alexa Wake-on-LAN Config');
+          openwolconfig();
         }
       },
       {

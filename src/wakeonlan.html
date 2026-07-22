@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./foundation.css">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<form>
+    <div class="row">
+        <div class="medium-12 columns">
+            <h4>Alexa Wake-on-LAN</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="medium-12 columns">
+            <p>Detected network adapter MAC address(es), reported to TRIGGERcmd if enabled below:</p>
+            <p id="mac_addresses"><em>Detecting...</em></p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="medium-12 columns">
+            <label>
+                Enable Alexa Wake-on-LAN for this computer
+                <input type="checkbox" name="wol_enabled" id="wol_enabled" class="form-control"/>
+            </label>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="medium-12 columns">
+            <button class="large expanded button" type="submit">Save</button>
+        </div>
+    </div>
+</form>
+</body>
+<script>
+    // You can also require other files to run in this process
+    require('./wakeonlan.js')
+</script>
+</html>

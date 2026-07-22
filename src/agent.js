@@ -47,6 +47,12 @@ module.exports = {
   },
   startHomeKit: function (ground) {
     startHomeKit(ground);
+  },
+  updateWakeOnLan: function () {
+    updateWakeOnLan();
+  },
+  getMacAddresses: function () {
+    return getMacAddresses();
   }
 };
 
@@ -319,6 +325,7 @@ function background(datapath) {
   if (tokenFromFile) {
     console.log('Logging in with saved token to run background tasks.');
     updateCmds(tokenFromFile,useridFromFile,computeridFromFile,true);
+    updateWakeOnLan();
   } else {
     console.log('No token.  Exiting background service.');
   }
@@ -335,6 +342,7 @@ function foreground(token,userid,computerid) {
     console.log('ComputerIDfile: ' + cidfile);
     console.log('Logging in with saved token to run foreground tasks.');
     updateCmds(token,userid,computerid,true);
+    updateWakeOnLan();
   });
 
   startHomeAssistant(ground);
@@ -887,4 +895,58 @@ function restartHomeKit() {
   }
   homeKitBridge = new HomeKitBridge(ground, datafile);
   homeKitBridge.start();
+}
+
+function getMacAddresses() {
+  var macAddresses = [];
+  var interfaces = os.networkInterfaces();
+  for (var name in interfaces) {
+    interfaces[name].forEach(function (iface) {
+      if (!iface.internal && iface.mac && iface.mac !== '00:00:00:00:00:00' && macAddresses.indexOf(iface.mac) === -1) {
+        macAddresses.push(iface.mac);
+      }
+    });
+  }
+  return macAddresses;
+}
+
+// Reports whether the user enabled Alexa Wake-on-LAN from this agent's tray menu, plus this
+// computer's local network adapter MAC address(es) if so. Called at agent startup and again
+// whenever the user saves the Wake-on-LAN settings window (see wakeOnLanSave in main.js).
+function updateWakeOnLan() {
+  if (!tokenFromFile || !computeridFromFile) {
+    console.log('updateWakeOnLan: no saved token or computer ID yet, skipping.');
+    return;
+  }
+
+  var wolConfigFile = path.resolve(datapath, 'wake_on_lan_config.json');
+  var wolEnabled = false;
+  try {
+    var wolConfig = JSON.parse(fs.readFileSync(wolConfigFile, 'utf8'));
+    wolEnabled = !!wolConfig.WOL_ENABLED;
+  } catch (e) {
+    // No config yet -- the user has never opened the Wake-on-LAN settings window.
+    wolEnabled = false;
+  }
+
+  var macAddresses = wolEnabled ? getMacAddresses() : [];
+
+  headers.Authorization = 'Bearer ' + tokenFromFile;
+  options.headers = headers;
+  options.url = urlprefix + '/api/computer/updateWakeOnLan';
+  options.method = 'POST';
+  options.form = {
+    'computer_id': computeridFromFile,
+    'enableWakeOnLan': wolEnabled,
+    'macAddresses': JSON.stringify(macAddresses)
+  };
+
+  request(options, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      console.log('updateWakeOnLan: reported enableWakeOnLan=' + wolEnabled + ' with ' + macAddresses.length + ' MAC address(es).');
+    } else {
+      console.log('updateWakeOnLan: failed to report Wake-on-LAN status.');
+      console.log(error);
+    }
+  });
 }
