@@ -183,8 +183,16 @@ app.on('ready', function(){
 
   args.parse(process.argv.slice(n), function (errors, options) {
     if (errors) { 
-      if (!errors[0].includes("psn")) {
-        console.log(errors[0]);
+      // macOS passes a "-psn_..." argument when launched from Finder, and
+      // after a Squirrel update Windows relaunches the agent with the new
+      // version number (e.g. "1.0.61") as a bare argument.  Neither is a real
+      // error, so ignore them and let the agent start normally below instead
+      // of quitting (which left the agent dead / no tray icon after an update
+      // until it was started manually).
+      var errText = String(errors[0]);
+      var isNoiseArg = errText.includes("psn") || errText.includes(version);
+      if (!isNoiseArg) {
+        console.log(errText);
         doQuit = true;
         app.quit();
         // return console.log(errors[0])
