@@ -1,0 +1,105 @@
+{
+  "name": "triggercmdagent",
+  "productName": "triggercmdagent",
+  "version": "1.0.1",
+  "description": "TRIGGERcmd Agent",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "lint": "eslint src"
+  },
+  "keywords": [],
+  "author": "TRIGGERcmd",
+  "license": "LicenseRef-LICENSE",
+  "config": {
+    "forge": {
+      "make_targets": {
+        "win32": [
+          "squirrel"
+        ],
+        "darwin": [
+          "zip"
+        ],
+        "linux": [
+          "rpm"
+        ]
+      },
+      "electronPackagerConfig": {
+        "icon": "src/ms-icon-310x310.ico",
+        "win32metadata": {
+          "ProductName": "TRIGGERcmd Agent",
+          "FileDescription": "TRIGGERcmd Agent",
+          "InternalName": "TRIGGERcmd Agent",
+          "CompanyName": "TRIGGERcmd",
+          "OriginalFilename": "TRIGGERcmdAgent.exe"
+        }
+      },
+      "electronWinstallerConfig": {
+        "certificatePassword": "pw",
+        "certificateFile": "c:\\triggercmddev\\CodeSigningCert.pfx",
+        "name": "TRIGGERcmdAgent",
+        "iconUrl": "http://www.triggercmd.com/iconico.ico"
+      },
+      "electronInstallerDebian": {
+        "homepage": "http://www.triggercmd.com",
+        "depends": [
+          "gconf2",
+          "gconf-service",
+          "libnotify4",
+          "libappindicator1",
+          "libxtst6",
+          "libnss3",
+          "nodejs"
+        ]
+      },
+      "electronInstallerRedhat": {
+        "homepage": "http://www.triggercmd.com",
+        "requires": [
+          "libxscrnsaver",
+          "nodejs"
+        ]
+      }
+    }
+  },
+  "dependencies": {
+    "sudo-prompt": "^6.2.1",
+    "child_process": "^1.0.2",
+    "chokidar": "^1.6.1",
+    "electron-compile": "latest",
+    "electron-squirrel-startup": "latest",
+    "fs": "0.0.1-security",
+    "minimist": "^1.2.0",
+    "os": "^0.1.1",
+    "path": "^0.12.7",
+    "posix-argv-parser": "^2.0.0",
+    "prompt": "^1.0.0",
+    "request": "^2.79.0",
+    "sails.io.js": "^1.1.4",
+    "socket.io-client": "^2.0.2",
+    "snyk": "^1.41.1",
+    "bootstrap": "^3.3.7",
+    "electron-reload": "latest",
+    "lodash": "^4.13.1",
+    "jquery": "^3.1.0",
+    "node-abi": "^2.7.0"
+  },
+  "devDependencies": {
+    "babel-preset-stage-0": "^6.16.0",
+    "electron-compilers": "latest",
+    "electron-prebuilt-compile": "2.0.16",
+    "electron-rebuild": "1.8.4",
+    "eslint": "^3.12.2",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.8.0",
+    "gulp": "^4.0.2",
+    "gulp-browserify": "^0.5.1",
+    "gulp-concat-css": "^2.3.0",
+    "gulp-react": "^3.1.0",
+    "gulp-run": "^1.7.1",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
+    "reactify": "^1.1.1"
+  }
+}
