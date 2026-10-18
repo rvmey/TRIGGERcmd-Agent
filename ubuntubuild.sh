@@ -1,4 +1,5 @@
 set -e
+umask 0022
 export PATH="./node_modules/.bin:$PATH"
 
 apt-get update
