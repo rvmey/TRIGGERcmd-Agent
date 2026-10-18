@@ -1,7 +1,8 @@
+set -e
 export PATH="./node_modules/.bin:$PATH"
 
-apt update -y
-apt install jq fakeroot dpkg rpm git -y
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y jq fakeroot dpkg rpm git
 
 # Linux deb and rpm
 cp ubuntupackage.json package.json
