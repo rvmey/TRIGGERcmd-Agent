@@ -492,7 +492,131 @@ function writeFileTransactional (path, content, cb) {
   });
 };
 
+// Only one command sync runs at a time.  Overlapping syncs could each see a command missing online
+// and both add it, leaving duplicates.  A commands.json change during a sync queues one more sync.
+var syncRunning = false;
+var syncQueued = null;
+var currentSyncId = 0;
+var syncWatchdog = null;
+
+function startSync() {
+  syncRunning = true;
+  currentSyncId++;
+  var syncId = currentSyncId;
+  // Don't let a request that never returns block command syncs forever.
+  syncWatchdog = setTimeout(function () {
+    console.log('Command sync did not finish within 5 minutes.  Allowing new syncs.');
+    finishSync(syncId);
+  }, 300000);
+  return syncId;
+}
+
+function finishSync(syncId) {
+  if (syncId !== currentSyncId || !syncRunning) {
+    return; // a stale completion from a sync the watchdog already gave up on
+  }
+  clearTimeout(syncWatchdog);
+  syncRunning = false;
+  if (syncQueued) {
+    var q = syncQueued;
+    syncQueued = null;
+    updateCmds(q.token, q.userid, q.computerid, false);
+  }
+}
+
+function cmdMatches(onlinecmd, localcmd) {
+  var localallowParams = false;
+
+  var _arr = [1, "1", true, "true"];
+  for (var _i = 0; _i < _arr.length; _i++) {
+    var value = _arr[_i];
+    if (localcmd.allowParams == value) {
+      localallowParams = true;
+    }
+  }
+
+  return onlinecmd.name == localcmd.trigger &&
+      onlinecmd.voice == localcmd.voice &&
+      onlinecmd.voiceReply == localcmd.voiceReply &&
+      onlinecmd.mcpToolDescription == localcmd.mcpToolDescription &&
+      Boolean(onlinecmd.allowParams) == localallowParams &&
+      (onlinecmd.icon || '') == (localcmd.icon || '');
+}
+
+// Decide which online commands to delete and which local commands to add.
+// A name is left alone when its online records match its local commands one-to-one.  Otherwise every
+// online record with that name is deleted and the local commands re-added.  The server deletes by
+// name, so deleting them all is the only way to get rid of a duplicate copy.
+// The foreground and background agents both sync, so a name that exists locally is only handled by the
+// agent whose ground matches the local command.  Names no longer in the local file are deleted by either.
+function planSync(onlinerecords, localcmds) {
+  var onlineByName = Object.create(null);
+  onlinerecords.forEach(function (rec) {
+    (onlineByName[rec.name] = onlineByName[rec.name] || []).push(rec);
+  });
+  var localByName = Object.create(null);
+  localcmds.forEach(function (cmd) {
+    (localByName[cmd.trigger] = localByName[cmd.trigger] || []).push(cmd);
+  });
+
+  var plan = { removals: [], adds: [] };
+  var names = Object.keys(onlineByName).concat(Object.keys(localByName).filter(function (name) {
+    return !(name in onlineByName);
+  }));
+
+  names.forEach(function (name) {
+    var online = onlineByName[name] || [];
+    var local = localByName[name] || [];
+
+    if (local.length && local[0].ground != ground) {
+      return; // the other agent owns this command
+    }
+
+    var inSync = online.length == local.length;
+    var used = [];
+    for (var l = 0; inSync && l < local.length; l++) {
+      var found = false;
+      for (var o = 0; o < online.length; o++) {
+        if (used.indexOf(o) == -1 && cmdMatches(online[o], local[l])) {
+          used.push(o);
+          found = true;
+          break;
+        }
+      }
+      inSync = found;
+    }
+    if (inSync) {
+      return;
+    }
+
+    if (online.length > 1) {
+      console.log('Command ' + name + ' has ' + online.length + ' copies online.  Replacing them.');
+    }
+    online.forEach(function () {
+      plan.removals.push(name);
+    });
+    plan.adds = plan.adds.concat(local);
+  });
+
+  return plan;
+}
+
+function runRemovals(removals, token, userid, computerid, done) {
+  var i = 0;
+  (function next() {
+    if (i >= removals.length) {
+      return done();
+    }
+    removeCmd(removals[i++], token, userid, computerid, next);
+  })();
+}
+
 function updateCmds(token,userid,computerid,startsocket) {
+  if (syncRunning && !startsocket) {
+    syncQueued = {token: token, userid: userid, computerid: computerid};
+    console.log('Command sync already running.  Will sync again when it finishes.');
+    return;
+  }
   if(computerid == "") {
     console.log("No computer ID.  Skipping command updates and exiting.");
   } else {
@@ -536,93 +660,50 @@ function updateCmds(token,userid,computerid,startsocket) {
         // Configure the request
         headers.Authorization = 'Bearer ' + token;
         options.headers = headers;
-        options.url = urlprefix + '/api/command/list?computer_id=' + computerid;
+        // includeDuplicates makes the server return every copy of a command instead of one per name, so
+        // planSync can see duplicates and remove them.  Older servers ignore it.
+        options.url = urlprefix + '/api/command/list?computer_id=' + computerid + '&includeDuplicates=1';
         options.method = 'GET';
+
+        var syncId = startSync();
 
         // Start the request
         request(options, function (error, response, body) {
           if (!error && response.statusCode == 200) {
             onlinecmds = JSON.parse(body);
+            var plan = planSync(onlinecmds.records, localcmds);
 
-            // Remove any command triggers found online that don't exist in local file anymore.
-            // for(var o = 0; o < onlinecmds.records.length; o++)  <- this was too fast
-            syncLoop(onlinecmds.records.length, function(loop){
-              setTimeout(function(){
-                var o = loop.iteration();
-                // console.log(o);
-                var foundlocal = false;
-                for(var l = 0; l < localcmds.length; l++)
-                {
-                  var localallowParams = false;
+            // All removals must land before any adds.  The server deletes by name, so a delete that
+            // arrives after the add for the same name could remove the new record instead of the old one.
+            // Removals run one at a time so repeated deletes of the same name don't race each other.
+            runRemovals(plan.removals, token, userid, computerid, function () {
+              console.log('Command removals complete');
 
-                  var _arr = [1, "1", true, "true"];
-                  for (var _i = 0; _i < _arr.length; _i++) {
-                    var value = _arr[_i];
-                    if (localcmds[l].allowParams == value) {
-                      localallowParams = true;
+              // Adds are spaced 10ms apart.  Firing them all at once was too fast.
+              var pendingAdds = plan.adds.length;
+              if (!pendingAdds) {
+                return finishSync(syncId);
+              }
+              syncLoop(plan.adds.length, function(loop){
+                setTimeout(function(){
+                  var cmd = plan.adds[loop.iteration()];
+                  addCmd(cmd.trigger,cmd.voice,cmd.voiceReply,cmd.allowParams,cmd.mcpToolDescription,cmd.icon||'',token,userid,computerid, function () {
+                    if (--pendingAdds === 0) {
+                      finishSync(syncId);
                     }
-                  }
-
-                  if (onlinecmds.records[o].name == localcmds[l].trigger &&
-                      onlinecmds.records[o].voice == localcmds[l].voice &&
-                      onlinecmds.records[o].voiceReply == localcmds[l].voiceReply &&
-                      onlinecmds.records[o].mcpToolDescription == localcmds[l].mcpToolDescription &&
-                      Boolean(onlinecmds.records[o].allowParams) == localallowParams &&
-                      (onlinecmds.records[o].icon || '') == (localcmds[l].icon || '')
-                  ) { foundlocal = true }
-                }
-                if (!foundlocal) {
-                  removeCmd(onlinecmds.records[o].name,token,userid,computerid);
-                }
-                loop.next();
-              }, 10);
-            }, function(){
-                console.log('Initiated command removals');
-            });
-
-            // Add any command triggers found locally that don't exist online anymore.
-            syncLoop(localcmds.length, function(loop){
-              setTimeout(function(){
-                var l = loop.iteration();
-                // console.log(l);
-                var foundonline = false;
-                for(var o = 0; o < onlinecmds.records.length; o++)
-                {
-                  // console.log(onlinecmds.records[o].name);
-                  // console.log(l.toString() + localcmds[l].trigger);
-                  var localallowParams = false;
-
-                  var _arr = [1, "1", true, "true"];
-                  for (var _i = 0; _i < _arr.length; _i++) {
-                    var value = _arr[_i];
-                    if (localcmds[l].allowParams == value) {
-                      localallowParams = true;
-                    }
-                  }
-
-                  if (onlinecmds.records[o].name == localcmds[l].trigger &&
-                      onlinecmds.records[o].voice == localcmds[l].voice &&
-                      onlinecmds.records[o].voiceReply == localcmds[l].voiceReply &&
-                      onlinecmds.records[o].mcpToolDescription == localcmds[l].mcpToolDescription &&
-                      Boolean(onlinecmds.records[o].allowParams) == localallowParams &&
-                      (onlinecmds.records[o].icon || '') == (localcmds[l].icon || '')
-                  ) { foundonline = true }
-                }
-                if (!foundonline) {
-                  if (localcmds[l] && localcmds[l].ground == ground) {
-                    addCmd(localcmds[l].trigger,localcmds[l].voice,localcmds[l].voiceReply,localcmds[l].allowParams,localcmds[l].mcpToolDescription,localcmds[l].icon||'',token,userid,computerid);
-                  }
-                }
-                loop.next();
-              }, 10);
-            }, function(){
-                console.log('Initiated command adds');
+                  });
+                  loop.next();
+                }, 10);
+              }, function(){
+                  console.log('Initiated command adds');
+              });
             });
 
           } else {
             console.log('Login failed trying to update command triggers.');
             console.log(error);
             console.log(response);
+            finishSync(syncId);
           }
         })
         if(startsocket) {
@@ -635,7 +716,7 @@ function updateCmds(token,userid,computerid,startsocket) {
 
 }
 
-function removeCmd(trigger,token,userid,computerid) {
+function removeCmd(trigger,token,userid,computerid,done) {
   // Configure the request
 
   headers.Authorization = 'Bearer ' + token;
@@ -652,10 +733,11 @@ function removeCmd(trigger,token,userid,computerid) {
     } else {
       console.log('Failed while trying delete a trigger.');
     }
+    if (done) done();
   })
 }
 
-function addCmd(trigger,voice,voiceReply,allowParams,mcpToolDescription,icon,token,userid,computerid) {
+function addCmd(trigger,voice,voiceReply,allowParams,mcpToolDescription,icon,token,userid,computerid,done) {
   // Configure the request
 
   headers.Authorization = 'Bearer ' + token;
@@ -672,6 +754,7 @@ function addCmd(trigger,voice,voiceReply,allowParams,mcpToolDescription,icon,tok
     } else {
       console.log('Failed while trying add a trigger.');
     }
+    if (done) done();
   })
 }
 
