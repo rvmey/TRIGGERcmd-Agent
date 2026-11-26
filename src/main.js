@@ -544,7 +544,7 @@ function handleSubmission() {
         agent.tokenLogin(token,function (token) {
           console.log('handleSubmission token ' + token)
           if (token) {
-            agent.createComputer(token,null, computername, function (computerid) {
+            agent.reuseOrCreateComputer(token,null, computername, function (computerid) {
               if (computerid == 'MustSubscribe') {
                 mainWindow.loadURL(`file://${__dirname}/html/${i18n.t('en')}/subscribefirst.html`);
               } else {

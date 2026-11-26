@@ -24,6 +24,9 @@ module.exports = {
   createComputer: function (token,userid,computername,callback) {
     createComputer(token,userid,computername,callback);
   },
+  reuseOrCreateComputer: function (token,userid,computername,callback) {
+    reuseOrCreateComputer(token,userid,computername,callback);
+  },
   initFiles: function (path, callback) {
     initFiles(path, callback);
   },
@@ -234,7 +237,7 @@ function consoleLogin(daemoninstall) {
     var token = result.token;
     token = token.trim();
     tokenLogin(token, function (token) {
-      createComputer(token,useridFromFile,null, function (computerid) {
+      reuseOrCreateComputer(token,useridFromFile,null, function (computerid) {
         if ((!daemoninstall) && (computerid != 'MustSubscribe')) {
           foreground(token,useridFromFile,computerid);
         }
@@ -297,18 +300,33 @@ function computerExists(token,computerid,cb) {
             computeridFromFile = null;
             cb(false);
         }
+      } else if (!error && response.statusCode == 401) {
+        // The server answered, so we're online.  The server's isApiAuthorised policy returns 401
+        // when the saved token is revoked, disabled, invalid, or the user is blocked/deleted.
+        // Report false so the caller prompts for a new token instead of waiting for Internet forever.
+        // Keep computeridFromFile - the computer itself may still exist, and reuseOrCreateComputer()
+        // will reuse it after the user signs in with a new token.
+        var reason = '';
+        try { reason = JSON.parse(body).err || ''; } catch (e) {}
+        console.log('Saved token was rejected by the server (HTTP 401' + (reason ? ': ' + reason : '') + ').  Login with a new token.');
+        loggedNoInternet = false;
+        cb(false);
       } else {
         if(!loggedNoInternet) {
           console.log('Error while checking whether computer exists in your account.');
-          console.log(error);
-          console.log('No Internet.  Trying again every 10 seconds.')
+          if (error) {
+            console.log(error);
+            console.log('No Internet.  Trying again every 10 seconds.')
+          } else {
+            console.log('Server returned HTTP ' + response.statusCode + '.  Trying again every 10 seconds.')
+          }
           loggedNoInternet = true;
         }
-        if(error && error.syscall == 'getaddrinfo') {
-          setTimeout(function() {
-            computerExists(token,computerid,cb);
-          }, 10000)
-        }
+        // Retry on any network error or unexpected server response (e.g. 404 on a server DB error, 5xx)
+        // instead of silently giving up, which left the agent stuck on "Waiting for Internet".
+        setTimeout(function() {
+          computerExists(token,computerid,cb);
+        }, 10000)
       }
     })
   }
@@ -423,6 +441,27 @@ function createComputer(token,userid,computer_name,callback) {
       }
     }
   })
+}
+
+// After logging in with a new token (e.g. because the old one was revoked), reuse the saved
+// computer if it still exists in the account, instead of creating a duplicate computer
+// (or hitting "MustSubscribe" for unsubscribed users, who are limited to one computer).
+function reuseOrCreateComputer(token,userid,computer_name,callback) {
+  if (!computeridFromFile) {
+    createComputer(token,userid,computer_name,callback);
+    return;
+  }
+  var existingid = computeridFromFile;
+  computerExists(token,existingid,function (exists) {
+    if (exists) {
+      console.log('Reusing existing computer ' + existingid + ' with the new token.');
+      if (typeof callback === "function") {
+        callback(existingid);
+      }
+    } else {
+      createComputer(token,userid,computer_name,callback);
+    }
+  });
 }
 
 function triggerCmd(token,computername,triggername,callback) {
