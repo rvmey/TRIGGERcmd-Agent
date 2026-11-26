@@ -157,7 +157,14 @@ module.exports = {
       LSUIElement: true
     }
   },
-  rebuildConfig: {},
+  rebuildConfig: {
+    // chacha-native's C++ source doesn't compile against the V8 version
+    // bundled with current Electron (v8::Object::CreationContext() was
+    // removed). It's an optionalDependency of the `chacha` package, which
+    // already falls back to a pure-JS implementation when the native
+    // binding is unavailable, so just skip rebuilding it.
+    ignoreModules: ['chacha-native'],
+  },
   makers,
   plugins: [
   ],
